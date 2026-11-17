@@ -1,15 +1,15 @@
 <!doctype html><html lang="en"><head><script src="/config.js"></script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <title>Biashara Tanzania Community | Ramani</title>
 <meta name="description" content="Biashara Tanzania: the community for Tanzanian importers. Ask questions, share suppliers and wins, and learn with other traders. Free, in Kiswahili and English.">
-<meta name="theme-color" content="#388539">
+<meta name="theme-color" content="#04C401">
 <style>
-:root{--bg:#fbfaf6;--surface:#ffffff;--sunk:#f3f1ea;--ink:#16211a;--ink2:#2c3a31;--muted:#5f6d63;--line:#e4e1d6;--line2:#d4d0c2;
---brand:#388539;--brand-deep:#24602a;--brand-ink:#ffffff;--brand-soft:#e7f1e3;--accent:#d98a1c;--accent-soft:#fbefd9;--warn:#b5432c;--warn-soft:#f8e3dd;
---sans:"Plus Jakarta Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1511;--surface:#161e19;--sunk:#1c2620;--ink:#e9eee8;--ink2:#cdd6cf;--muted:#9aa89e;--line:#27322b;--line2:#33413a;--brand:#6cc06d;--brand-deep:#8fd38f;--brand-ink:#0b140d;--brand-soft:#1d3121;--accent:#efb054;--accent-soft:#33291a;--warn:#ef8a74;--warn-soft:#3a221d}}
-:root[data-theme="dark"]{--bg:#0f1511;--surface:#161e19;--sunk:#1c2620;--ink:#e9eee8;--ink2:#cdd6cf;--muted:#9aa89e;--line:#27322b;--line2:#33413a;--brand:#6cc06d;--brand-deep:#8fd38f;--brand-ink:#0b140d;--brand-soft:#1d3121;--accent:#efb054;--accent-soft:#33291a;--warn:#ef8a74;--warn-soft:#3a221d}
+:root{--bg:#F7F9FF;--surface:#FFFFFF;--sunk:#EEF2F8;--ink:#1E222E;--ink2:#374151;--muted:#4B5563;--line:#D9DDE7;--line2:#D1D5DB;
+--brand:#04C401;--brand-deep:#0C4A8F;--brand-ink:#FFFFFF;--brand-soft:#E6F8E6;--accent:#E2B93B;--accent-soft:#FBF4DE;--warn:#C0392B;--warn-soft:#FDEEEE;
+--sans:Galvji,"Inter","Segoe UI",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#F7F9FF;--surface:#FFFFFF;--sunk:#EEF2F8;--ink:#1E222E;--ink2:#374151;--muted:#4B5563;--line:#D9DDE7;--line2:#D1D5DB;--brand:#04C401;--brand-deep:#0C4A8F;--brand-ink:#FFFFFF;--brand-soft:#E6F8E6;--accent:#E2B93B;--accent-soft:#FBF4DE;--warn:#C0392B;--warn-soft:#FDEEEE}}
+:root[data-theme="dark"]{--bg:#12151C;--surface:#1E222E;--sunk:#262B38;--ink:#F7F9FF;--ink2:#D1D5DB;--muted:#9CA3AF;--line:#2E3442;--line2:#3A4150;--brand:#04C401;--brand-deep:#5897DC;--brand-ink:#FFFFFF;--brand-soft:#173019;--accent:#E2B93B;--accent-soft:#3A3220;--warn:#F28B8B;--warn-soft:#3A1F22}
 [hidden]{display:none!important}
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -73,13 +73,13 @@ button{font:inherit;color:inherit}
 .post h3{margin:0 0 6px;font-size:18px;letter-spacing:-.01em;line-height:1.3}
 .post h3 a{text-decoration:none}.post h3 a:hover{text-decoration:underline}
 .txt{white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
-.txt a{color:var(--brand);font-weight:600}
-.more{border:0;background:none;color:var(--brand);font-weight:700;padding:0;cursor:pointer;margin-top:4px}
+.txt a{color:var(--brand-text,var(--brand));font-weight:600}
+.more{border:0;background:none;color:var(--brand-text,var(--brand));font-weight:700;padding:0;cursor:pointer;margin-top:4px}
 .pimg{display:block;max-width:100%;max-height:480px;border-radius:12px;margin-top:12px;border:1px solid var(--line)}
 .acts{display:flex;align-items:center;gap:6px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
 .act{display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;border-radius:999px;padding:7px 12px;font-weight:600;font-size:14px;cursor:pointer;color:var(--ink2);text-decoration:none}
 .act:hover{background:var(--sunk)}
-.act.on{color:var(--brand)}
+.act.on{color:var(--brand-text,var(--brand))}
 .act.dots{margin-left:auto;font-size:18px;line-height:1;padding:5px 10px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 14.5px var(--sans);border-radius:999px;padding:11px 20px;border:1px solid transparent;cursor:pointer;text-decoration:none}
 .btn.p{background:var(--brand);color:var(--brand-ink)}.btn.p:hover{background:var(--brand-deep)}
@@ -161,12 +161,13 @@ button{font:inherit;color:inherit}
 </style>
 <script src="i18n/sw.js"></script>
 <script src="i18n/engine.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="brand/favicon-32.png"><link rel="apple-touch-icon" href="brand/ramani-icon.png"><link rel="stylesheet" href="ramani-ds.css">
 </head>
 <body>
 <div class="app" id="app" data-noi18n>
   <header class="top">
     <button class="burger" id="burger" type="button" aria-label="Menu" aria-controls="side" aria-expanded="false">☰</button>
-    <a class="brand" href="#/"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#388539"/><path d="M16 7.5c-3.9 0-7 3-7 6.8 0 4.9 7 10.2 7 10.2s7-5.3 7-10.2c0-3.8-3.1-6.8-7-6.8Z" fill="none" stroke="#fff" stroke-width="2.2"/><circle cx="16" cy="14.2" r="2.4" fill="#fde9a8"/></svg><span>Biashara Tanzania<small id="tBy"></small></span></a>
+    <a class="brand" href="#/"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#04C401"/><path d="M16 7.5c-3.9 0-7 3-7 6.8 0 4.9 7 10.2 7 10.2s7-5.3 7-10.2c0-3.8-3.1-6.8-7-6.8Z" fill="none" stroke="#fff" stroke-width="2.2"/><circle cx="16" cy="14.2" r="2.4" fill="#fde9a8"/></svg><span>Biashara Tanzania<small id="tBy"></small></span></a>
     <form class="search" id="search" role="search"><span aria-hidden="true">⌕</span><input id="q" type="search" autocomplete="off"></form>
     <div class="tr"><button class="lang" id="lang" type="button"></button><span id="meSlot"></span></div>
   </header>
@@ -186,7 +187,7 @@ button{font:inherit;color:inherit}
   function api(path,opt){ opt=opt||{}; var h={"x-rc":"1"}; var body=opt.body;
     if(body&&!(body instanceof FormData)){ h["content-type"]="application/json"; body=JSON.stringify(body); }
     return fetch(API+path,{method:opt.method||(body?"POST":"GET"),headers:h,body:body,credentials:"same-origin"}).then(function(r){ return r.json().catch(function(){return {ok:false,error:"network"};}).then(function(j){ j.status=r.status; return j; }); },function(){ return {ok:false,error:"network"}; }); }
-  var COLORS=["#388539","#d98a1c","#2f6f8f","#8a4f9e","#b5432c","#4f7a28","#a0662a","#356b5c"];
+  var COLORS=["#04C401","#E2B93B","#2f6f8f","#8a4f9e","#b5432c","#4f7a28","#a0662a","#356b5c"];
   function avatar(name,id,cls){ var a=el("span","av"+(cls?" "+cls:"")); var n=String(name||"?").trim().split(/\s+/); a.textContent=(n[0]||"?").charAt(0)+(n[1]?n[1].charAt(0):""); var h=0; String(id||name).split("").forEach(function(c){h=(h*31+c.charCodeAt(0))>>>0;}); a.style.background=COLORS[h%COLORS.length]; a.setAttribute("aria-hidden","true"); return a; }
   function ago(iso){ var s=(Date.now()-Date.parse(iso))/1000; if(s<60) return T("just now","sasa hivi"); var m=s/60,h=m/60,d=h/24;
     if(m<60) return Math.floor(m)+T(" min ago"," dk zilizopita"); if(h<24) return Math.floor(h)+T(" h ago"," saa zilizopita"); if(d<7) return Math.floor(d)+T(" d ago"," siku zilizopita");

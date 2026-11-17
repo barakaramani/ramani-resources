@@ -1,0 +1,71 @@
+/* Ramani Design System for the resource site.
+   Source: "Ramani Design System" in Figma (UI Style Guidelines by the Ramani design team).
+   Colours, type, buttons, inputs, notifications and selectors. Every page loads this file after its own styles.
+   Brand: Primary #04C401, Secondary 1 #1E222E, Secondary 2 #1D8CF8, Secondary 3 #D9DDE7, Secondary 4 #FD4E5D.
+   Grays: #000000 #1F2937 #374151 #4B5563 #6B7280 #9CA3AF #D1D5DB #F7F9FF #FFFFFF.
+   States: Info #2F80ED, Success #27AE60, Warning #E2B93B, Error #EB5757. Button hover #5897DC, pressed #0C4A8F.
+   Font: Galvji, with Inter as the web fallback (Galvji ships on Apple devices only). */
+
+:root{
+  --ds-primary:#04C401; --ds-secondary-1:#1E222E; --ds-secondary-2:#1D8CF8; --ds-secondary-3:#D9DDE7; --ds-secondary-4:#FD4E5D;
+  --ds-black:#000000; --ds-gray-1:#1F2937; --ds-gray-2:#374151; --ds-gray-3:#4B5563; --ds-gray-4:#6B7280; --ds-gray-5:#9CA3AF; --ds-gray-6:#D1D5DB; --ds-gray-7:#F7F9FF; --ds-white:#FFFFFF;
+  --ds-info:#2F80ED; --ds-success:#27AE60; --ds-warning:#E2B93B; --ds-error:#EB5757;
+  --ds-hover:#5897DC; --ds-pressed:#0C4A8F; --ds-disabled:#D1D5DB;
+  --ds-radius:6px; --ds-focus-bg:#F5F9FF;
+  --brand-text:#027A00; /* Primary is too light for small text on white (2.4:1); text uses this darker shade (5.5:1) */
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--brand-text:#04C401;--ds-focus-bg:#1A2233;--ds-disabled:#3A4150}}
+:root[data-theme="dark"]{--brand-text:#04C401;--ds-focus-bg:#1A2233;--ds-disabled:#3A4150}
+
+/* Type */
+body{font-family:var(--sans,Galvji,"Inter",system-ui,sans-serif)}
+h1,h2,h3,h4{font-family:var(--sans,Galvji,"Inter",system-ui,sans-serif)}
+
+/* Logo: the Ramani wordmark, dark on light pages and white in dark mode */
+.rg-logo,.logo,.ds-logo{display:inline-flex;align-items:center;gap:0;text-decoration:none;line-height:0}
+.rg-logo img,.logo img,.ds-logo img{height:28px;width:auto;display:block}
+.rg-logo .lg-d,.logo .lg-d,.ds-logo .lg-d{display:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .lg-l{display:none!important}:root:not([data-theme="light"]) .lg-d{display:block!important}}
+:root[data-theme="dark"] .lg-l{display:none!important}
+:root[data-theme="dark"] .lg-d{display:block!important}
+@media (max-width:600px){.rg-logo img,.logo img,.ds-logo img{height:24px}}
+
+/* Buttons: 6px corners, bold label, padding 1.5 x font size left and right, 1 x font size top and bottom.
+   Primary is green, hover is blue, pressed is navy, disabled is light gray. */
+.btn,.hb-btn,.cm-btn,.ib-btn,.preview-btn,.tbtn,button.btn{border-radius:var(--ds-radius)!important;font-weight:700;transition:background-color .15s,border-color .15s,color .15s}
+.btn-brand,.hb-btn:not(.g):not(.x),.cm-btn.p,.btn-p,.btn-bright{background:var(--ds-primary)!important;color:#fff!important;border-color:transparent!important}
+.btn-brand:hover,.hb-btn:not(.g):not(.x):hover,.cm-btn.p:hover,.btn-p:hover,.btn-bright:hover{background:var(--ds-hover)!important}
+.btn-brand:active,.hb-btn:not(.g):not(.x):active,.cm-btn.p:active,.btn-p:active,.btn-bright:active{background:var(--ds-pressed)!important}
+.btn-line,.hb-btn.g,.cm-btn.g,.btn-g{border:1px solid var(--ds-primary)!important;color:var(--brand-text)!important;background:transparent!important}
+.btn-line:hover,.hb-btn.g:hover,.cm-btn.g:hover,.btn-g:hover{background:rgba(88,151,220,.18)!important;border-color:var(--ds-hover)!important}
+.btn-line:active,.hb-btn.g:active,.cm-btn.g:active,.btn-g:active{background:rgba(12,74,143,.12)!important}
+.btn-danger,.ds-btn-secondary{background:var(--ds-secondary-4)!important;color:#fff!important}
+.btn:disabled,.hb-btn:disabled,.cm-btn:disabled,.btn[aria-disabled="true"]{background:var(--ds-disabled)!important;color:#fff!important;border-color:transparent!important;cursor:not-allowed}
+.linkbtn{color:var(--brand-text)}
+
+/* Text inputs: gray border, focused and typing get a green border on a pale blue fill, errors are red */
+input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=color]),select,textarea{border-radius:var(--ds-radius)}
+input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=color]):hover,select:hover,textarea:hover{border-color:var(--ds-primary)}
+input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=color]):focus,select:focus,textarea:focus{border-color:var(--ds-primary)!important;background-color:var(--ds-focus-bg);outline:none;box-shadow:0 0 0 3px rgba(4,196,1,.18)}
+input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="true"]{border-color:var(--ds-error)!important}
+input:disabled,select:disabled,textarea:disabled{color:var(--ds-gray-5);background:transparent}
+input[type=checkbox],input[type=radio],input[type=range],progress{accent-color:var(--ds-primary)}
+::placeholder{color:var(--ds-gray-5)}
+
+/* Focus ring for keyboard users */
+:focus-visible{outline-color:var(--ds-secondary-2)}
+
+/* Snackbar and state helpers (Notifications section of the design system) */
+.ds-snack{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid;border-radius:var(--ds-radius);padding:8px 12px;font-size:14px}
+.ds-snack.warning{color:#9A7613;border-color:var(--ds-warning);background:#FDF8E8}
+.ds-snack.error{color:#B42318;border-color:var(--ds-error);background:#FDEEEE}
+.ds-snack.success{color:#1E7F47;border-color:var(--ds-success);background:#EAF7EF}
+.ds-snack.info{color:#1B5FB8;border-color:var(--ds-info);background:#EAF2FD}
+
+/* Tooltip */
+.ds-tip{background:var(--ds-secondary-1);color:#fff;border-radius:4px;padding:6px 10px;font-size:12.5px}
+
+/* Header call to action uses the button shape and states */
+.rg-cta,.cta{border-radius:var(--ds-radius)!important}
+.rg-cta:hover{background:var(--ds-hover)!important}
+.rg-cta:active{background:var(--ds-pressed)!important}

@@ -1,24 +1,24 @@
 <!doctype html><html lang="en"><head><script src="/config.js"></script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <title>Biashara Tanzania Community</title>
 <style>
-:root{--bg:#fbfaf6;--surface:#ffffff;--sunk:#f3f1ea;--ink:#16211a;--ink2:#2c3a31;--muted:#5f6d63;--line:#e4e1d6;--line2:#d4d0c2;
---brand:#388539;--brand-deep:#24602a;--brand-ink:#ffffff;--brand-soft:#e7f1e3;--accent:#d98a1c;--accent-soft:#fbefd9;--warn:#b5432c;--warn-soft:#f8e3dd;
---sans:"Plus Jakarta Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;--gut:max(16px,env(safe-area-inset-left,0px));--gutr:max(16px,env(safe-area-inset-right,0px))}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1511;--surface:#161e19;--sunk:#1c2620;--ink:#e9eee8;--ink2:#cdd6cf;--muted:#9aa89e;--line:#27322b;--line2:#33413a;--brand:#6cc06d;--brand-deep:#8fd38f;--brand-ink:#0b140d;--brand-soft:#1d3121;--accent:#efb054;--accent-soft:#33291a;--warn:#ef8a74;--warn-soft:#3a221d}}
-:root[data-theme="dark"]{--bg:#0f1511;--surface:#161e19;--sunk:#1c2620;--ink:#e9eee8;--ink2:#cdd6cf;--muted:#9aa89e;--line:#27322b;--line2:#33413a;--brand:#6cc06d;--brand-deep:#8fd38f;--brand-ink:#0b140d;--brand-soft:#1d3121;--accent:#efb054;--accent-soft:#33291a;--warn:#ef8a74;--warn-soft:#3a221d}
+:root{--bg:#F7F9FF;--surface:#FFFFFF;--sunk:#EEF2F8;--ink:#1E222E;--ink2:#374151;--muted:#4B5563;--line:#D9DDE7;--line2:#D1D5DB;
+--brand:#04C401;--brand-deep:#0C4A8F;--brand-ink:#FFFFFF;--brand-soft:#E6F8E6;--accent:#E2B93B;--accent-soft:#FBF4DE;--warn:#C0392B;--warn-soft:#FDEEEE;
+--sans:Galvji,"Inter","Segoe UI",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;--gut:max(16px,env(safe-area-inset-left,0px));--gutr:max(16px,env(safe-area-inset-right,0px))}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#F7F9FF;--surface:#FFFFFF;--sunk:#EEF2F8;--ink:#1E222E;--ink2:#374151;--muted:#4B5563;--line:#D9DDE7;--line2:#D1D5DB;--brand:#04C401;--brand-deep:#0C4A8F;--brand-ink:#FFFFFF;--brand-soft:#E6F8E6;--accent:#E2B93B;--accent-soft:#FBF4DE;--warn:#C0392B;--warn-soft:#FDEEEE}}
+:root[data-theme="dark"]{--bg:#12151C;--surface:#1E222E;--sunk:#262B38;--ink:#F7F9FF;--ink2:#D1D5DB;--muted:#9CA3AF;--line:#2E3442;--line2:#3A4150;--brand:#04C401;--brand-deep:#5897DC;--brand-ink:#FFFFFF;--brand-soft:#173019;--accent:#E2B93B;--accent-soft:#3A3220;--warn:#F28B8B;--warn-soft:#3A1F22}
 [hidden]{display:none!important}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 :focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:4px}
 .cm-wrap{max-width:1120px;margin:0 auto;padding:0 var(--gutr) 0 var(--gut)}
-.cm-eb{font:600 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--brand)}
+.cm-eb{font:600 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--brand-text,var(--brand))}
 .cm-btn{display:inline-flex;align-items:center;gap:8px;font:700 15px var(--sans);text-decoration:none;border-radius:999px;padding:13px 22px;border:1px solid transparent;cursor:pointer}
 .cm-btn.p{background:var(--brand);color:var(--brand-ink)}.cm-btn.p:hover{background:var(--brand-deep)}
 .cm-btn.g{background:transparent;color:var(--ink);border-color:var(--line2)}.cm-btn.g:hover{border-color:var(--ink)}
 .cm-btn.sm{padding:9px 16px;font-size:14px}
-.cm-link{color:var(--brand);font-weight:700;text-decoration:none;background:none;border:0;padding:0;font:inherit;font-weight:700;cursor:pointer}.cm-link:hover{text-decoration:underline}
+.cm-link{color:var(--brand-text,var(--brand));font-weight:700;text-decoration:none;background:none;border:0;padding:0;font:inherit;font-weight:700;cursor:pointer}.cm-link:hover{text-decoration:underline}
 section{padding:64px 0}
 h2.cm-h{font-size:clamp(26px,3.4vw,38px);line-height:1.15;letter-spacing:-.025em;font-weight:800;margin:10px 0 12px}
 .cm-lede{color:var(--muted);font-size:17px;max-width:42rem;margin:0}
@@ -132,6 +132,7 @@ h2.cm-h{font-size:clamp(26px,3.4vw,38px);line-height:1.15;letter-spacing:-.025em
   window.addEventListener("storage",function(e){ if(e.key===KEY) count(); });
 })();
 </script>
+<link rel="icon" type="image/png" sizes="32x32" href="brand/favicon-32.png"><link rel="apple-touch-icon" href="brand/ramani-icon.png"><link rel="stylesheet" href="ramani-ds.css">
 </head><body>
 <script src="brain/kb.js"></script>
 <script src="brain/core.js"></script>
@@ -140,34 +141,34 @@ h2.cm-h{font-size:clamp(26px,3.4vw,38px);line-height:1.15;letter-spacing:-.025em
 <script src="i18n/sw.js"></script>
 <script src="i18n/engine.js"></script>
 <style id="rg-css">
-.rg{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--bg,#fff) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line,#ddd);font-family:"Plus Jakarta Sans",system-ui,sans-serif}
+.rg{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--bg,#fff) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line,#ddd);font-family:Galvji,"Inter",system-ui,sans-serif}
 .rg-in{max-width:1180px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));height:58px;display:flex;align-items:center;gap:14px}
 .rg a{color:inherit}
-.rg-logo{display:flex;align-items:center;gap:8px;text-decoration:none;font:800 19px/1 "Plus Jakarta Sans",system-ui,sans-serif;letter-spacing:-.03em;color:var(--ink,#142016)}
+.rg-logo{display:flex;align-items:center;gap:8px;text-decoration:none;font:800 19px/1 Galvji,"Inter",system-ui,sans-serif;letter-spacing:-.03em;color:var(--ink,#1E222E)}
 .rg-logo svg{width:26px;height:26px}
 .rg-nav{display:flex;align-items:center;gap:2px;margin-left:8px}
-.rg-nav>a,.rg-res{background:none;border:0;text-decoration:none;font:600 14.5px "Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink,#142016);padding:8px 12px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.rg-nav>a,.rg-res{background:none;border:0;text-decoration:none;font:600 14.5px Galvji,"Inter",system-ui,sans-serif;color:var(--ink,#1E222E);padding:8px 12px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
 .rg-nav>a:hover,.rg-res:hover,.rg-res[aria-expanded=true]{background:var(--brand-soft,#e6f1e5)}
 .rg-dd{position:relative}
 .rg-menu{position:absolute;top:calc(100% + 8px);left:-8px;width:340px;background:var(--surface,#fff);border:1px solid var(--line,#ddd);border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.18);padding:8px;display:none;z-index:70}
 .rg-menu.open{display:block}
-.rg-menu a,.rg-menu .rg-soon{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;text-decoration:none;padding:10px;border-radius:12px;color:var(--ink,#142016)}
+.rg-menu a,.rg-menu .rg-soon{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;text-decoration:none;padding:10px;border-radius:12px;color:var(--ink,#1E222E)}
 .rg-menu a:hover,.rg-menu a[aria-current=page]{background:var(--brand-soft,#e6f1e5)}
 .rg-menu .rg-soon{opacity:.7;cursor:default}
-.rg-mi{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:var(--brand-soft,#e6f1e5);color:var(--brand,#388539)}
+.rg-mi{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:var(--brand-soft,#e6f1e5);color:var(--brand-text,var(--brand,#04C401))}
 .rg-mi svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .rg-menu b{display:block;font-size:15px}
-.rg-menu small{display:block;font-size:13px;color:var(--muted,#56685a);line-height:1.4}
-.rg-menu em{display:inline-block;font:700 10px/1 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;padding:3px 6px;border-radius:5px;margin-left:6px;vertical-align:2px;font-style:normal;background:var(--bg,#f4f7f3);color:var(--muted,#56685a)}
+.rg-menu small{display:block;font-size:13px;color:var(--muted,#4B5563);line-height:1.4}
+.rg-menu em{display:inline-block;font:700 10px/1 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;padding:3px 6px;border-radius:5px;margin-left:6px;vertical-align:2px;font-style:normal;background:var(--bg,#f4f7f3);color:var(--muted,#4B5563)}
 .rg-sp{flex:1}
-.rg-lang{font:700 13px "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.04em;border:1px solid var(--line,#ddd);background:var(--surface,#fff);color:var(--ink,#142016);border-radius:999px;height:36px;min-width:44px;padding:0 10px;cursor:pointer}
-.rg-lang:hover{border-color:var(--brand,#388539);color:var(--brand,#388539)}
-.rg-cta{background:var(--brand,#388539);color:var(--brand-ink,#fff)!important;text-decoration:none;border-radius:999px;padding:9px 16px;font:700 14px "Plus Jakarta Sans",system-ui,sans-serif;white-space:nowrap}
+.rg-lang{font:700 13px "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.04em;border:1px solid var(--line,#ddd);background:var(--surface,#fff);color:var(--ink,#1E222E);border-radius:999px;height:36px;min-width:44px;padding:0 10px;cursor:pointer}
+.rg-lang:hover{border-color:var(--brand,#04C401);color:var(--brand-text,var(--brand,#04C401))}
+.rg-cta{background:var(--brand,#04C401);color:var(--brand-ink,#fff)!important;text-decoration:none;border-radius:999px;padding:9px 16px;font:700 14px Galvji,"Inter",system-ui,sans-serif;white-space:nowrap}
 @media (max-width:760px){.rg-nav>a{display:none}.rg-nav{margin-left:auto}.rg-sp{display:none}.rg-menu{position:fixed;top:62px;left:16px;right:16px;width:auto;max-height:calc(100vh - 80px);overflow-y:auto}}
 @media (max-width:420px){.rg-cta{display:none}}
 </style>
 <header class="rg"><div class="rg-in">
-<a class="rg-logo" href="index.html#learn" aria-label="Ramani"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#388539"/><path d="M16 7.5c-3.9 0-7 3-7 6.8 0 4.9 7 10.2 7 10.2s7-5.3 7-10.2c0-3.8-3.1-6.8-7-6.8Z" fill="none" stroke="#fff" stroke-width="2.2"/><circle cx="16" cy="14.2" r="2.4" fill="#fde9a8"/></svg>ramani</a>
+<a class="rg-logo" href="index.html#learn" aria-label="Ramani"><img class="lg-l" src="brand/ramani-wordmark.png" alt="" width="145" height="32"><img class="lg-d" src="brand/ramani-wordmark-white.png" alt="" width="145" height="32"></a>
 <nav class="rg-nav" aria-label="Main">
 <a href="https://www.ramani.io" target="_blank" rel="noopener">Import finance</a>
 <div class="rg-dd"><button type="button" class="rg-res" aria-expanded="false" aria-controls="rgMenu">Resources <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>
@@ -202,25 +203,25 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 .cm-app .brand{display:flex;gap:8px;align-items:center;font-weight:800;font-size:13px;margin:0 4px 10px}
 .cm-app .brand i{width:22px;height:22px;border-radius:7px;background:var(--brand);display:block}
 .cm-app .sp{font-size:12.5px;padding:7px 8px;border-radius:8px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cm-app .sp.on{background:var(--surface);color:var(--brand);font-weight:700}
+.cm-app .sp.on{background:var(--surface);color:var(--brand-text,var(--brand));font-weight:700}
 .cm-app .sp small{display:block;font:600 10px var(--mono);letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin:8px 0 2px;padding:0}
 .cm-app .fd{padding:14px;display:grid;gap:10px;align-content:start}
 .cm-post{border:1px solid var(--line);border-radius:14px;padding:12px;font-size:13.5px}
 .cm-post .who{display:flex;gap:8px;align-items:center;margin-bottom:6px}
-.cm-post .av{width:26px;height:26px;border-radius:999px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;font-weight:800;font-size:11px}
+.cm-post .av{width:26px;height:26px;border-radius:999px;background:var(--brand-soft);color:var(--brand-text,var(--brand));display:grid;place-items:center;font-weight:800;font-size:11px}
 .cm-post b{font-size:13px}.cm-post .t{font:500 11px var(--mono);color:var(--muted)}
 .cm-post .meta{display:flex;gap:12px;font:500 11.5px var(--mono);color:var(--muted);margin-top:8px}
 .cm-post.ev{background:var(--brand-soft);border-color:transparent}
 .cm-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:30px}
 .cm-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px}
-.cm-ic{width:46px;height:46px;border-radius:14px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;margin-bottom:14px}
+.cm-ic{width:46px;height:46px;border-radius:14px;background:var(--brand-soft);color:var(--brand-text,var(--brand));display:grid;place-items:center;margin-bottom:14px}
 .cm-ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .cm-card h3{margin:0 0 6px;font-size:18px;letter-spacing:-.01em}
 .cm-card p{margin:0;color:var(--muted);font-size:15px}
 .cm-quote{background:var(--brand);color:var(--brand-ink);text-align:center}
 .cm-quote blockquote{margin:0 auto 10px;font-size:clamp(24px,3.4vw,38px);font-weight:800;letter-spacing:-.02em;line-height:1.2;max-width:46rem}
 .cm-quote cite{display:block;font:600 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;opacity:.85;font-style:normal;margin-bottom:24px}
-.cm-quote .cm-btn{background:var(--brand-ink);color:var(--brand)}
+.cm-quote .cm-btn{background:var(--brand-ink);color:var(--brand-text,var(--brand))}
 .cm-groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:28px}
 .cm-g{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:6px}
 .cm-g .tag{align-self:flex-start;font:600 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;border-radius:6px;padding:3px 7px;background:var(--sunk);color:var(--muted)}
@@ -232,11 +233,11 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 .cm-co .ls{font:500 12px var(--mono);color:var(--muted)}
 .cm-week{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:28px}
 .cm-day{border-top:3px solid var(--brand);background:var(--surface);border-radius:0 0 14px 14px;padding:14px;border-left:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
-.cm-day b{font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--brand)}
+.cm-day b{font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--brand-text,var(--brand))}
 .cm-day h3{margin:6px 0 4px;font-size:16px}.cm-day p{margin:0;color:var(--muted);font-size:14px}
 .cm-ev{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;margin-top:28px}
 .cm-evc{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px;display:grid;grid-template-columns:86px 1fr;gap:18px;align-items:start}
-.cm-date{background:var(--brand-soft);color:var(--brand);border-radius:14px;text-align:center;padding:12px 6px;font-weight:800}
+.cm-date{background:var(--brand-soft);color:var(--brand-text,var(--brand));border-radius:14px;text-align:center;padding:12px 6px;font-weight:800}
 .cm-date span{display:block;font:600 11px var(--mono);letter-spacing:.06em;text-transform:uppercase}
 .cm-date b{display:block;font-size:26px;line-height:1.1}
 .cm-evc h3{margin:0 0 6px;font-size:19px}.cm-evc p{margin:0 0 12px;color:var(--muted);font-size:15px}
@@ -258,7 +259,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 .cm-two-col{display:grid;grid-template-columns:1fr 1fr;gap:40px}
 .cm-rules{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:12px}
 .cm-rules li{display:grid;grid-template-columns:26px 1fr;gap:10px;font-size:15.5px}
-.cm-rules li::before{content:"";width:22px;height:22px;border-radius:999px;background:var(--brand-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23388539' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12 4 4 8-8'/%3E%3C/svg%3E") center/14px no-repeat;margin-top:2px}
+.cm-rules li::before{content:"";width:22px;height:22px;border-radius:999px;background:var(--brand-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2304C401' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12 4 4 8-8'/%3E%3C/svg%3E") center/14px no-repeat;margin-top:2px}
 .cm-faq details{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:14px 16px;margin-bottom:10px}
 .cm-faq summary{font-weight:700;cursor:pointer}
 .cm-faq details p{margin:8px 0 0;color:var(--muted)}
@@ -341,11 +342,11 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
   <div class="cm-wrap">
     <span class="cm-eb">Courses</span>
     <h2 class="cm-h" id="cm-cr">Learn at your own pace</h2>
-    <p class="cm-lede">Short lessons with a quiz and a certificate. All three are open now in the <a href="academy.html" style="color:var(--brand);font-weight:700">Ramani Import Academy</a>.</p>
+    <p class="cm-lede">Short lessons with a quiz and a certificate. All three are open now in the <a href="academy.html" style="color:var(--brand-text,var(--brand));font-weight:700">Ramani Import Academy</a>.</p>
     <div class="cm-courses">
-      <div class="cm-co"><span class="lv">Beginner</span><h3>Your first import from China</h3><p>Choosing a supplier, checking samples, paying safely and shipping with a cargo agent.</p><span class="ls">4 lessons · <a href="academy.html#first" style="color:var(--brand);font-weight:700">Start free</a></span></div>
-      <div class="cm-co"><span class="lv">Intermediate</span><h3>From shared loads to a full container</h3><p>When a full container pays, how to plan the order, and how to fund it.</p><span class="ls">4 lessons · <a href="academy.html#container" style="color:var(--brand);font-weight:700">Start free</a></span></div>
-      <div class="cm-co"><span class="lv">All levels</span><h3>Clearing without surprises</h3><p>Documents, duty, port charges and free days, with the Ramani calculators.</p><span class="ls">4 lessons · <a href="academy.html#clearing" style="color:var(--brand);font-weight:700">Start free</a></span></div>
+      <div class="cm-co"><span class="lv">Beginner</span><h3>Your first import from China</h3><p>Choosing a supplier, checking samples, paying safely and shipping with a cargo agent.</p><span class="ls">4 lessons · <a href="academy.html#first" style="color:var(--brand-text,var(--brand));font-weight:700">Start free</a></span></div>
+      <div class="cm-co"><span class="lv">Intermediate</span><h3>From shared loads to a full container</h3><p>When a full container pays, how to plan the order, and how to fund it.</p><span class="ls">4 lessons · <a href="academy.html#container" style="color:var(--brand-text,var(--brand));font-weight:700">Start free</a></span></div>
+      <div class="cm-co"><span class="lv">All levels</span><h3>Clearing without surprises</h3><p>Documents, duty, port charges and free days, with the Ramani calculators.</p><span class="ls">4 lessons · <a href="academy.html#clearing" style="color:var(--brand-text,var(--brand));font-weight:700">Start free</a></span></div>
     </div>
   </div>
 </section>
@@ -505,16 +506,16 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 </script>
 
 <style id="rn-css">
-.rn{max-width:1120px;margin:8px auto 48px;padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink,#142016)}
-.rn-card{background:var(--surface,#fff);border:1px solid var(--line,#d7e1d6);border-radius:18px;padding:24px;display:grid;grid-template-columns:1fr 1.1fr;gap:22px;align-items:center}
+.rn{max-width:1120px;margin:8px auto 48px;padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));font-family:Galvji,"Inter",system-ui,sans-serif;color:var(--ink,#1E222E)}
+.rn-card{background:var(--surface,#fff);border:1px solid var(--line,#D9DDE7);border-radius:18px;padding:24px;display:grid;grid-template-columns:1fr 1.1fr;gap:22px;align-items:center}
 .rn-card h2{margin:6px 0 6px;font-size:24px;font-weight:800;letter-spacing:-.02em}
-.rn-card p{margin:0;color:var(--muted,#56685a)}
-.rn-eb{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand,#388539);font-weight:700}
+.rn-card p{margin:0;color:var(--muted,#4B5563)}
+.rn-eb{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-text,var(--brand,#04C401));font-weight:700}
 .rn form{display:grid;grid-template-columns:1fr 1fr auto;gap:8px}
-.rn input{font:500 16px "Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink,#142016);background:var(--bg,#f4f7f3);border:1px solid var(--line,#d7e1d6);border-radius:10px;padding:11px 13px;width:100%;min-width:0}
-.rn button{font:700 15px "Plus Jakarta Sans",system-ui,sans-serif;border:0;border-radius:10px;padding:11px 18px;cursor:pointer;background:var(--brand,#388539);color:var(--brand-ink,#fff)}
-.rn small{display:block;grid-column:1/-1;font-size:12.5px;color:var(--muted,#56685a)}
-.rn small a{color:var(--brand,#388539)}
+.rn input{font:500 16px Galvji,"Inter",system-ui,sans-serif;color:var(--ink,#1E222E);background:var(--bg,#f4f7f3);border:1px solid var(--line,#D9DDE7);border-radius:10px;padding:11px 13px;width:100%;min-width:0}
+.rn button{font:700 15px Galvji,"Inter",system-ui,sans-serif;border:0;border-radius:10px;padding:11px 18px;cursor:pointer;background:var(--brand,#04C401);color:var(--brand-ink,#fff)}
+.rn small{display:block;grid-column:1/-1;font-size:12.5px;color:var(--muted,#4B5563)}
+.rn small a{color:var(--brand-text,var(--brand,#04C401))}
 .rn .rn-msg{grid-column:1/-1;font-size:14px;font-weight:600;min-height:1em}
 @media (max-width:760px){.rn-card{grid-template-columns:1fr;padding:20px}.rn form{grid-template-columns:1fr}}
 </style>
@@ -531,6 +532,6 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 var n=document.getElementById("rn-name").value.trim(),m=document.getElementById("rn-email").value.trim().toLowerCase(),o=document.getElementById("rn-msg");
 if(!n){o.style.color="var(--warn,#a35208)";o.textContent="Please enter your name.";return;}
 if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)){o.style.color="var(--warn,#a35208)";o.textContent="Please enter a valid email address.";return;}
-var done=function(r){o.style.color="var(--brand,#388539)";o.textContent=(r&&r.duplicate)?"This email is already subscribed. You will keep getting the newsletter every Monday.":"Thank you, "+n+". Our next newsletter reaches your inbox on Monday. Test version: saved to the test inbox only.";f.reset();};
+var done=function(r){o.style.color="var(--brand,#04C401)";o.textContent=(r&&r.duplicate)?"This email is already subscribed. You will keep getting the newsletter every Monday.":"Thank you, "+n+". Our next newsletter reaches your inbox on Monday. Test version: saved to the test inbox only.";f.reset();};
 if(window.RAMANI&&window.RAMANI.send)window.RAMANI.send("newsletter",{list:"Ramani newsletter",name:n,email:m,marketing_consent:true}).then(done,done);else done();});})();</script>
 </body></html>

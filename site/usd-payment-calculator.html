@@ -16,40 +16,40 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
-/* Layout: calculator on the left, a bank transfer slip on the right, then two conversion cards (get a quote, newsletter); stacks on phones. Brand green from ramani.io theme colour #388539. */
+/* Layout: calculator on the left, a bank transfer slip on the right, then two conversion cards (get a quote, newsletter); stacks on phones. Brand green from ramani.io theme colour #04C401. */
 :root{
-  --bg:#F4F7F3; --surface:#FFFFFF; --ink:#142016; --muted:#56685A; --line:#D7E1D6;
-  --brand:#388539; --brand-ink:#FFFFFF; --deep:#17361A; --deep-ink:#F2F8F1;
-  --bright:#7ACB7D; --bright-ink:#0B1A0C; --warn:#A35208; --warn-bg:#FDF1E4; --slip:#FAFCF9; --focus:#2F7BD8;
-  --sans:"Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  --bg:#F7F9FF; --surface:#FFFFFF; --ink:#1E222E; --muted:#4B5563; --line:#D9DDE7;
+  --brand:#04C401; --brand-ink:#FFFFFF; --deep:#1E222E; --deep-ink:#F7F9FF;
+  --bright:#04C401; --bright-ink:#FFFFFF; --warn:#C0392B; --warn-bg:#FDEEEE; --slip:#FAFCF9; --focus:#1D8CF8;
+  --sans:Galvji,"Inter","Segoe UI",system-ui,sans-serif;
   --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0D150E; --surface:#142017; --ink:#E5EFE4; --muted:#9DB29E; --line:#26382A;
-    --brand:#5DB760; --brand-ink:#0B1A0C; --deep:#1D4521; --deep-ink:#EEF7ED;
-    --bright:#86D989; --bright-ink:#0B1A0C; --warn:#F2A65A; --warn-bg:#2A1D10; --slip:#111C13; --focus:#6FA8F0;
+    --bg:#12151C; --surface:#1E222E; --ink:#F7F9FF; --muted:#9CA3AF; --line:#2E3442;
+    --brand:#04C401; --brand-ink:#FFFFFF; --deep:#0C0E14; --deep-ink:#F7F9FF;
+    --bright:#04C401; --bright-ink:#FFFFFF; --warn:#F28B8B; --warn-bg:#3A1F22; --slip:#111C13; --focus:#5897DC;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0D150E; --surface:#142017; --ink:#E5EFE4; --muted:#9DB29E; --line:#26382A;
-  --brand:#5DB760; --brand-ink:#0B1A0C; --deep:#1D4521; --deep-ink:#EEF7ED;
-  --bright:#86D989; --bright-ink:#0B1A0C; --warn:#F2A65A; --warn-bg:#2A1D10; --slip:#111C13; --focus:#6FA8F0;
+  --bg:#12151C; --surface:#1E222E; --ink:#F7F9FF; --muted:#9CA3AF; --line:#2E3442;
+  --brand:#04C401; --brand-ink:#FFFFFF; --deep:#0C0E14; --deep-ink:#F7F9FF;
+  --bright:#04C401; --bright-ink:#FFFFFF; --warn:#F28B8B; --warn-bg:#3A1F22; --slip:#111C13; --focus:#5897DC;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55}
 .wrap{max-width:1080px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:20px 48px}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.brand{font-weight:800;font-size:22px;letter-spacing:-.02em;color:var(--brand)}
+.brand{font-weight:800;font-size:22px;letter-spacing:-.02em;color:var(--brand-text,var(--brand))}
 .top-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .tag{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
 .pill{font:700 14px var(--sans);background:var(--brand);color:var(--brand-ink);border-radius:999px;padding:8px 16px;border:0;cursor:pointer}
 header.hero{margin-block:28px 22px;max-width:46rem}
-.eyebrow{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);font-weight:700}
+.eyebrow{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-text,var(--brand));font-weight:700}
 h1{font-weight:800;font-size:clamp(28px,4.4vw,44px);line-height:1.08;letter-spacing:-.025em;margin:6px 0 10px;text-wrap:balance}
 .lede{color:var(--muted);font-size:18px;margin:0;max-width:40rem}
 .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
@@ -77,10 +77,10 @@ input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{ou
 .row .val{text-align:right;white-space:nowrap}
 .total{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-top:14px;flex-wrap:wrap}
 .total .lbl{font-family:var(--sans);font-weight:700;font-size:15px}
-.total .big{font-family:var(--sans);font-weight:800;font-size:clamp(26px,3.4vw,34px);letter-spacing:-.02em;color:var(--brand)}
+.total .big{font-family:var(--sans);font-weight:800;font-size:clamp(26px,3.4vw,34px);letter-spacing:-.02em;color:var(--brand-text,var(--brand))}
 .receives{margin-top:12px;display:flex;justify-content:space-between;gap:12px;font-size:14px;flex-wrap:wrap}
 .receives .lbl{font-family:var(--sans)}
-.ok{color:var(--brand);font-weight:600}
+.ok{color:var(--brand-text,var(--brand));font-weight:600}
 .short{color:var(--warn);font-weight:600}
 .alert{margin-top:12px;background:var(--warn-bg);color:var(--warn);border-radius:8px;padding:10px 12px;font-family:var(--sans);font-size:14px}
 .spread{margin:14px 0 0;font-family:var(--sans);font-size:14px;color:var(--muted)}
@@ -149,7 +149,7 @@ details.notes ol{margin:12px 0 0;padding-left:20px;display:grid;gap:8px;max-widt
 .sc-out .risk{font-weight:800;font-size:22px;letter-spacing:-.01em}
 .sc-out.r-high{border-color:var(--warn)}
 .sc-out.r-high .risk,.sc-out.r-mid .risk{color:var(--warn)}
-.sc-out.r-low .risk{color:var(--brand)}
+.sc-out.r-low .risk{color:var(--brand-text,var(--brand))}
 .sc-out ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14px}
 .sc-ramani{margin:0;font-size:14px;background:var(--bg);border-radius:10px;padding:10px 12px}
 @media (max-width:820px){ .grid,.cta-row,.sc-grid{grid-template-columns:minmax(0,1fr)} }
@@ -158,7 +158,7 @@ details.notes ol{margin:12px 0 0;padding-left:20px;display:grid;gap:8px;max-widt
   .row{grid-template-columns:36px minmax(0,1fr) auto;font-size:13px}
 }
 </style>
-<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}.backnav a{color:var(--brand);text-decoration:none}.backnav a:hover{text-decoration:underline}</style>
+<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}.backnav a{color:var(--brand-text,var(--brand));text-decoration:none}.backnav a:hover{text-decoration:underline}</style>
 <script src="data/live.js"></script>
 <script>
 (function(){
@@ -314,7 +314,7 @@ details.notes ol{margin:12px 0 0;padding-left:20px;display:grid;gap:8px;max-widt
     if(ls(CKEY)) return;
     var css=document.createElement("style");
     css.textContent=".ck{position:fixed;right:16px;bottom:16px;z-index:55;max-width:360px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:0 16px 40px rgba(0,0,0,.18);font:500 14px/1.45 var(--sans)}"+
-      "body.lead-locked .ck{bottom:96px}.ck p{margin:0 0 10px}.ck a{color:var(--brand)}.ck .r{display:flex;gap:8px;justify-content:flex-end}"+
+      "body.lead-locked .ck{bottom:96px}.ck p{margin:0 0 10px}.ck a{color:var(--brand-text,var(--brand))}.ck .r{display:flex;gap:8px;justify-content:flex-end}"+
       ".ck button{font:700 14px var(--sans);border-radius:9px;padding:8px 14px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink)}.ck button.y{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}"+
       "@media (max-width:560px){.ck{left:16px;right:16px;max-width:none}}";
     document.head.appendChild(css);
@@ -347,6 +347,7 @@ details.notes ol{margin:12px 0 0;padding-left:20px;display:grid;gap:8px;max-widt
   if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",wire); else wire();
 })();
 </script>
+<link rel="icon" type="image/png" sizes="32x32" href="brand/favicon-32.png"><link rel="apple-touch-icon" href="brand/ramani-icon.png"><link rel="stylesheet" href="ramani-ds.css">
 </head>
 <body>
 <script src="brain/kb.js"></script>
@@ -356,34 +357,34 @@ details.notes ol{margin:12px 0 0;padding-left:20px;display:grid;gap:8px;max-widt
 <script src="i18n/sw.js"></script>
 <script src="i18n/engine.js"></script>
 <style id="rg-css">
-.rg{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--bg,#fff) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line,#ddd);font-family:"Plus Jakarta Sans",system-ui,sans-serif}
+.rg{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--bg,#fff) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line,#ddd);font-family:Galvji,"Inter",system-ui,sans-serif}
 .rg-in{max-width:1180px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));height:58px;display:flex;align-items:center;gap:14px}
 .rg a{color:inherit}
-.rg-logo{display:flex;align-items:center;gap:8px;text-decoration:none;font:800 19px/1 "Plus Jakarta Sans",system-ui,sans-serif;letter-spacing:-.03em;color:var(--ink,#142016)}
+.rg-logo{display:flex;align-items:center;gap:8px;text-decoration:none;font:800 19px/1 Galvji,"Inter",system-ui,sans-serif;letter-spacing:-.03em;color:var(--ink,#1E222E)}
 .rg-logo svg{width:26px;height:26px}
 .rg-nav{display:flex;align-items:center;gap:2px;margin-left:8px}
-.rg-nav>a,.rg-res{background:none;border:0;text-decoration:none;font:600 14.5px "Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink,#142016);padding:8px 12px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.rg-nav>a,.rg-res{background:none;border:0;text-decoration:none;font:600 14.5px Galvji,"Inter",system-ui,sans-serif;color:var(--ink,#1E222E);padding:8px 12px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
 .rg-nav>a:hover,.rg-res:hover,.rg-res[aria-expanded=true]{background:var(--brand-soft,#e6f1e5)}
 .rg-dd{position:relative}
 .rg-menu{position:absolute;top:calc(100% + 8px);left:-8px;width:340px;background:var(--surface,#fff);border:1px solid var(--line,#ddd);border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.18);padding:8px;display:none;z-index:70}
 .rg-menu.open{display:block}
-.rg-menu a,.rg-menu .rg-soon{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;text-decoration:none;padding:10px;border-radius:12px;color:var(--ink,#142016)}
+.rg-menu a,.rg-menu .rg-soon{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;text-decoration:none;padding:10px;border-radius:12px;color:var(--ink,#1E222E)}
 .rg-menu a:hover,.rg-menu a[aria-current=page]{background:var(--brand-soft,#e6f1e5)}
 .rg-menu .rg-soon{opacity:.7;cursor:default}
-.rg-mi{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:var(--brand-soft,#e6f1e5);color:var(--brand,#388539)}
+.rg-mi{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:var(--brand-soft,#e6f1e5);color:var(--brand-text,var(--brand,#04C401))}
 .rg-mi svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .rg-menu b{display:block;font-size:15px}
-.rg-menu small{display:block;font-size:13px;color:var(--muted,#56685a);line-height:1.4}
-.rg-menu em{display:inline-block;font:700 10px/1 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;padding:3px 6px;border-radius:5px;margin-left:6px;vertical-align:2px;font-style:normal;background:var(--bg,#f4f7f3);color:var(--muted,#56685a)}
+.rg-menu small{display:block;font-size:13px;color:var(--muted,#4B5563);line-height:1.4}
+.rg-menu em{display:inline-block;font:700 10px/1 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;padding:3px 6px;border-radius:5px;margin-left:6px;vertical-align:2px;font-style:normal;background:var(--bg,#f4f7f3);color:var(--muted,#4B5563)}
 .rg-sp{flex:1}
-.rg-lang{font:700 13px "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.04em;border:1px solid var(--line,#ddd);background:var(--surface,#fff);color:var(--ink,#142016);border-radius:999px;height:36px;min-width:44px;padding:0 10px;cursor:pointer}
-.rg-lang:hover{border-color:var(--brand,#388539);color:var(--brand,#388539)}
-.rg-cta{background:var(--brand,#388539);color:var(--brand-ink,#fff)!important;text-decoration:none;border-radius:999px;padding:9px 16px;font:700 14px "Plus Jakarta Sans",system-ui,sans-serif;white-space:nowrap}
+.rg-lang{font:700 13px "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.04em;border:1px solid var(--line,#ddd);background:var(--surface,#fff);color:var(--ink,#1E222E);border-radius:999px;height:36px;min-width:44px;padding:0 10px;cursor:pointer}
+.rg-lang:hover{border-color:var(--brand,#04C401);color:var(--brand-text,var(--brand,#04C401))}
+.rg-cta{background:var(--brand,#04C401);color:var(--brand-ink,#fff)!important;text-decoration:none;border-radius:999px;padding:9px 16px;font:700 14px Galvji,"Inter",system-ui,sans-serif;white-space:nowrap}
 @media (max-width:760px){.rg-nav>a{display:none}.rg-nav{margin-left:auto}.rg-sp{display:none}.rg-menu{position:fixed;top:62px;left:16px;right:16px;width:auto;max-height:calc(100vh - 80px);overflow-y:auto}}
 @media (max-width:420px){.rg-cta{display:none}}
 </style>
 <header class="rg"><div class="rg-in">
-<a class="rg-logo" href="index.html#learn" aria-label="Ramani"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#388539"/><path d="M16 7.5c-3.9 0-7 3-7 6.8 0 4.9 7 10.2 7 10.2s7-5.3 7-10.2c0-3.8-3.1-6.8-7-6.8Z" fill="none" stroke="#fff" stroke-width="2.2"/><circle cx="16" cy="14.2" r="2.4" fill="#fde9a8"/></svg>ramani</a>
+<a class="rg-logo" href="index.html#learn" aria-label="Ramani"><img class="lg-l" src="brand/ramani-wordmark.png" alt="" width="145" height="32"><img class="lg-d" src="brand/ramani-wordmark-white.png" alt="" width="145" height="32"></a>
 <nav class="rg-nav" aria-label="Main">
 <a href="https://www.ramani.io" target="_blank" rel="noopener">Import finance</a>
 <div class="rg-dd"><button type="button" class="rg-res" aria-expanded="false" aria-controls="rgMenu">Resources <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>
@@ -565,12 +566,12 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
       <li>The "Get a quote" button carries the amount and currency from the calculator, so ramani.io/apply/start opens with the order value already filled in.</li>
       <li>The newsletter offer is tied to the tool (weekly dollar rate) and asks for name and email only.</li>
       <li>On the live site, each step sends an event to the CRM (calculation done, quote clicked, newsletter joined) so follow ups start automatically.</li>
-      <li>The live version needs a daily rate feed, compliance sign off on the quote copy, and Ramani's confirmed font, logo and full colour palette. Only the brand green (#388539) was confirmed from ramani.io.</li>
+      <li>The live version needs a daily rate feed, compliance sign off on the quote copy, and Ramani's confirmed font, logo and full colour palette. Only the brand green (#04C401) was confirmed from ramani.io.</li>
     </ol>
   </details>
 </div>
 
-<style>.seo-more{max-width:1120px;margin:0 auto;padding:8px max(16px,env(safe-area-inset-right,0px)) 56px max(16px,env(safe-area-inset-left,0px));font-family:var(--sans);color:var(--ink)}.seo-more h2{font-size:22px;font-weight:800;letter-spacing:-.02em;margin:28px 0 10px}.seo-more ol{margin:0;padding-left:20px;display:grid;gap:6px;max-width:46rem}.seo-more details{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 16px;margin-bottom:8px;max-width:52rem}.seo-more summary{font-weight:700;cursor:pointer}.seo-more details p{margin:8px 0 0;color:var(--muted)}.seo-more .rel{display:flex;gap:8px;flex-wrap:wrap}.seo-more .rel a{border:1px solid var(--line);border-radius:999px;padding:6px 12px;color:var(--brand);text-decoration:none;font-weight:600;font-size:14px;background:var(--surface)}</style>
+<style>.seo-more{max-width:1120px;margin:0 auto;padding:8px max(16px,env(safe-area-inset-right,0px)) 56px max(16px,env(safe-area-inset-left,0px));font-family:var(--sans);color:var(--ink)}.seo-more h2{font-size:22px;font-weight:800;letter-spacing:-.02em;margin:28px 0 10px}.seo-more ol{margin:0;padding-left:20px;display:grid;gap:6px;max-width:46rem}.seo-more details{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 16px;margin-bottom:8px;max-width:52rem}.seo-more summary{font-weight:700;cursor:pointer}.seo-more details p{margin:8px 0 0;color:var(--muted)}.seo-more .rel{display:flex;gap:8px;flex-wrap:wrap}.seo-more .rel a{border:1px solid var(--line);border-radius:999px;padding:6px 12px;color:var(--brand-text,var(--brand));text-decoration:none;font-weight:600;font-size:14px;background:var(--surface)}</style>
 <section class="seo-more" aria-label="About this tool">
 <h2>How it works</h2>
 <ol><li>Enter the amount on your supplier&#x27;s invoice and pick its currency.</li><li>Add your bank&#x27;s markup on the rate, the sending fee and any intermediary charges.</li><li>Choose OUR or SHA to see the total you pay and what your supplier receives.</li></ol>
@@ -818,7 +819,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     ".lg-row{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap}"+
     ".lg-skip{background:none;border:0;color:var(--muted);font:600 14px var(--sans);cursor:pointer;padding:6px 0}"+
     ".lg-modal .go{background:var(--brand);color:var(--brand-ink);font:700 15px var(--sans);border:0;border-radius:10px;padding:12px 18px;cursor:pointer}"+
-    ".lg-pn{font-size:12px;color:var(--muted)}.lg-pn a{color:var(--brand)}"+
+    ".lg-pn{font-size:12px;color:var(--muted)}.lg-pn a{color:var(--brand-text,var(--brand))}"+
     ".lg-reset{display:block;margin:28px auto 8px;background:none;border:0;color:var(--muted);font:500 12px var(--sans);text-decoration:underline;cursor:pointer}";
   document.head.appendChild(css);
 
@@ -922,7 +923,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 
   var css=document.createElement("style");
   css.textContent=
-    ".sm-btn{display:inline-flex;align-items:center;gap:6px;margin:12px 0 4px;font:700 14px var(--sans);color:var(--brand);background:var(--surface);border:1px solid var(--brand);border-radius:10px;padding:8px 14px;cursor:pointer}"+
+    ".sm-btn{display:inline-flex;align-items:center;gap:6px;margin:12px 0 4px;font:700 14px var(--sans);color:var(--brand-text,var(--brand));background:var(--surface);border:1px solid var(--brand);border-radius:10px;padding:8px 14px;cursor:pointer}"+
     ".sm-btn:hover{background:var(--brand-soft)}.sm-after{grid-column:1/-1;justify-self:start;align-self:start;width:auto}"+
     ".sm-back{position:fixed;inset:0;z-index:70;background:rgba(8,20,10,.55);display:grid;place-items:center;padding:16px}"+
     ".sm-modal{background:var(--surface);color:var(--ink);border-radius:16px;padding:22px;width:100%;max-width:460px;max-height:90vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.3);font-family:var(--sans)}"+
@@ -942,8 +943,8 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     ".sm-x{background:none;border:0;color:var(--muted);font:600 14px var(--sans);cursor:pointer;padding:6px 0}"+
     ".sm-err{color:var(--warn);font-size:13px;min-height:1em}"+
     ".sm-ok{background:var(--brand-soft);border-radius:10px;padding:12px;font-size:14px}"+
-    ".sm-wa{font:600 14px var(--sans);color:var(--brand)}"+
-    ".sm-pn{font-size:12px;color:var(--muted)}.sm-pn a{color:var(--brand)}";
+    ".sm-wa{font:600 14px var(--sans);color:var(--brand-text,var(--brand))}"+
+    ".sm-pn{font-size:12px;color:var(--muted)}.sm-pn a{color:var(--brand-text,var(--brand))}";
   document.head.appendChild(css);
 
   var back=el("div","sm-back"); back.hidden=true;
