@@ -66,14 +66,18 @@ export async function onRequestPost({ request, env }) {
       if (text) return json({ text: clean(text), by: "claude" });
     } catch {}
   }
+  // Private check for Ramani's team: header x-uliza-debug equal to EMAIL_SECRET shows errors and can try another model.
+  const debug = !!env.EMAIL_SECRET && request.headers.get("x-uliza-debug") === env.EMAIL_SECRET;
   if (workersAIReady(env) && (await underDailyCap(env))) { // 2. Cloudflare Workers AI, free tier
     try {
-      const text = await workersAIAnswer(env, { rules: RULES, facts: factsFor(core, question, sw), turns, sw });
+      const t0 = Date.now();
+      const text = await workersAIAnswer(env, { rules: RULES, facts: factsFor(core, question, sw), turns, sw, model: debug && body.model ? String(body.model) : null, raw: debug });
+      if (debug && text && typeof text === "object") return json({ debug: text, ms: Date.now() - t0 });
       if (text) {
         if (env.DB) { try { await env.DB.prepare("UPDATE questions SET answered_by = 'workers_ai' WHERE id = ?1").bind(qid).run(); } catch {} }
         return json({ text: clean(text), by: "workers_ai" });
       }
-    } catch {}
-  }
+    } catch (e) { if (debug) return json({ error: String(e && e.message || e).slice(0, 500) }, 500); }
+  } else if (debug) return json({ error: "no AI binding or daily cap reached", ai: workersAIReady(env) }, 500);
   return json({ error: "brain_unavailable" }, 503); // 3. the page answers from Ramani's tools on its own
 }
