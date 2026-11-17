@@ -27,7 +27,7 @@ export async function makeBrief(env, personId) {
 }
 
 export async function onRequestGet({ request, env }) {
-  if (!staff(request)) return json({ error: "staff_only" }, 401);
+  if (!(await staff(request, env))) return json({ error: "staff_only" }, 401);
   const pid = new URL(request.url).searchParams.get("person");
   const b = pid && await makeBrief(env, pid);
   return b ? json(b) : json({ error: "not_found" }, 404);
