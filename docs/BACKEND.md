@@ -60,6 +60,7 @@ Everything one person did: `SELECT type, received_at FROM submissions WHERE pers
    - `SEMACALL_WEBHOOK_SECRET`, `SEMACALL_API_BASE`, `SEMACALL_API_KEY` and `SEMACALL_SENDER`.
    - Optional: `TURNSTILE_SECRET`.
 3. Protect `/api/brief*`, `/api/semacall/push*`, `/api/semacall/send-sms*` and the sales desk page with Cloudflare Access, using your Ramani Google accounts. Do not protect the webhook. It checks the shared secret instead.
+   Then add two Cloudflare variables from that Access application: `ACCESS_TEAM_DOMAIN` (for example `ramani.cloudflareaccess.com`) and `ACCESS_AUD` (the Application Audience tag). The code checks the signed Access token itself, so a faked header is refused. Until both are set, every staff route answers "staff_only" and stays closed.
 4. In the site config set `RAMANI.brainEndpoint = "/api/uliza"`. The assistant then uses the Claude API instead of the demo.
 5. Add a Cloudflare rate limit on `/api/uliza`, for example 10 questions a minute per IP.
 
