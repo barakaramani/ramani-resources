@@ -1,0 +1,454 @@
+<!doctype html><html lang="en"><head><script src="/config.js"></script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<title>Biashara Tanzania Community | Ramani</title>
+<meta name="description" content="Biashara Tanzania: the community for Tanzanian importers. Ask questions, share suppliers and wins, and learn with other traders. Free, in Kiswahili and English.">
+<meta name="theme-color" content="#388539">
+<style>
+:root{--bg:#fbfaf6;--surface:#ffffff;--sunk:#f3f1ea;--ink:#16211a;--ink2:#2c3a31;--muted:#5f6d63;--line:#e4e1d6;--line2:#d4d0c2;
+--brand:#388539;--brand-deep:#24602a;--brand-ink:#ffffff;--brand-soft:#e7f1e3;--accent:#d98a1c;--accent-soft:#fbefd9;--warn:#b5432c;--warn-soft:#f8e3dd;
+--sans:"Plus Jakarta Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1511;--surface:#161e19;--sunk:#1c2620;--ink:#e9eee8;--ink2:#cdd6cf;--muted:#9aa89e;--line:#27322b;--line2:#33413a;--brand:#6cc06d;--brand-deep:#8fd38f;--brand-ink:#0b140d;--brand-soft:#1d3121;--accent:#efb054;--accent-soft:#33291a;--warn:#ef8a74;--warn-soft:#3a221d}}
+:root[data-theme="dark"]{--bg:#0f1511;--surface:#161e19;--sunk:#1c2620;--ink:#e9eee8;--ink2:#cdd6cf;--muted:#9aa89e;--line:#27322b;--line2:#33413a;--brand:#6cc06d;--brand-deep:#8fd38f;--brand-ink:#0b140d;--brand-soft:#1d3121;--accent:#efb054;--accent-soft:#33291a;--warn:#ef8a74;--warn-soft:#3a221d}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15.5px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:6px}
+a{color:inherit}
+button{font:inherit;color:inherit}
+.app{display:grid;grid-template-rows:60px 1fr;height:100vh;height:100dvh}
+/* top bar */
+.top{display:flex;align-items:center;gap:14px;padding:0 18px;background:var(--surface);border-bottom:1px solid var(--line);position:relative;z-index:5}
+.burger{display:none;width:40px;height:40px;border:0;background:transparent;border-radius:10px;cursor:pointer;font-size:20px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:16.5px;white-space:nowrap}
+.brand svg{width:30px;height:30px;flex:none}
+.brand small{display:block;font:600 11px var(--mono);letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+.search{flex:1;max-width:520px;margin:0 auto;position:relative}
+.search input{width:100%;font:500 14.5px var(--sans);color:var(--ink);background:var(--sunk);border:1px solid transparent;border-radius:999px;padding:10px 16px 10px 38px}
+.search input:focus{background:var(--surface);border-color:var(--line2);outline:none}
+.search span{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px}
+.tr{display:flex;align-items:center;gap:8px}
+.lang{border:1px solid var(--line2);background:transparent;border-radius:999px;padding:6px 11px;font:700 12.5px var(--mono);cursor:pointer}
+.av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font:800 14px var(--sans);color:#fff;flex:none;text-transform:uppercase}
+.av.sm{width:30px;height:30px;font-size:12px}.av.lg{width:72px;height:72px;font-size:26px}
+.mebtn{border:0;background:transparent;padding:0;cursor:pointer;border-radius:50%}
+.menu{position:absolute;right:16px;top:56px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,.12);min-width:200px;padding:6px;z-index:20}
+.menu a,.menu button{display:block;width:100%;text-align:left;padding:10px 12px;border:0;background:none;border-radius:10px;text-decoration:none;font-weight:600;font-size:14.5px;cursor:pointer}
+.menu a:hover,.menu button:hover{background:var(--sunk)}
+/* layout */
+.body{display:grid;grid-template-columns:268px minmax(0,1fr);min-height:0}
+.side{background:var(--surface);border-right:1px solid var(--line);overflow:auto;padding:14px 10px 24px}
+.side h4{margin:18px 12px 6px;font:600 11.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.side a{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;text-decoration:none;font-weight:600;font-size:14.5px;color:var(--ink2)}
+.side a:hover{background:var(--sunk)}
+.side a[aria-current=page]{background:var(--brand-soft);color:var(--brand-deep)}
+.side a .e{width:22px;text-align:center;flex:none}
+.side a .n{margin-left:auto;font:600 12px var(--mono);color:var(--muted)}
+.side a .soon{margin-left:auto;font:600 10.5px var(--mono);color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:2px 7px}
+.side .sback{margin-top:18px;border-top:1px solid var(--line);padding-top:12px}
+.main{overflow:auto;min-height:0}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;max-width:1120px;margin:0 auto;padding:24px 24px 60px}
+.wrap.one{grid-template-columns:minmax(0,1fr);max-width:820px}
+.col{min-width:0}
+.rail{display:grid;gap:16px;align-content:start}
+/* cards */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
+.hd{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.hd .em{font-size:30px;line-height:1}
+.hd h1{margin:0;font-size:24px;letter-spacing:-.02em;line-height:1.2}
+.hd p{margin:4px 0 0;color:var(--muted)}
+.compose{display:flex;align-items:center;gap:12px;cursor:pointer;margin-bottom:16px}
+.compose .fake{flex:1;background:var(--sunk);border-radius:999px;padding:11px 16px;color:var(--muted);font-weight:500;text-align:left;border:0;cursor:pointer}
+.post{margin-bottom:14px}
+.ph{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ph .who{min-width:0;flex:1}
+.ph .who b{display:block;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ph .who b a{text-decoration:none}.ph .who b a:hover{text-decoration:underline}
+.ph .who span{display:block;font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip{display:inline-flex;align-items:center;gap:5px;font:600 12px var(--sans);background:var(--sunk);border-radius:999px;padding:3px 9px;text-decoration:none;color:var(--ink2);white-space:nowrap}
+.chip.pin{background:var(--accent-soft);color:var(--ink)}
+.chip.mod{background:var(--brand-soft);color:var(--brand-deep)}
+.chip.hid{background:var(--warn-soft);color:var(--warn)}
+.post h3{margin:0 0 6px;font-size:18px;letter-spacing:-.01em;line-height:1.3}
+.post h3 a{text-decoration:none}.post h3 a:hover{text-decoration:underline}
+.txt{white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+.txt a{color:var(--brand);font-weight:600}
+.more{border:0;background:none;color:var(--brand);font-weight:700;padding:0;cursor:pointer;margin-top:4px}
+.pimg{display:block;max-width:100%;max-height:480px;border-radius:12px;margin-top:12px;border:1px solid var(--line)}
+.acts{display:flex;align-items:center;gap:6px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.act{display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;border-radius:999px;padding:7px 12px;font-weight:600;font-size:14px;cursor:pointer;color:var(--ink2);text-decoration:none}
+.act:hover{background:var(--sunk)}
+.act.on{color:var(--brand)}
+.act.dots{margin-left:auto;font-size:18px;line-height:1;padding:5px 10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 14.5px var(--sans);border-radius:999px;padding:11px 20px;border:1px solid transparent;cursor:pointer;text-decoration:none}
+.btn.p{background:var(--brand);color:var(--brand-ink)}.btn.p:hover{background:var(--brand-deep)}
+.btn.g{background:transparent;color:var(--ink);border-color:var(--line2)}.btn.g:hover{border-color:var(--ink)}
+.btn.sm{padding:8px 14px;font-size:13.5px}
+.btn:disabled{opacity:.55;cursor:default}
+.f{display:grid;gap:5px;margin-bottom:12px}
+.f label{font-weight:600;font-size:13.5px}
+.f input,.f textarea,.f select{font:500 15px var(--sans);color:var(--ink);background:var(--bg);border:1px solid var(--line2);border-radius:10px;padding:10px 12px;width:100%}
+.f textarea{resize:vertical;min-height:120px;line-height:1.5}
+.f small{color:var(--muted);font-size:12.5px}
+.err{color:var(--warn);font-weight:600;font-size:13.5px;min-height:1.2em;margin:0 0 8px}
+.note{color:var(--muted);font-size:13px}
+.empty{text-align:center;color:var(--muted);padding:40px 16px}
+.empty b{display:block;color:var(--ink);font-size:17px;margin-bottom:4px}
+/* comments */
+.cmts{margin-top:16px}
+.cmt{display:flex;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
+.cmt .bx{min-width:0;flex:1}
+.cmt .bx b{font-size:14px}.cmt .bx b a{text-decoration:none}
+.cmt .bx span{color:var(--muted);font-size:12.5px;margin-left:6px}
+.cmt .bx p{margin:2px 0 0}
+.cmt .x{border:0;background:none;color:var(--muted);cursor:pointer;font-size:12.5px;padding:0;margin:4px 12px 0 0}
+.cbox{display:flex;gap:10px;align-items:flex-start;margin-top:12px}
+.cbox textarea{flex:1;font:500 15px var(--sans);color:var(--ink);background:var(--bg);border:1px solid var(--line2);border-radius:12px;padding:10px 12px;min-height:44px;resize:vertical}
+/* members */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.mcard{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;text-decoration:none}
+.mcard b{font-size:15px}
+.mcard span{font-size:13px;color:var(--muted)}
+.prof{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.prof h1{margin:0;font-size:24px}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.facts span{background:var(--sunk);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:600}
+/* rail */
+.rail h3{margin:0 0 6px;font-size:16px}
+.rail p{margin:0;color:var(--muted);font-size:14px}
+.rail ul{margin:8px 0 0;padding-left:18px;font-size:14px;color:var(--ink2);display:grid;gap:4px}
+.stat{display:flex;gap:18px;margin-top:10px}
+.stat div b{display:block;font-size:20px}.stat div span{font-size:12.5px;color:var(--muted)}
+/* join hero */
+.join{background:linear-gradient(135deg,var(--brand) 0%,var(--brand-deep) 100%);color:#fff;border-radius:18px;padding:26px;margin-bottom:16px}
+.join h1{margin:0 0 8px;font-size:clamp(24px,3vw,32px);letter-spacing:-.02em;line-height:1.15}
+.join p{margin:0 0 16px;opacity:.92;max-width:36rem}
+.join .btn.p{background:#fff;color:var(--brand-deep)}
+.join .btn.g{color:#fff;border-color:rgba(255,255,255,.5)}
+.blur{filter:blur(4px);pointer-events:none;user-select:none;opacity:.7}
+/* modal */
+.back{position:fixed;inset:0;background:rgba(10,15,12,.5);display:grid;place-items:center;padding:16px;z-index:50}
+.modal{background:var(--surface);border-radius:18px;width:100%;max-width:520px;max-height:calc(100dvh - 32px);overflow:auto;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.modal h2{margin:0 0 6px;font-size:21px}
+.modal .sub{margin:0 0 16px;color:var(--muted)}
+.mh{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.mx{border:0;background:var(--sunk);width:34px;height:34px;border-radius:50%;cursor:pointer;flex:none}
+.tabs{display:flex;gap:6px;background:var(--sunk);padding:4px;border-radius:999px;margin-bottom:14px}
+.tabs button{flex:1;border:0;background:transparent;border-radius:999px;padding:8px;font-weight:700;cursor:pointer;font-size:14px}
+.tabs button[aria-pressed=true]{background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.code{font:700 26px var(--mono)!important;letter-spacing:.4em;text-align:center}
+.mbar{display:flex;justify-content:flex-end;gap:10px;margin-top:6px;flex-wrap:wrap}
+.imgprev{max-height:160px;border-radius:10px;display:block;margin-top:8px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:999px;font-weight:600;font-size:14px;z-index:60;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+.pmenu{position:absolute;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 26px rgba(0,0,0,.14);padding:5px;z-index:30;min-width:170px}
+.pmenu button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 11px;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px}
+.pmenu button:hover{background:var(--sunk)}
+.skel{height:120px;border-radius:16px;background:linear-gradient(90deg,var(--sunk),var(--surface),var(--sunk));background-size:200% 100%;animation:sk 1.2s infinite;margin-bottom:14px}
+@keyframes sk{to{background-position:-200% 0}}
+@media (max-width:1180px){.wrap{grid-template-columns:minmax(0,1fr)}.rail{display:none}}
+@media (max-width:900px){
+  .burger{display:grid;place-items:center}
+  .body{grid-template-columns:minmax(0,1fr)}
+  .side{position:fixed;top:60px;left:0;bottom:0;width:280px;z-index:15;transform:translateX(-100%);transition:transform .2s;box-shadow:0 0 0 100vmax rgba(0,0,0,0)}
+  .app.nav .side{transform:none;box-shadow:0 0 0 100vmax rgba(0,0,0,.35)}
+  .search{display:none}
+  .brand small{display:none}
+  .wrap{padding:16px 14px 60px}
+}
+@media (max-width:480px){.card{padding:14px}.hd h1{font-size:21px}.join{padding:20px}}
+@media (prefers-reduced-motion:reduce){.side{transition:none}.skel{animation:none}}
+</style>
+<script src="i18n/sw.js"></script>
+<script src="i18n/engine.js"></script>
+</head>
+<body>
+<div class="app" id="app" data-noi18n>
+  <header class="top">
+    <button class="burger" id="burger" type="button" aria-label="Menu" aria-controls="side" aria-expanded="false">☰</button>
+    <a class="brand" href="#/"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#388539"/><path d="M16 7.5c-3.9 0-7 3-7 6.8 0 4.9 7 10.2 7 10.2s7-5.3 7-10.2c0-3.8-3.1-6.8-7-6.8Z" fill="none" stroke="#fff" stroke-width="2.2"/><circle cx="16" cy="14.2" r="2.4" fill="#fde9a8"/></svg><span>Biashara Tanzania<small id="tBy"></small></span></a>
+    <form class="search" id="search" role="search"><span aria-hidden="true">⌕</span><input id="q" type="search" autocomplete="off"></form>
+    <div class="tr"><button class="lang" id="lang" type="button"></button><span id="meSlot"></span></div>
+  </header>
+  <div class="body">
+    <nav class="side" id="side" aria-label="Community"></nav>
+    <main class="main" id="main"><div class="wrap" id="wrap"><div class="col" id="col"></div><aside class="rail" id="rail"></aside></div></main>
+  </div>
+</div>
+<script>
+(function(){
+  "use strict";
+  var API="/api/c/", S={spaces:[],me:null,members:0,uploads:false,sms:false,loaded:false};
+  var $=function(id){return document.getElementById(id);};
+  function SW(){ return document.documentElement.lang==="sw"; }
+  function T(en,sw){ return SW()?sw:en; }
+  function el(t,c,txt){ var e=document.createElement(t); if(c) e.className=c; if(txt!=null) e.textContent=txt; return e; }
+  function api(path,opt){ opt=opt||{}; var h={"x-rc":"1"}; var body=opt.body;
+    if(body&&!(body instanceof FormData)){ h["content-type"]="application/json"; body=JSON.stringify(body); }
+    return fetch(API+path,{method:opt.method||(body?"POST":"GET"),headers:h,body:body,credentials:"same-origin"}).then(function(r){ return r.json().catch(function(){return {ok:false,error:"network"};}).then(function(j){ j.status=r.status; return j; }); },function(){ return {ok:false,error:"network"}; }); }
+  var COLORS=["#388539","#d98a1c","#2f6f8f","#8a4f9e","#b5432c","#4f7a28","#a0662a","#356b5c"];
+  function avatar(name,id,cls){ var a=el("span","av"+(cls?" "+cls:"")); var n=String(name||"?").trim().split(/\s+/); a.textContent=(n[0]||"?").charAt(0)+(n[1]?n[1].charAt(0):""); var h=0; String(id||name).split("").forEach(function(c){h=(h*31+c.charCodeAt(0))>>>0;}); a.style.background=COLORS[h%COLORS.length]; a.setAttribute("aria-hidden","true"); return a; }
+  function ago(iso){ var s=(Date.now()-Date.parse(iso))/1000; if(s<60) return T("just now","sasa hivi"); var m=s/60,h=m/60,d=h/24;
+    if(m<60) return Math.floor(m)+T(" min ago"," dk zilizopita"); if(h<24) return Math.floor(h)+T(" h ago"," saa zilizopita"); if(d<7) return Math.floor(d)+T(" d ago"," siku zilizopita");
+    return new Date(iso).toLocaleDateString(SW()?"sw-TZ":"en-GB",{day:"numeric",month:"short",year:d>300?"numeric":undefined}); }
+  function linkify(p,text){ String(text).split(/(https?:\/\/[^\s<]+)/g).forEach(function(part,i){ if(i%2){ var a=el("a",null,part.replace(/^https?:\/\//,"").slice(0,60)); a.href=part; a.target="_blank"; a.rel="noopener nofollow ugc"; p.appendChild(a); } else if(part) p.appendChild(document.createTextNode(part)); }); return p; }
+  function toast(t){ var x=el("div","toast",t); x.setAttribute("role","status"); document.body.appendChild(x); setTimeout(function(){ x.remove(); },2600); }
+  function space(slug){ for(var i=0;i<S.spaces.length;i++) if(S.spaces[i].slug===slug) return S.spaces[i]; return null; }
+  function sname(s){ return SW()?s.name_sw:s.name_en; }
+  var ERR={wrong_code:["That code is not right. Check it and try again.","Namba hiyo si sahihi. Iangalie ujaribu tena."],code_expired:["That code has expired. Ask for a new one.","Namba hiyo imeisha muda. Omba mpya."],too_many:["Too many codes asked for. Try again in an hour.","Umeomba namba nyingi mno. Jaribu tena baada ya saa moja."],bad_contact:["Please enter a valid email or phone number.","Tafadhali andika barua pepe au namba ya simu sahihi."],email_off:["Email sign in is not switched on yet.","Kuingia kwa barua pepe bado hakujawashwa."],sms_off:["SMS sign in is coming soon. Please use your email for now.","Kuingia kwa SMS kunakuja hivi karibuni. Tumia barua pepe kwa sasa."],send_failed:["We could not send the code. Try again in a minute.","Hatukuweza kutuma namba. Jaribu tena baada ya dakika moja."],slow_down:["You are posting very fast. Please wait a little.","Unachapisha haraka sana. Tafadhali subiri kidogo."],staff_only_space:["Only Ramani can post in this space.","Ramani pekee wanaweza kuchapisha hapa."],empty:["Please write something first.","Tafadhali andika kitu kwanza."],banned:["This account has been removed from the community.","Akaunti hii imeondolewa kwenye jumuiya."],network:["No connection. Check your internet and try again.","Hakuna mtandao. Angalia intaneti ujaribu tena."],bad_type:["Please choose a JPG, PNG or WEBP image.","Tafadhali chagua picha ya JPG, PNG au WEBP."],too_large:["That image is too big. The limit is 3 MB.","Picha hiyo ni kubwa mno. Kikomo ni MB 3."],name_required:["Please enter your name.","Tafadhali andika jina lako."],run_schema_v5:["The community is being set up. Please check back soon.","Jumuiya inaandaliwa. Tafadhali rudi baadaye kidogo."]};
+  function emsg(e){ var m=ERR[e]; return m?T(m[0],m[1]):T("Something went wrong. Please try again.","Kuna hitilafu. Tafadhali jaribu tena."); }
+
+  // ---------- shell
+  function setLangBtn(){ $("lang").textContent=SW()?"EN":"SW"; $("lang").setAttribute("aria-label",SW()?"Switch to English":"Badilisha kwenda Kiswahili"); $("q").placeholder=T("Search posts","Tafuta machapisho"); $("tBy").textContent=T("by Ramani","na Ramani"); $("burger").setAttribute("aria-label",T("Menu","Menyu")); }
+  $("lang").addEventListener("click",function(){ var l=SW()?"en":"sw"; if(window.RG_I18N&&RG_I18N.set) RG_I18N.set(l); else { try{localStorage.setItem("rg_lang",l);}catch(e){} } document.documentElement.lang=l; setLangBtn(); shell(); route(); });
+  $("burger").addEventListener("click",function(){ var o=!$("app").classList.contains("nav"); $("app").classList.toggle("nav",o); $("burger").setAttribute("aria-expanded",String(o)); });
+  document.addEventListener("click",function(e){ if($("app").classList.contains("nav")&&!e.target.closest("#side")&&!e.target.closest("#burger")){ $("app").classList.remove("nav"); $("burger").setAttribute("aria-expanded","false"); } });
+  $("search").addEventListener("submit",function(e){ e.preventDefault(); var v=$("q").value.trim(); location.hash=v?"#/search/"+encodeURIComponent(v):"#/"; });
+
+  function shell(){
+    var n=$("side"); n.replaceChildren(); var cur=location.hash||"#/";
+    function link(href,emoji,text,extra){ var a=el("a"); a.href=href; a.appendChild(el("span","e",emoji)); a.appendChild(el("span",null,text)); if(extra) a.appendChild(extra); if(cur===href||(href!=="#/"&&cur.indexOf(href+"/")===0)) a.setAttribute("aria-current","page"); n.appendChild(a); return a; }
+    link("#/","🏠",T("Feed","Habari zote"));
+    n.appendChild(el("h4",null,T("Spaces","Vikundi")));
+    S.spaces.forEach(function(s){ link("#/s/"+s.slug,s.emoji||"#",sname(s),s.posts?el("span","n",String(s.posts)):null); });
+    n.appendChild(el("h4",null,T("Community","Jumuiya")));
+    link("#/members","👥",T("Members","Wanachama"),el("span","n",String(S.members||"")));
+    var ev=link("events.html","📅",T("Events","Matukio")); ev.removeAttribute("aria-current");
+    var ch=el("a"); ch.href="#/chat"; ch.appendChild(el("span","e","💬")); ch.appendChild(el("span",null,T("Chat rooms","Vyumba vya gumzo"))); ch.appendChild(el("span","soon",T("Soon","Karibuni"))); n.appendChild(ch);
+    link("#/guidelines","📜",T("Community guidelines","Miongozo ya jumuiya"));
+    if(S.me&&(S.me.role==="mod"||S.me.role==="admin")){ n.appendChild(el("h4",null,T("Moderation","Usimamizi"))); link("#/reports","🚩",T("Reports","Ripoti")); }
+    var bk=el("div","sback"); var a=el("a"); a.href="index.html"; a.appendChild(el("span","e","←")); a.appendChild(el("span",null,T("Back to Ramani","Rudi Ramani"))); bk.appendChild(a); n.appendChild(bk);
+    var slot=$("meSlot"); slot.replaceChildren();
+    if(S.me){ var b=el("button","mebtn"); b.type="button"; b.setAttribute("aria-label",T("Your account","Akaunti yako")); b.appendChild(avatar(S.me.name,S.me.id)); b.addEventListener("click",function(e){ e.stopPropagation(); meMenu(); }); slot.appendChild(b); }
+    else if(S.loaded){ var j=el("button","btn p sm",T("Join free","Jiunge bure")); j.type="button"; j.addEventListener("click",function(){ signIn(); }); slot.appendChild(j); }
+  }
+  var mm=null;
+  function meMenu(){ if(mm){ mm.remove(); mm=null; return; } mm=el("div","menu");
+    var a=el("a",null,T("My profile","Wasifu wangu")); a.href="#/m/"+S.me.id; mm.appendChild(a);
+    var e=el("a",null,T("Edit profile","Hariri wasifu")); e.href="#/me"; mm.appendChild(e);
+    var o=el("button",null,T("Sign out","Toka")); o.type="button"; o.addEventListener("click",function(){ api("auth/logout",{body:{}}).then(function(){ S.me=null; shell(); route(); toast(T("Signed out","Umetoka")); }); }); mm.appendChild(o);
+    document.querySelector(".top").appendChild(mm);
+    setTimeout(function(){ document.addEventListener("click",function c(ev){ if(mm&&!mm.contains(ev.target)){ mm.remove(); mm=null; } document.removeEventListener("click",c); }); },0); }
+
+  function rail(){ var r=$("rail"); r.replaceChildren();
+    var c=el("div","card"); c.appendChild(el("h3",null,T("About Biashara Tanzania","Kuhusu Biashara Tanzania")));
+    c.appendChild(el("p",null,T("A free community for Tanzanian importers and wholesalers, run by Ramani. Ask questions, share suppliers and wins, and learn from traders who have done it.","Jumuiya ya bure ya waagizaji na wauzaji wa jumla Tanzania, inayoendeshwa na Ramani. Uliza maswali, shiriki wasambazaji na mafanikio, na jifunze kutoka kwa wafanyabiashara waliofanikiwa.")));
+    var st=el("div","stat"); var d1=el("div"); d1.appendChild(el("b",null,String(S.members||0))); d1.appendChild(el("span",null,T("members","wanachama"))); st.appendChild(d1);
+    var tp=S.spaces.reduce(function(a,s){return a+(s.posts||0);},0); var d2=el("div"); d2.appendChild(el("b",null,String(tp))); d2.appendChild(el("span",null,T("posts","machapisho"))); st.appendChild(d2); c.appendChild(st); r.appendChild(c);
+    if(S.me&&!S.me.business){ var p=el("div","card"); p.appendChild(el("h3",null,T("Finish your profile","Kamilisha wasifu wako"))); p.appendChild(el("p",null,T("Add your business, city and what you import so other traders know who you are.","Ongeza biashara yako, mji na unachoagiza ili wafanyabiashara wengine wakufahamu."))); var b=el("a","btn g sm",T("Edit profile","Hariri wasifu")); b.href="#/me"; b.style.marginTop="12px"; p.appendChild(b); r.appendChild(p); }
+    var g=el("div","card"); g.appendChild(el("h3",null,T("House rules","Kanuni"))); var ul=el("ul");
+    [T("Be kind and helpful.","Kuwa mpole na msaidizi."),T("No spam or selling in every space. Use Selling and wholesale.","Hakuna matangazo kila mahali. Tumia Kuuza na jumla."),T("Never share bank details or passwords here.","Usishiriki taarifa za benki au nywila hapa."),T("Report anything that looks like a scam.","Ripoti chochote kinachoonekana kama utapeli.")].forEach(function(t){ ul.appendChild(el("li",null,t)); });
+    g.appendChild(ul); var gl=el("a","btn g sm",T("Read the guidelines","Soma miongozo")); gl.href="#/guidelines"; gl.style.marginTop="12px"; g.appendChild(gl); r.appendChild(g);
+    var f=el("div","card"); f.appendChild(el("h3",null,T("Need cash for your next order?","Unahitaji pesa kwa oda inayofuata?"))); f.appendChild(el("p",null,T("Ramani can pay your supplier and you repay as you sell, subject to assessment.","Ramani inaweza kumlipa msambazaji wako na ukarejesha unapouza, kwa kutegemea tathmini."))); var fl=el("a","btn p sm",T("Check your readiness","Pima utayari wako")); fl.href="import-finance-readiness-score.html"; fl.style.marginTop="12px"; f.appendChild(fl); r.appendChild(f);
+  }
+  function layout(one){ $("wrap").className="wrap"+(one?" one":""); var c=$("col"); c.replaceChildren(); if(!one) rail(); else $("rail").replaceChildren(); $("main").scrollTop=0; return c; }
+
+  // ---------- signed out view
+  function joinCard(c){ var j=el("div","join"); j.appendChild(el("h1",null,T("Join Biashara Tanzania","Jiunge na Biashara Tanzania")));
+    j.appendChild(el("p",null,T("The free community for Tanzanian importers. Ask about suppliers, clearing and cash flow, share your wins and learn from other traders. In Kiswahili and English.","Jumuiya ya bure ya waagizaji wa Tanzania. Uliza kuhusu wasambazaji, kutoa mzigo na mtiririko wa pesa, shiriki mafanikio na jifunze kutoka kwa wafanyabiashara wengine. Kwa Kiswahili na Kiingereza.")));
+    var b=el("button","btn p",T("Join free with your email","Jiunge bure kwa barua pepe")); b.type="button"; b.addEventListener("click",function(){ signIn(); }); j.appendChild(b);
+    var s=el("button","btn g",T("I am already a member","Mimi tayari ni mwanachama")); s.type="button"; s.style.marginLeft="8px"; s.addEventListener("click",function(){ signIn(); }); j.appendChild(s); c.appendChild(j); }
+  function lockedFeed(c){ joinCard(c); var g=el("div","grid"); S.spaces.forEach(function(s){ var a=el("a","card mcard"); a.href="#/s/"+s.slug; a.style.alignItems="flex-start"; a.style.textAlign="left"; a.appendChild(el("span",null,s.emoji)); a.appendChild(el("b",null,sname(s))); a.appendChild(el("span",null,SW()?s.desc_sw:s.desc_en)); a.addEventListener("click",function(e){ e.preventDefault(); signIn(); }); g.appendChild(a); }); c.appendChild(g);
+    var ex=el("div"); ex.style.marginTop="16px"; ex.className="blur"; ex.setAttribute("aria-hidden","true"); for(var i=0;i<2;i++){ var k=el("div","card post"); k.appendChild(el("p","txt","Habari wote, nimepata msambazaji mzuri wa vigae Foshan. Nani amewahi kutumia kontena la pamoja kutoka Guangzhou mwezi huu?")); ex.appendChild(k); } c.appendChild(ex); }
+
+  // ---------- sign in
+  var bg=null;
+  function modal(build){ close(); bg=el("div","back"); var m=el("div","modal"); m.setAttribute("role","dialog"); m.setAttribute("aria-modal","true"); bg.appendChild(m); build(m); document.body.appendChild(bg);
+    bg.addEventListener("mousedown",function(e){ if(e.target===bg) close(); }); var f=m.querySelector("input,textarea,select,button"); if(f) f.focus(); return m; }
+  function close(){ if(bg){ bg.remove(); bg=null; } }
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape"){ close(); if(mm){ mm.remove(); mm=null; } } });
+  function head(m,t,sub){ var h=el("div","mh"); var d=el("div"); d.appendChild(el("h2",null,t)); if(sub) d.appendChild(el("p","sub",sub)); h.appendChild(d); var x=el("button","mx","✕"); x.type="button"; x.setAttribute("aria-label",T("Close","Funga")); x.addEventListener("click",close); h.appendChild(x); m.appendChild(h); }
+  function field(m,id,label,type,attrs,help){ var f=el("div","f"); var l=el("label",null,label); l.htmlFor=id; f.appendChild(l); var i=el(type==="textarea"?"textarea":"input"); i.id=id; if(type!=="textarea") i.type=type||"text"; for(var k in attrs||{}) i.setAttribute(k,attrs[k]); f.appendChild(i); if(help) f.appendChild(el("small",null,help)); m.appendChild(f); return i; }
+  function signIn(then){
+    var mode="email", target=null;
+    modal(function(m){
+      function step1(){ m.replaceChildren(); head(m,T("Join or sign in","Jiunge au ingia"),T("We will send you a 6 digit code. No password needed.","Tutakutumia namba ya tarakimu 6. Hakuna nywila."));
+        var tb=el("div","tabs"); [["email",T("Email","Barua pepe")],["sms",T("Phone (SMS)","Simu (SMS)")]].forEach(function(o){ var b=el("button",null,o[1]); b.type="button"; b.setAttribute("aria-pressed",String(mode===o[0])); b.addEventListener("click",function(){ mode=o[0]; step1(); }); tb.appendChild(b); }); m.appendChild(tb);
+        var f=el("form"); f.noValidate=true; m.appendChild(f);
+        var i=mode==="email"?field(f,"si-v",T("Your email","Barua pepe yako"),"email",{autocomplete:"email",inputmode:"email",placeholder:"jina@mfano.co.tz"}):field(f,"si-v",T("Your phone number","Namba yako ya simu"),"tel",{autocomplete:"tel",inputmode:"tel",placeholder:"0712 345 678"});
+        if(mode==="sms"&&!S.sms) f.appendChild(el("p","note",T("SMS codes are coming soon. Until then, please use your email.","Namba kwa SMS zinakuja hivi karibuni. Kwa sasa, tumia barua pepe.")));
+        var er=el("p","err"); er.setAttribute("aria-live","polite"); f.appendChild(er);
+        var bar=el("div","mbar"); var go=el("button","btn p",T("Send my code","Nitumie namba")); go.type="submit"; if(mode==="sms"&&!S.sms) go.disabled=true; bar.appendChild(go); f.appendChild(bar);
+        f.appendChild(el("p","note",T("By joining you agree to the community guidelines. We use your details to run your account; Ramani may contact you about your imports.","Kwa kujiunga unakubali miongozo ya jumuiya. Tunatumia taarifa zako kuendesha akaunti yako; Ramani inaweza kuwasiliana nawe kuhusu uagizaji wako.")));
+        f.addEventListener("submit",function(e){ e.preventDefault(); var v=i.value.trim(); if(!v){ er.textContent=emsg("bad_contact"); return; } go.disabled=true; er.textContent="";
+          var body={lang:SW()?"sw":"en"}; body[mode==="email"?"email":"phone"]=v;
+          api("auth/start",{body:body}).then(function(j){ go.disabled=false; if(!j.ok){ er.textContent=emsg(j.error); return; } target=body; step2(false); }); });
+      }
+      function step2(needName){ m.replaceChildren(); head(m,T("Enter your code","Andika namba yako"),(mode==="email"?T("We sent a 6 digit code to ","Tumetuma namba ya tarakimu 6 kwa "):T("We sent a 6 digit code by SMS to ","Tumetuma namba ya tarakimu 6 kwa SMS kwa "))+(target.email||target.phone)+".");
+        var f=el("form"); f.noValidate=true; m.appendChild(f);
+        var c=field(f,"si-c",T("Code","Namba"),"text",{inputmode:"numeric",autocomplete:"one-time-code",maxlength:"6",class:"code"});
+        var n=null; if(needName){ f.appendChild(el("p","note",T("Welcome! You are new here. What should we call you?","Karibu! Wewe ni mgeni hapa. Tukuite nani?"))); n=field(f,"si-n",T("Your full name","Jina lako kamili"),"text",{autocomplete:"name",maxlength:"80"}); }
+        var er=el("p","err"); er.setAttribute("aria-live","polite"); f.appendChild(er);
+        var bar=el("div","mbar"); var again=el("button","btn g",T("Send a new code","Tuma namba mpya")); again.type="button"; again.addEventListener("click",function(){ step1(); }); bar.appendChild(again);
+        var go=el("button","btn p",needName?T("Join the community","Jiunge na jumuiya"):T("Continue","Endelea")); go.type="submit"; bar.appendChild(go); f.appendChild(bar);
+        if(needName&&c.dataset) { c.value=step2.code||""; n.focus(); } else c.focus();
+        f.addEventListener("submit",function(e){ e.preventDefault(); var code=c.value.replace(/\D/g,""); if(code.length!==6){ er.textContent=emsg("wrong_code"); return; }
+          if(n&&n.value.trim().length<2){ er.textContent=emsg("name_required"); return; } go.disabled=true; er.textContent="";
+          var body=Object.assign({code:code,lang:SW()?"sw":"en"},target); if(n) body.name=n.value.trim();
+          api("auth/verify",{body:body}).then(function(j){ go.disabled=false;
+            if(j.need_name){ step2.code=code; step2(true); return; }
+            if(!j.ok){ er.textContent=emsg(j.error); return; }
+            S.me=j.member; close(); try{ if(window.RAMANI&&RAMANI.people&&RAMANI.people.remember) RAMANI.people.remember({name:j.member.name,email:j.member.email||""}); }catch(x){}
+            boot(true).then(function(){ if(j.new){ toast(T("Welcome to Biashara Tanzania!","Karibu Biashara Tanzania!")); location.hash="#/me"; } else { toast(T("Welcome back, ","Karibu tena, ")+j.member.name.split(" ")[0]); if(then) then(); else route(); } }); }); });
+      }
+      step1();
+    });
+  }
+
+  // ---------- posts
+  function postCard(p,full){
+    var c=el("article","card post"); var h=el("div","ph"); h.appendChild(avatar(p.author,p.author_id));
+    var w=el("div","who"); var b=el("b"); var al=el("a",null,p.author); al.href="#/m/"+p.author_id; b.appendChild(al); w.appendChild(b);
+    w.appendChild(el("span",null,[p.author_business,ago(p.created_at)+(p.edited_at?T(" · edited"," · imehaririwa"):"")].filter(Boolean).join(" · "))); h.appendChild(w);
+    if(p.author_role==="admin"||p.author_role==="mod") h.appendChild(el("span","chip mod",p.author_role==="admin"?"Ramani":T("Moderator","Msimamizi")));
+    if(p.pinned) h.appendChild(el("span","chip pin",T("📌 Pinned","📌 Imebandikwa")));
+    if(p.hidden) h.appendChild(el("span","chip hid",T("Hidden","Imefichwa")));
+    var sc=el("a","chip",(p.emoji||"#")+" "+(SW()?p.space_sw:p.space_en)); sc.href="#/s/"+p.space; h.appendChild(sc); c.appendChild(h);
+    if(p.title){ var t=el("h3"); if(full) t.textContent=p.title; else { var ta=el("a",null,p.title); ta.href="#/p/"+p.id; t.appendChild(ta); } c.appendChild(t); }
+    var long=!full&&p.body.length>420, tx=linkify(el("p","txt"),long?p.body.slice(0,400).replace(/\s+\S*$/,"")+"…":p.body); c.appendChild(tx);
+    if(long){ var mo=el("a","more",T("Read more","Soma zaidi")); mo.href="#/p/"+p.id; c.appendChild(mo); }
+    if(p.image_key){ var im=el("img","pimg"); im.src=API+"media/"+p.image_key; im.alt=p.title||T("Image shared in the post","Picha iliyoshirikiwa"); im.loading="lazy"; c.appendChild(im); }
+    var a=el("div","acts"); var lk=el("button","act"+(p.liked?" on":""),(p.liked?"♥ ":"♡ ")+(p.like_count||0)); lk.type="button"; lk.setAttribute("aria-pressed",String(!!p.liked)); lk.setAttribute("aria-label",T("Like","Penda"));
+    lk.addEventListener("click",function(){ lk.disabled=true; api("posts/"+p.id+"/like",{body:{}}).then(function(j){ lk.disabled=false; if(!j.ok) return toast(emsg(j.error)); p.liked=j.liked; p.like_count=j.likes; lk.textContent=(j.liked?"♥ ":"♡ ")+j.likes; lk.classList.toggle("on",j.liked); lk.setAttribute("aria-pressed",String(j.liked)); }); }); a.appendChild(lk);
+    var cm=el("a","act","💬 "+(p.comment_count||0)); cm.href="#/p/"+p.id; cm.setAttribute("aria-label",T("Comments","Maoni")); a.appendChild(cm);
+    var dt=el("button","act dots","⋯"); dt.type="button"; dt.setAttribute("aria-label",T("More actions","Vitendo zaidi")); dt.addEventListener("click",function(e){ e.stopPropagation(); postMenu(dt,p,c); }); a.appendChild(dt);
+    c.appendChild(a); return c; }
+  var pm=null;
+  function postMenu(anchor,p,card){ if(pm){ pm.remove(); pm=null; } pm=el("div","pmenu"); var mine=S.me&&p.author_id===S.me.id, mod=S.me&&(S.me.role==="mod"||S.me.role==="admin");
+    function item(t,fn){ var b=el("button",null,t); b.type="button"; b.addEventListener("click",function(){ pm.remove(); pm=null; fn(); }); pm.appendChild(b); }
+    var link=location.origin+location.pathname+"#/p/"+p.id;
+    item(T("Copy link","Nakili kiungo"),function(){ (navigator.clipboard?navigator.clipboard.writeText(link):Promise.reject()).then(function(){ toast(T("Link copied","Kiungo kimenakiliwa")); },function(){ prompt(T("Copy this link","Nakili kiungo hiki"),link); }); });
+    if(mine) item(T("Edit post","Hariri chapisho"),function(){ composer(p.space,p); });
+    if(mine||mod) item(T("Delete post","Futa chapisho"),function(){ if(confirm(T("Delete this post?","Futa chapisho hili?"))) api("posts/"+p.id+"/delete",{body:{}}).then(function(j){ if(j.ok){ card.remove(); toast(T("Post deleted","Chapisho limefutwa")); } else toast(emsg(j.error)); }); });
+    if(mod){ item(p.pinned?T("Unpin","Ondoa kubandika"):T("Pin to top","Bandika juu"),function(){ modAct(p.pinned?"unpin":"pin",p.id); });
+      if(p.hidden) item(T("Unhide","Onyesha tena"),function(){ modAct("unhide",p.id); }); }
+    if(!mine) item(T("Report","Ripoti"),function(){ report("post",p.id); });
+    document.body.appendChild(pm); var r=anchor.getBoundingClientRect(); pm.style.top=(r.bottom+window.scrollY+4)+"px"; pm.style.left=Math.max(8,r.right-pm.offsetWidth)+"px";
+    setTimeout(function(){ document.addEventListener("click",function c(ev){ if(pm&&!pm.contains(ev.target)){ pm.remove(); pm=null; } document.removeEventListener("click",c); }); },0); }
+  function modAct(action,id,extra){ return api("mod",{body:Object.assign({action:action,id:id},extra||{})}).then(function(j){ if(j.ok){ toast(T("Done","Imefanyika")); route(); } else toast(emsg(j.error)); return j; }); }
+  function report(kind,id){ modal(function(m){ head(m,T("Report this","Ripoti hii"),T("Tell the moderators what is wrong. Your report is private.","Waambie wasimamizi tatizo ni nini. Ripoti yako ni ya siri."));
+    var f=el("form"); m.appendChild(f); var r=field(f,"rp-r",T("Reason","Sababu"),"textarea",{maxlength:"300",rows:"3"}); r.style.minHeight="80px";
+    var bar=el("div","mbar"); var go=el("button","btn p",T("Send report","Tuma ripoti")); go.type="submit"; bar.appendChild(go); f.appendChild(bar);
+    f.addEventListener("submit",function(e){ e.preventDefault(); go.disabled=true; api("report",{body:{kind:kind,id:id,reason:r.value}}).then(function(){ close(); toast(T("Thank you. The moderators will look at it.","Asante. Wasimamizi wataiangalia.")); }); }); }); }
+
+  function composer(slug,edit){
+    if(!S.me) return signIn(function(){ composer(slug); });
+    var canStaff=S.me.role==="mod"||S.me.role==="admin", img=edit?edit.image_key:null;
+    modal(function(m){ head(m,edit?T("Edit post","Hariri chapisho"):T("New post","Chapisho jipya"));
+      var f=el("form"); f.noValidate=true; m.appendChild(f);
+      var sf=el("div","f"); var sl=el("label",null,T("Space","Kikundi")); sl.htmlFor="np-s"; sf.appendChild(sl); var sel=el("select"); sel.id="np-s"; if(edit) sel.disabled=true;
+      S.spaces.forEach(function(s){ if(s.staff_only&&!canStaff) return; var o=el("option",null,s.emoji+" "+sname(s)); o.value=s.slug; if(s.slug===(edit?edit.space:slug)) o.selected=true; sel.appendChild(o); }); sf.appendChild(sel); f.appendChild(sf);
+      var ti=field(f,"np-t",T("Title (optional)","Kichwa (si lazima)"),"text",{maxlength:"140"}); var bo=field(f,"np-b",T("What do you want to share or ask?","Unataka kushiriki au kuuliza nini?"),"textarea",{maxlength:"5000",rows:"6"});
+      if(edit){ ti.value=edit.title||""; bo.value=edit.body||""; }
+      var pv=null;
+      if(S.uploads&&!edit){ var ff=el("div","f"); var il=el("label",null,T("Add an image (optional)","Ongeza picha (si lazima)")); il.htmlFor="np-i"; ff.appendChild(il); var fi=el("input"); fi.type="file"; fi.id="np-i"; fi.accept="image/jpeg,image/png,image/webp"; ff.appendChild(fi); pv=el("img","imgprev"); pv.hidden=true; pv.alt=""; ff.appendChild(pv); f.appendChild(ff);
+        fi.addEventListener("change",function(){ var file=fi.files[0]; img=null; if(!file){ pv.hidden=true; return; } if(file.size>3*1024*1024){ er.textContent=emsg("too_large"); fi.value=""; return; } pv.src=URL.createObjectURL(file); pv.hidden=false; }); }
+      f.appendChild(el("p","note",T("Never post bank details, passwords or ID numbers. Ramani staff will never ask for them here.","Usichapishe taarifa za benki, nywila au namba za kitambulisho. Wafanyakazi wa Ramani hawatawahi kuziomba hapa.")));
+      var er=el("p","err"); er.setAttribute("aria-live","polite"); f.appendChild(er);
+      var bar=el("div","mbar"); var go=el("button","btn p",edit?T("Save","Hifadhi"):T("Post","Chapisha")); go.type="submit"; bar.appendChild(go); f.appendChild(bar);
+      f.addEventListener("submit",function(e){ e.preventDefault(); er.textContent=""; if(bo.value.trim().length<2){ er.textContent=emsg("empty"); return; } go.disabled=true;
+        var up=Promise.resolve(img); var fi=$("np-i");
+        if(fi&&fi.files[0]){ var fd=new FormData(); fd.append("file",fi.files[0]); up=api("upload",{body:fd}).then(function(j){ if(!j.ok) throw j.error; return j.key; }); }
+        up.then(function(key){ return edit?api("posts/"+edit.id+"/edit",{body:{title:ti.value,body:bo.value}}):api("posts",{body:{space:sel.value,title:ti.value,body:bo.value,image_key:key}}); })
+          .then(function(j){ go.disabled=false; if(!j.ok){ er.textContent=emsg(j.error); return; } close(); toast(edit?T("Saved","Imehifadhiwa"):T("Posted","Imechapishwa"));
+            var s=space(j.post.space); if(s&&!edit) s.posts=(s.posts||0)+1; shell(); location.hash="#/p/"+j.post.id; if(edit) route(); },function(e){ go.disabled=false; er.textContent=emsg(e); }); });
+    }); }
+
+  function feed(c,opts){
+    var list=el("div"); c.appendChild(list); var more=el("button","btn g",T("Load more","Pakia zaidi")); more.type="button"; more.hidden=true; c.appendChild(more); var last=null;
+    for(var i=0;i<3;i++) list.appendChild(el("div","skel"));
+    function load(){ var qs=[]; if(opts.space) qs.push("space="+encodeURIComponent(opts.space)); if(opts.member) qs.push("member="+encodeURIComponent(opts.member)); if(opts.q) qs.push("q="+encodeURIComponent(opts.q)); if(last) qs.push("before="+encodeURIComponent(last));
+      more.disabled=true; api("posts"+(qs.length?"?"+qs.join("&"):"")).then(function(j){ more.disabled=false; if(!last) list.replaceChildren();
+        if(!j.ok){ list.appendChild(el("p","empty",emsg(j.error))); return; }
+        j.posts.forEach(function(p){ list.appendChild(postCard(p)); }); if(j.posts.length) last=j.posts[j.posts.length-1].created_at;
+        more.hidden=j.posts.length<20;
+        if(!list.children.length){ var e=el("div","empty card"); e.appendChild(el("b",null,opts.q?T("Nothing found","Hakuna kilichopatikana"):T("No posts yet","Bado hakuna machapisho"))); e.appendChild(document.createTextNode(opts.q?T("Try other words.","Jaribu maneno mengine."):T("Be the first to start a conversation.","Kuwa wa kwanza kuanzisha mazungumzo."))); list.appendChild(e); } }); }
+    more.addEventListener("click",load); load(); }
+  function composeBar(c,slug){ var s=slug&&space(slug); if(s&&s.staff_only&&!(S.me&&(S.me.role==="mod"||S.me.role==="admin"))) return;
+    var b=el("div","card compose"); b.appendChild(avatar(S.me.name,S.me.id)); var f=el("button","fake",T("Start a post or ask a question…","Anzisha chapisho au uliza swali…")); f.type="button"; b.appendChild(f); b.addEventListener("click",function(){ composer(slug||"welcome"); }); c.appendChild(b); }
+
+  // ---------- views
+  function vFeed(){ var c=layout(); if(!S.me) return lockedFeed(c);
+    var h=el("div","hd"); var d=el("div"); d.appendChild(el("h1",null,T("Feed","Habari zote"))); d.appendChild(el("p",null,T("The latest from every space.","Mapya kutoka kila kikundi."))); h.appendChild(d); c.appendChild(h); composeBar(c); feed(c,{}); }
+  function vSpace(slug){ var s=space(slug); var c=layout(); if(!s){ c.appendChild(el("p","empty",T("This space does not exist.","Kikundi hiki hakipo."))); return; }
+    var h=el("div","hd"); h.appendChild(el("span","em",s.emoji)); var d=el("div"); d.appendChild(el("h1",null,sname(s))); d.appendChild(el("p",null,SW()?s.desc_sw:s.desc_en)); h.appendChild(d); c.appendChild(h);
+    if(!S.me) return joinCard(c); composeBar(c,slug); feed(c,{space:slug}); }
+  function vSearch(q){ var c=layout(); var h=el("div","hd"); var d=el("div"); d.appendChild(el("h1",null,T("Search","Tafuta"))); d.appendChild(el("p",null,"“"+q+"”")); h.appendChild(d); c.appendChild(h); $("q").value=q; if(!S.me) return joinCard(c); feed(c,{q:q}); }
+  function vPost(id){ var c=layout(); if(!S.me) return joinCard(c); c.appendChild(el("div","skel"));
+    api("posts/"+id).then(function(j){ c.replaceChildren(); if(!j.ok){ c.appendChild(el("p","empty",j.status===404?T("This post was removed or does not exist.","Chapisho hili limeondolewa au halipo."):emsg(j.error))); return; }
+      var bk=el("a","act","← "+(SW()?j.post.space_sw:j.post.space_en)); bk.href="#/s/"+j.post.space; bk.style.marginBottom="10px"; c.appendChild(bk);
+      var card=postCard(j.post,true); c.appendChild(card);
+      var box=el("section","card cmts"); box.setAttribute("aria-label",T("Comments","Maoni")); box.appendChild(el("h3",null,T("Comments","Maoni")+" ("+j.comments.length+")"));
+      var list=el("div"); box.appendChild(list); j.comments.forEach(function(x){ list.appendChild(cmt(x)); });
+      var f=el("form","cbox"); f.appendChild(avatar(S.me.name,S.me.id,"sm")); var ta=el("textarea"); ta.rows=2; ta.maxLength=2000; ta.placeholder=T("Write a comment…","Andika maoni…"); ta.setAttribute("aria-label",T("Write a comment","Andika maoni")); f.appendChild(ta);
+      var go=el("button","btn p sm",T("Send","Tuma")); go.type="submit"; f.appendChild(go); box.appendChild(f); c.appendChild(box);
+      var ch=box.querySelector("h3"), nC=j.comments.length;
+      f.addEventListener("submit",function(e){ e.preventDefault(); var v=ta.value.trim(); if(!v) return; go.disabled=true; api("posts/"+id+"/comments",{body:{body:v}}).then(function(r){ go.disabled=false; if(!r.ok) return toast(emsg(r.error)); ta.value=""; list.appendChild(cmt(r.comment)); nC++; ch.textContent=T("Comments","Maoni")+" ("+nC+")"; var cc=card.querySelector('.acts a.act'); if(cc) cc.textContent="💬 "+(j.post.comment_count=j.post.comment_count+1); }); });
+      ta.addEventListener("keydown",function(e){ if(e.key==="Enter"&&(e.ctrlKey||e.metaKey)) f.requestSubmit(); }); }); }
+  function cmt(x){ var d=el("div","cmt"); d.appendChild(avatar(x.author,x.author_id,"sm")); var b=el("div","bx"); var n=el("b"); var a=el("a",null,x.author); a.href="#/m/"+x.author_id; n.appendChild(a); b.appendChild(n);
+    if(x.author_role==="admin") { var r=el("span","chip mod","Ramani"); r.style.marginLeft="6px"; b.appendChild(r); }
+    b.appendChild(el("span",null,ago(x.created_at)+(x.hidden?T(" · hidden"," · imefichwa"):""))); b.appendChild(linkify(el("p","txt"),x.body));
+    var mod=S.me&&(S.me.role==="mod"||S.me.role==="admin");
+    if(S.me&&x.author_id!==S.me.id){ var rp=el("button","x",T("Report","Ripoti")); rp.type="button"; rp.addEventListener("click",function(){ report("comment",x.id); }); b.appendChild(rp); }
+    if(mod){ var h=el("button","x",x.hidden?T("Unhide","Onyesha"):T("Hide","Ficha")); h.type="button"; h.addEventListener("click",function(){ modAct(x.hidden?"unhide_comment":"hide_comment",x.id); }); b.appendChild(h); }
+    d.appendChild(b); return d; }
+  function vMembers(){ var c=layout(); var h=el("div","hd"); var d=el("div"); d.appendChild(el("h1",null,T("Members","Wanachama"))); d.appendChild(el("p",null,T("Importers, wholesalers and traders across Tanzania.","Waagizaji, wauzaji wa jumla na wafanyabiashara kote Tanzania."))); h.appendChild(d); c.appendChild(h);
+    if(!S.me) return joinCard(c);
+    var sf=el("div","f"); var si=el("input"); si.type="search"; si.placeholder=T("Search by name, business, city or goods","Tafuta kwa jina, biashara, mji au bidhaa"); si.setAttribute("aria-label",si.placeholder); sf.appendChild(si); c.appendChild(sf);
+    var g=el("div","grid"); c.appendChild(g); var tm=null;
+    function load(){ api("members?q="+encodeURIComponent(si.value.trim())).then(function(j){ g.replaceChildren(); (j.members||[]).forEach(function(m){ var a=el("a","card mcard"); a.href="#/m/"+m.id; a.appendChild(avatar(m.name,m.id,"lg")); a.appendChild(el("b",null,m.name)); if(m.business) a.appendChild(el("span",null,m.business)); var meta=[m.city,m.imports].filter(Boolean).join(" · "); if(meta) a.appendChild(el("span",null,meta)); if(m.role!=="member") a.appendChild(el("span","chip mod",m.role==="admin"?"Ramani":T("Moderator","Msimamizi"))); g.appendChild(a); });
+      if(!g.children.length) g.appendChild(el("p","empty",T("No members found.","Hakuna wanachama waliopatikana."))); }); }
+    si.addEventListener("input",function(){ clearTimeout(tm); tm=setTimeout(load,300); }); load(); }
+  function vMember(id){ var c=layout(); if(!S.me) return joinCard(c);
+    api("members/"+id).then(function(j){ if(!j.ok){ c.appendChild(el("p","empty",T("Member not found.","Mwanachama hakupatikana."))); return; } var m=j.member;
+      var card=el("div","card"); var p=el("div","prof"); p.appendChild(avatar(m.name,m.id,"lg")); var d=el("div"); d.appendChild(el("h1",null,m.name)); if(m.business) d.appendChild(el("p","note",m.business)); p.appendChild(d); card.appendChild(p);
+      var fx=el("div","facts"); if(m.city) fx.appendChild(el("span",null,"📍 "+m.city)); if(m.imports) fx.appendChild(el("span",null,"📦 "+m.imports)); if(m.years) fx.appendChild(el("span",null,"⏳ "+m.years)); fx.appendChild(el("span",null,T("Joined ","Alijiunga ")+new Date(m.created_at).toLocaleDateString(SW()?"sw-TZ":"en-GB",{month:"short",year:"numeric"}))); card.appendChild(fx);
+      if(m.bio) card.appendChild(linkify(el("p","txt"),m.bio)).style.marginTop="12px";
+      if(S.me.id===m.id){ var e=el("a","btn g sm",T("Edit profile","Hariri wasifu")); e.href="#/me"; e.style.marginTop="14px"; card.appendChild(e); }
+      if(S.me.role==="admin"&&S.me.id!==m.id){ var bar=el("div","mbar"); bar.style.justifyContent="flex-start"; bar.style.marginTop="14px";
+        var mk=el("button","btn g sm",m.role==="mod"?T("Remove moderator","Ondoa usimamizi"):T("Make moderator","Fanya msimamizi")); mk.type="button"; mk.addEventListener("click",function(){ modAct("role",m.id,{role:m.role==="mod"?"member":"mod"}); }); bar.appendChild(mk);
+        var bn=el("button","btn g sm",m.status==="banned"?T("Unban","Rudisha"):T("Remove from community","Ondoa kwenye jumuiya")); bn.type="button"; bn.style.color="var(--warn)"; bn.addEventListener("click",function(){ if(m.status==="banned"||confirm(T("Remove this member? They will be signed out and cannot post.","Mwondoe mwanachama huyu? Atatolewa na hataweza kuchapisha."))) modAct(m.status==="banned"?"unban":"ban",m.id); }); bar.appendChild(bn); card.appendChild(bar); }
+      c.appendChild(card); var h=el("h3",null,T("Posts","Machapisho")); h.style.margin="22px 0 10px"; c.appendChild(h); feed(c,{member:m.id}); }); }
+  function vMe(){ var c=layout(true); if(!S.me) return joinCard(c); var me=S.me;
+    var card=el("div","card"); var h=el("div","hd"); var d=el("div"); d.appendChild(el("h1",null,T("Your profile","Wasifu wako"))); d.appendChild(el("p",null,T("Help other traders know who you are. Your email and phone are never shown.","Wasaidie wafanyabiashara wengine wakufahamu. Barua pepe na simu yako haionyeshwi kamwe."))); h.appendChild(d); card.appendChild(h);
+    var f=el("form"); f.noValidate=true; card.appendChild(f);
+    var n=field(f,"pf-n",T("Full name","Jina kamili"),"text",{maxlength:"80",autocomplete:"name"}); n.value=me.name||"";
+    var bz=field(f,"pf-b",T("Business name","Jina la biashara"),"text",{maxlength:"100",autocomplete:"organization"}); bz.value=me.business||"";
+    var ci=field(f,"pf-c",T("City or region","Mji au mkoa"),"text",{maxlength:"60",placeholder:"Dar es Salaam"}); ci.value=me.city||"";
+    var im=field(f,"pf-i",T("What do you import or sell?","Unaagiza au kuuza nini?"),"text",{maxlength:"160",placeholder:T("Tiles, phone accessories, fabric","Vigae, vifaa vya simu, vitambaa")}); im.value=me.imports||"";
+    var yf=el("div","f"); var yl=el("label",null,T("How long have you been importing?","Umeagiza kwa muda gani?")); yl.htmlFor="pf-y"; yf.appendChild(yl); var ys=el("select"); ys.id="pf-y";
+    [["",T("Choose","Chagua")],["Not yet",T("Not yet, I am planning","Bado, ninapanga")],["Under 1 year",T("Under 1 year","Chini ya mwaka 1")],["1 to 3 years",T("1 to 3 years","Miaka 1 hadi 3")],["3 to 10 years",T("3 to 10 years","Miaka 3 hadi 10")],["Over 10 years",T("Over 10 years","Zaidi ya miaka 10")]].forEach(function(o){ var op=el("option",null,o[1]); op.value=o[0]; if(o[0]===(me.years||"")) op.selected=true; ys.appendChild(op); }); yf.appendChild(ys); f.appendChild(yf);
+    var bi=field(f,"pf-a",T("About you (optional)","Kuhusu wewe (si lazima)"),"textarea",{maxlength:"500",rows:"4"}); bi.value=me.bio||""; bi.style.minHeight="90px";
+    f.appendChild(el("p","note",(me.email?T("Signed in as ","Umeingia kama ")+me.email:me.phone?T("Signed in as ","Umeingia kama ")+me.phone:"")));
+    var er=el("p","err"); er.setAttribute("aria-live","polite"); f.appendChild(er);
+    var bar=el("div","mbar"); var go=el("button","btn p",T("Save profile","Hifadhi wasifu")); go.type="submit"; bar.appendChild(go); f.appendChild(bar); c.appendChild(card);
+    f.addEventListener("submit",function(e){ e.preventDefault(); if(n.value.trim().length<2){ er.textContent=emsg("name_required"); return; } go.disabled=true;
+      api("me",{body:{name:n.value,business:bz.value,city:ci.value,imports:im.value,years:ys.value,bio:bi.value,lang:SW()?"sw":"en"}}).then(function(j){ go.disabled=false; if(!j.ok){ er.textContent=emsg(j.error); return; } S.me=j.me; shell(); toast(T("Profile saved","Wasifu umehifadhiwa")); location.hash="#/s/welcome"; }); }); }
+  function vReports(){ var c=layout(true); var h=el("div","hd"); var d=el("div"); d.appendChild(el("h1",null,T("Reports","Ripoti"))); d.appendChild(el("p",null,T("Posts and comments members have reported.","Machapisho na maoni yaliyoripotiwa na wanachama."))); h.appendChild(d); c.appendChild(h);
+    api("mod/reports").then(function(j){ if(!j.ok){ c.appendChild(el("p","empty",emsg(j.error))); return; } if(!j.reports.length){ c.appendChild(el("p","empty card",T("Nothing to review. 🎉","Hakuna cha kukagua. 🎉"))); return; }
+      j.reports.forEach(function(r){ var k=el("div","card post"); k.appendChild(el("span","chip hid",(r.kind==="post"?T("Post","Chapisho"):T("Comment","Maoni"))+" · "+r.n+T(" reports"," ripoti"))); k.appendChild(el("p","txt",r.preview||"")).style.marginTop="8px"; if(r.reasons) k.appendChild(el("p","note",T("Reasons: ","Sababu: ")+r.reasons));
+        var bar=el("div","mbar"); bar.style.justifyContent="flex-start"; var v=el("a","btn g sm",T("Open","Fungua")); v.href="#/p/"+r.post_id; bar.appendChild(v);
+        var hd=el("button","btn g sm",T("Hide it","Ficha")); hd.type="button"; hd.addEventListener("click",function(){ modAct(r.kind==="post"?"hide":"hide_comment",r.target_id).then(function(){ modAct("resolve",r.target_id); }); }); bar.appendChild(hd);
+        var ok=el("button","btn g sm",T("Keep it","Iache")); ok.type="button"; ok.addEventListener("click",function(){ modAct("resolve",r.target_id); }); bar.appendChild(ok); k.appendChild(bar); c.appendChild(k); }); }); }
+  function vGuidelines(){ var c=layout(true); var card=el("div","card"); card.appendChild(el("h1",null,T("Community guidelines","Miongozo ya jumuiya"))).style.marginTop="0";
+    [[T("Help each other","Saidianeni"),T("Answer questions you know, share what worked and what did not. Everyone was new once.","Jibu maswali unayoyajua, shiriki kilichofanya kazi na kisichofanya. Kila mtu aliwahi kuwa mgeni.")],
+     [T("Keep selling in its place","Matangazo mahali pake"),T("Offers and price lists go in Selling and wholesale only. No spam, chain messages or repeated adverts.","Ofa na orodha za bei ziwe kwenye Kuuza na jumla tu. Hakuna spam, jumbe za mnyororo au matangazo yanayojirudia.")],
+     [T("Protect yourself and others","Jilinde na uwalinde wengine"),T("Never share bank details, passwords, ID numbers or one time codes here. Ramani staff will never ask for them in the community. Report anything that looks like a scam.","Usishiriki taarifa za benki, nywila, namba za kitambulisho au namba za siri hapa. Wafanyakazi wa Ramani hawatawahi kuziomba kwenye jumuiya. Ripoti chochote kinachoonekana kama utapeli.")],
+     [T("Be respectful","Kuwa na heshima"),T("No insults, hate, or attacks on people, tribes, religions or businesses. Disagree with ideas, not people.","Hakuna matusi, chuki au mashambulizi dhidi ya watu, makabila, dini au biashara. Pinga mawazo, si watu.")],
+     [T("Advice is not a guarantee","Ushauri si dhamana"),T("Tips from members are their own experience. For duty, permits and port rules, confirm with TRA, TBS and a licensed clearing agent. Ramani finance is always subject to assessment.","Vidokezo vya wanachama ni uzoefu wao. Kwa ushuru, vibali na taratibu za bandari, hakikisha na TRA, TBS na wakala wa forodha mwenye leseni. Fedha za Ramani hutolewa kwa kutegemea tathmini.")],
+     [T("Moderation","Usimamizi"),T("Ramani moderators can pin, hide or remove posts and remove members who break these rules.","Wasimamizi wa Ramani wanaweza kubandika, kuficha au kuondoa machapisho na kuwaondoa wanachama wanaovunja kanuni hizi.")]].forEach(function(x){ card.appendChild(el("h3",null,x[0])); card.appendChild(el("p",null,x[1])); });
+    c.appendChild(card); }
+  function vChat(){ var c=layout(true); var k=el("div","card empty"); k.appendChild(el("b",null,T("Chat rooms are coming soon","Vyumba vya gumzo vinakuja hivi karibuni"))); k.appendChild(document.createTextNode(T("Live group chat for each topic is next. For now, start a post in a space.","Gumzo la kikundi kwa kila mada linakuja. Kwa sasa, anzisha chapisho kwenye kikundi."))); c.appendChild(k); }
+
+  function route(){ if(mm){ mm.remove(); mm=null; } $("app").classList.remove("nav"); shell();
+    var h=(location.hash||"#/").slice(2).split("/"), a=h[0], b=decodeURIComponent(h[1]||"");
+    if(a==="s") vSpace(b); else if(a==="p") vPost(b); else if(a==="members") vMembers(); else if(a==="m") vMember(b); else if(a==="me") vMe();
+    else if(a==="search") vSearch(b); else if(a==="reports") vReports(); else if(a==="guidelines") vGuidelines(); else if(a==="chat") vChat(); else vFeed();
+    var t=document.querySelector("#col h1"); document.title=(t&&a?t.textContent+" · ":"")+"Biashara Tanzania | Ramani"; }
+  function boot(quiet){ return api("spaces").then(function(j){ if(j.ok){ S.spaces=j.spaces; S.me=j.me; S.members=j.members; S.uploads=j.uploads; S.sms=j.sms; } else if(!quiet){ $("col").replaceChildren(el("p","empty",emsg(j.error))); } S.loaded=true; }); }
+  window.addEventListener("hashchange",route);
+  if(window.RG_I18N) document.documentElement.lang=RG_I18N.lang;
+  setLangBtn(); boot().then(route);
+})();
+</script>
+</body></html>
