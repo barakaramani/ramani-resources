@@ -13,7 +13,7 @@ const core = makeCore(KB);
 
 const ONCE = { tool_lead:1, newsletter:1, community_join:1, registration:1, trip_alerts:1, rate_alert:1,
   freedays_alert:1, partner_review:1, dataroom_request:1, download:"item", download_notify:"item",
-  academy_certificate:"item", importer_survey:1, report_notify:1, meetup_rsvp:"item", meetup_interest:"item" };
+  academy_certificate:"item", academy_enroll:"item", importer_survey:1, report_notify:1, meetup_rsvp:"item", meetup_interest:"item" };
 const THIRD = { agent_referral:["client_phone"], bank_referral:["phone"] };
 const ALLOWED = new Set([...Object.keys(ONCE), ...Object.keys(THIRD), "quote_request", "request", "readiness_score", "finance_interest", "import_plan", "invoice_generator", "webinar_topic", "callback_request", "uliza_question"]);
 
