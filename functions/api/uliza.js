@@ -1,8 +1,9 @@
-// POST /api/uliza  ·  Uliza Ramani, the site assistant, on the Claude API.
+// POST /api/uliza  ·  Uliza Ramani, the site assistant. Claude when ANTHROPIC_API_KEY is set, otherwise Cloudflare Workers AI (free tier, binding AI).
 // The page sends {messages:[{role,content}], lang, page}. Numbers come from Ramani's own calculator (lib/core.js), not the model.
 import { KB } from "../../lib/kb.js";
 import { makeCore } from "../../lib/core.js";
 import { claudeWithTools } from "../../lib/claude.js";
+import { workersAIReady, underDailyCap, factsFor, workersAIAnswer } from "../../lib/workersai.js";
 
 const core = makeCore(KB);
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { "content-type": "application/json" } });
@@ -54,13 +55,25 @@ export async function onRequestPost({ request, env }) {
     throw new Error("Unknown tool");
   };
   const question = turns[turns.length - 1].content;
+  const qid = "q_" + crypto.randomUUID().slice(0, 18);
   if (env.DB) { // keep the questions: they show what content to make next
-    try { await env.DB.prepare("INSERT INTO questions (id, asked_at, page, lang, question) VALUES (?1, ?2, ?3, ?4, ?5)").bind("q_" + crypto.randomUUID().slice(0, 18), new Date().toISOString(), String(body.page || "").slice(0, 120), sw ? "sw" : "en", question.slice(0, 1000)).run(); } catch {}
+    try { await env.DB.prepare("INSERT INTO questions (id, asked_at, page, lang, question) VALUES (?1, ?2, ?3, ?4, ?5)").bind(qid, new Date().toISOString(), String(body.page || "").slice(0, 120), sw ? "sw" : "en", question.slice(0, 1000)).run(); } catch {}
   }
-  try {
-    const text = await claudeWithTools(env, { system: RULES + "\nSite language: " + (sw ? "Kiswahili" : "English") + ". Page: " + String(body.page || "").slice(0, 80), messages: turns, tools: TOOLS, run });
-    return json({ text: text.replace(/[—–]/g, ",") });
-  } catch (e) {
-    return json({ error: "brain_unavailable" }, 503); // the page then answers from Ramani's tools on its own
+  const clean = (t) => String(t).replace(/[—–]/g, ",");
+  if (env.ANTHROPIC_API_KEY && env.ANTHROPIC_MODEL) { // 1. Claude, when Ramani adds a key
+    try {
+      const text = await claudeWithTools(env, { system: RULES + "\nSite language: " + (sw ? "Kiswahili" : "English") + ". Page: " + String(body.page || "").slice(0, 80), messages: turns, tools: TOOLS, run });
+      if (text) return json({ text: clean(text), by: "claude" });
+    } catch {}
   }
+  if (workersAIReady(env) && (await underDailyCap(env))) { // 2. Cloudflare Workers AI, free tier
+    try {
+      const text = await workersAIAnswer(env, { rules: RULES, facts: factsFor(core, question, sw), turns, sw });
+      if (text) {
+        if (env.DB) { try { await env.DB.prepare("UPDATE questions SET answered_by = 'workers_ai' WHERE id = ?1").bind(qid).run(); } catch {} }
+        return json({ text: clean(text), by: "workers_ai" });
+      }
+    } catch {}
+  }
+  return json({ error: "brain_unavailable" }, 503); // 3. the page answers from Ramani's tools on its own
 }
