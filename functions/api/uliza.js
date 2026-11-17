@@ -4,6 +4,7 @@ import { KB } from "../../lib/kb.js";
 import { makeCore } from "../../lib/core.js";
 import { claudeWithTools } from "../../lib/claude.js";
 import { workersAIReady, underDailyCap, factsFor, workersAIAnswer } from "../../lib/workersai.js";
+import { liveRates } from "../../lib/fx.js";
 
 const core = makeCore(KB);
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { "content-type": "application/json" } });
@@ -55,6 +56,11 @@ export async function onRequestPost({ request, env }) {
     throw new Error("Unknown tool");
   };
   const question = turns[turns.length - 1].content;
+  let fxTime = "";
+  try { // the calculator reads today's rate the same way the tool pages do
+    const fx = await liveRates(); fxTime = fx.time;
+    globalThis.window = globalThis.window || {}; globalThis.window.RAMANI_LIVE = { usd: fx.usd, rates_time: fx.time };
+  } catch {}
   const qid = "q_" + crypto.randomUUID().slice(0, 18);
   if (env.DB) { // keep the questions: they show what content to make next
     try { await env.DB.prepare("INSERT INTO questions (id, asked_at, page, lang, question) VALUES (?1, ?2, ?3, ?4, ?5)").bind(qid, new Date().toISOString(), String(body.page || "").slice(0, 120), sw ? "sw" : "en", question.slice(0, 1000)).run(); } catch {}
