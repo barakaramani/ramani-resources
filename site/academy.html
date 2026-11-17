@@ -175,6 +175,66 @@ h2.cm-h{font-size:clamp(26px,3.4vw,38px);line-height:1.15;letter-spacing:-.025em
 .ac-who{color:var(--muted);font-size:14.5px;margin:6px 0 0}
 @media (max-width:900px){.ac-ov{grid-template-columns:minmax(0,1fr)}}
 </style>
+<style id="acp-css">
+body.ac-playing{overflow:hidden}
+body.ac-playing header.rg,body.ac-playing .rn,body.ac-playing footer{display:none!important}
+.acp{position:fixed;inset:0;z-index:60;padding:0!important;margin:0!important;background:var(--bg,#fbfaf6);display:flex;flex-direction:column;font-family:var(--sans,"Plus Jakarta Sans",system-ui,sans-serif)}
+.acp[hidden]{display:none}
+.acp-top{display:flex;align-items:center;gap:16px;padding:12px 20px;border-bottom:1px solid var(--line,#e4e1d6);background:var(--surface,#fff);flex:none}
+.acp-x{width:44px;height:44px;display:grid;place-items:center;background:var(--brand,#388539);color:#fff;border-radius:8px;text-decoration:none;font-size:20px;font-weight:700;flex:none}
+.acp-title{font-weight:700;font-size:17px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:14px;border-left:1px solid var(--line,#e4e1d6)}
+.acp-prog{display:flex;align-items:center;gap:8px;font-weight:600;font-size:15px;white-space:nowrap}
+.acp-prog svg{width:40px;height:40px}
+.acp-fb{font:700 14.5px var(--sans,system-ui);background:transparent;border:1.5px solid var(--ink,#142016);color:var(--ink,#142016);border-radius:8px;padding:10px 16px;cursor:pointer;white-space:nowrap}
+.acp-main{flex:1;display:flex;min-height:0}
+.acp-side{width:320px;flex:none;overflow:auto;border-right:1px solid var(--line,#e4e1d6);background:var(--surface,#fff);padding:18px 0}
+.acp-main.closed .acp-side{display:none}
+.acp-side h4{margin:0 0 10px;padding:0 22px;font:600 13px var(--mono,monospace);letter-spacing:.06em;text-transform:uppercase;color:var(--muted,#5f6d63)}
+.acp-side a,.acp-side button.mod{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 22px;color:var(--ink,#142016);text-decoration:none;font:600 15px/1.35 var(--sans,system-ui);background:none;border:0;cursor:pointer;border-left:3px solid transparent}
+.acp-side a:hover,.acp-side button.mod:hover{background:var(--sunk,#f1efe7)}
+.acp-side a[aria-current=page]{background:var(--sunk,#f1efe7);border-left-color:var(--ink,#142016);font-weight:800}
+.acp-side .sub a{padding:10px 22px 10px 22px;font-weight:500;font-size:14.5px}
+.acp-side .sub a .ic{opacity:.6;font-size:12px;width:16px;text-align:center;flex:none}
+.acp-side .dot{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--line2,#cfcabb);flex:none;display:grid;place-items:center;font-size:11px;color:#fff}
+.acp-side .done>.dot{background:var(--brand,#388539);border-color:var(--brand,#388539)}
+.acp-side .done>.dot::before{content:"✓"}
+.acp-side .half>.dot{border-color:var(--brand,#388539);border-width:2px}
+.acp-side button.mod .t{flex:1}
+.acp-side button.mod .chev{transition:transform .15s;font-size:13px}
+.acp-side button.mod[aria-expanded=true] .chev{transform:rotate(180deg)}
+.acp-side .sub[hidden]{display:none}
+.acp-side .lock{opacity:.5}
+.acp-content{flex:1;overflow:auto;min-width:0}
+.acp-bar{display:flex;align-items:center;gap:18px;padding:18px 24px 0}
+.acp-tog{width:44px;height:44px;border-radius:6px;border:0;background:var(--brand-soft,#e3f0e1);color:var(--brand,#388539);font-size:22px;cursor:pointer;flex:none}
+.acp-main.closed .acp-tog{transform:rotate(180deg)}
+.acp-resume{flex:1;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:16px}
+.acp-resume p{margin:0;flex:1;min-width:200px}
+.acp-resume .x{background:none;border:0;font-size:22px;cursor:pointer;color:var(--muted,#5f6d63)}
+.acp-inner{max-width:900px;margin:0 auto;padding:22px 24px 40px}
+.acp-inner .ac-body{background:transparent;border:0;padding:0}
+.acp-hero{position:relative;aspect-ratio:16/8;border-radius:6px;overflow:hidden;background:#f6f3ea;margin:6px 0 22px;border:1px solid var(--line,#e4e1d6)}
+.acp-hero::after{content:"";position:absolute;top:0;bottom:0;right:-6%;width:34%;background:var(--brand,#388539);transform:skewX(-10deg);transform-origin:top}
+.acp-hero .in{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:6% 6%;z-index:1}
+.acp-hero .kick{font:700 13px var(--mono,monospace);letter-spacing:.08em;text-transform:uppercase;color:var(--brand,#388539)}
+.acp-hero h2{font:800 clamp(26px,4.4vw,52px)/1.02 var(--sans,system-ui);letter-spacing:-.03em;margin:8px 0 18px;max-width:62%;text-transform:uppercase;color:var(--ink,#142016)}
+.acp-hero .badge{align-self:flex-start;font:800 clamp(14px,1.8vw,20px) var(--sans,system-ui);letter-spacing:.04em;border:3px solid var(--ink,#142016);border-radius:10px;padding:8px 22px;background:#fff;box-shadow:5px 5px 0 var(--ink,#142016)}
+.acp-hero .mark{position:absolute;right:7%;top:50%;transform:translateY(-50%);z-index:1;width:22%;aspect-ratio:1;background:#fff;border:3px solid var(--ink,#142016);border-radius:14px;display:grid;place-items:center;box-shadow:8px 8px 0 var(--ink,#142016)}
+.acp-hero .mark svg{width:58%;height:58%}
+.acp-big .yt{border-radius:6px;margin:6px 0 16px}
+.acp-foot{display:flex;justify-content:space-between;gap:12px;margin-top:34px;padding-top:18px;border-top:1px solid var(--line,#e4e1d6)}
+.acp-foot a{font:700 16px var(--sans,system-ui);color:var(--ink,#142016);display:flex;align-items:center;gap:8px}
+.acp-foot a.nx{margin-left:auto;text-decoration:underline;text-underline-offset:4px}
+.acp-foot a.pv{color:var(--muted,#5f6d63);text-decoration:none}
+@media (max-width:900px){
+ .acp-side{position:absolute;top:0;bottom:0;left:0;z-index:5;width:min(86vw,340px);box-shadow:0 20px 60px rgba(0,0,0,.25)}
+ .acp-main{position:relative}
+ .acp-main:not(.open) .acp-side{display:none}
+ .acp-main.open .acp-side{display:block}
+ .acp-prog span,.acp-fb{display:none}
+ .acp-hero h2{max-width:70%}
+}
+</style>
 </head><body>
 <script src="brain/kb.js"></script>
 <script src="brain/core.js"></script>
@@ -388,13 +448,21 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
   <p class="ac-vnote" id="acVNote" data-noi18n></p>
 </div></section>
 </div>
-<section class="hb-sec" id="acCourse" hidden><div class="hb-wrap">
-  <div class="hb-crumb"><a href="#" id="acBack">All courses</a> / <span id="acCt" data-noi18n></span></div>
-  <div class="ac-view" style="margin-top:12px">
-    <nav class="ac-side" id="acSide" aria-label="Course" data-noi18n></nav>
-    <div class="hb-card ac-body" id="acBody" data-noi18n></div>
+<section id="acCourse" class="acp" hidden data-noi18n>
+  <div class="acp-top">
+    <a href="#" id="acBack" class="acp-x" aria-label="Close the course and go back to all courses">✕</a>
+    <span class="acp-title" id="acCt"></span>
+    <div class="acp-prog" id="acProg"><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" fill="none" stroke="var(--line,#e4e1d6)" stroke-width="3"/><circle id="acRing" cx="18" cy="18" r="15" fill="none" stroke="var(--brand,#388539)" stroke-width="3" stroke-linecap="round" stroke-dasharray="94.25" stroke-dashoffset="94.25" transform="rotate(-90 18 18)"/></svg><span id="acProgT"></span></div>
+    <button type="button" class="acp-fb" id="acFbBtn"></button>
   </div>
-</div></section>
+  <div class="acp-main" id="acMain">
+    <nav class="acp-side" id="acSide" aria-label="Course content"></nav>
+    <div class="acp-content" id="acScroll">
+      <div class="acp-bar"><button type="button" class="acp-tog" id="acTog" aria-label="Show or hide course content">‹</button><div class="acp-resume" id="acResume" hidden></div></div>
+      <div class="acp-inner"><div class="ac-body" id="acBody"></div><div class="acp-foot" id="acFoot"></div></div>
+    </div>
+  </div>
+</section>
 </main>
 <script>
 (function(){
@@ -421,7 +489,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     var b=el("button","yt"); b.type="button"; b.setAttribute("aria-label",(SW()?"Cheza video: ":"Play video: ")+L(v.t));
     var im=el("img"); im.src="https://i.ytimg.com/vi/"+v.id+"/hqdefault.jpg"; im.alt=""; im.loading="lazy"; b.appendChild(im);
     var p=el("span","pl"); p.appendChild(el("span")); b.appendChild(p); if(v.d) b.appendChild(el("span","dur",v.d));
-    b.addEventListener("click",function(){ var f=document.createElement("iframe"); f.src="https://www.youtube-nocookie.com/embed/"+v.id+"?autoplay=1&rel=0"; f.title=L(v.t); f.allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"; f.allowFullscreen=true; b.replaceChildren(f); b.style.cursor="default"; if(window.rtrack) rtrack("video_played",{video:v.id,course:v.c,lesson:v.l}); });
+    b.addEventListener("click",function(){ var f=document.createElement("iframe"); f.src="https://www.youtube-nocookie.com/embed/"+v.id+"?autoplay=1&rel=0"; f.title=L(v.t); f.allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"; f.allowFullscreen=true; b.replaceChildren(f); b.style.cursor="default"; markV(v); if(window.rtrack) rtrack("video_played",{video:v.id,course:v.c,lesson:v.l}); });
     return b;
   }
   function vcard(v,small){ var a=el("article",small?"ac-v":"hb-card ac-v"); a.appendChild(player(v)); a.appendChild(el("h3",null,L(v.t)));
@@ -444,7 +512,6 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
   function save(){ try{ localStorage.setItem(K,JSON.stringify(S)); }catch(e){} }
   function st(id){ return S[id]=S[id]||{l:[],q:0,cert:""}; }
   function course(id){ for(var i=0;i<C.length;i++) if(C[i].id===id) return C[i]; return null; }
-  function pct(c){ var s=st(c.id); return Math.round(((s.l.length)+(s.q>=4?1:0))/(c.lessons.length+1)*100); }
   function el(t,c,x){ var e=document.createElement(t); if(c) e.className=c; if(x!=null) e.textContent=x; return e; }
   function home(){
     videos();
@@ -500,9 +567,10 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     enBack.hidden=false; $("en-name").focus();
   }
   function overview(c){
-    $("acSide").replaceChildren(); var b=$("acBody"), s=st(c.id), x=EX[c.id]; b.replaceChildren();
+    var b=$("acBody"), s=st(c.id), x=EX[c.id]; b.replaceChildren();
+    b.appendChild(hero(L(c.level)+" · Ramani Import Academy",L(c.title),SW()?"KOZI":"COURSE"));
     var w=el("div","ac-ov"), left=el("div"), right=el("div");
-    left.appendChild(el("span","hb-pill",L(c.level))); left.appendChild(el("h1",null,L(c.title))); left.appendChild(el("p","lede",L(c.desc)));
+    left.appendChild(el("p","lede",L(c.desc)));
     var f=el("div","ac-facts"); var nv=V.filter(function(v){return v.c===c.id;}).length;
     [c.lessons.length+(SW()?" masomo":" lessons"),(SW()?"Takriban dakika ":"About ")+x.mins+(SW()?"":" min of reading"),nv+(SW()?" video za ziada":" extra videos"),SW()?"Maswali 5 na cheti":"5 question quiz and certificate",SW()?"Bure":"Free"].forEach(function(t){ f.appendChild(el("span",null,t)); }); left.appendChild(f);
     left.appendChild(el("h3",null,SW()?"Utakachojifunza":"What you will learn")); var o=el("ul","ac-out"); x.out.forEach(function(t){ o.appendChild(el("li",null,L(t))); }); left.appendChild(o);
@@ -515,26 +583,79 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     var q=el("li","q"); q.appendChild(el("b",null,SW()?"Maswali na cheti":"Quiz and certificate")); q.appendChild(el("span",null,SW()?"Pata angalau 4 kati ya 5 upate cheti chenye jina lako.":"Get at least 4 of 5 right to earn a certificate with your name.")); ml.appendChild(q);
     right.appendChild(ml); w.appendChild(left); w.appendChild(right); b.appendChild(w);
   }
+  function acts(c){ // every step of a course, in order, for the sidebar, the progress ring and the next and previous links
+    var s=st(c.id), A=[{k:"",h:"#"+c.id,t:SW()?"Muhtasari":"Overview",ic:"",done:!!s.en}];
+    c.lessons.forEach(function(l,i){ var n=i+1;
+      A.push({k:String(n),h:"#"+c.id+"/"+n,t:SW()?"Soma: "+L(l[0]):"Read: "+L(l[0]),ic:"≡",mod:n,done:s.l.indexOf(n)>=0});
+      V.filter(function(v){return v.c===c.id&&v.l===n;}).forEach(function(v,k){ A.push({k:n+"/v"+(k+1),h:"#"+c.id+"/"+n+"/v"+(k+1),t:(SW()?"Video: ":"Video: ")+L(v.t),ic:"▶",mod:n,done:(s.v||[]).indexOf(v.id)>=0,vid:v}); });
+    });
+    A.push({k:"quiz",h:"#"+c.id+"/quiz",t:SW()?"Maswali 5":"5 question quiz",ic:"?",mod:"q",done:s.q>=4});
+    A.push({k:"cert",h:"#"+c.id+"/cert",t:SW()?"Cheti chako":"Your certificate",ic:"★",mod:"q",done:!!s.cert,lock:s.q<4});
+    return A; }
+  function pct(c){ var A=acts(c), d=A.filter(function(a){return a.done;}).length; return Math.round(d/A.length*100); }
+  function markV(v){ var s=st(v.c); s.v=s.v||[]; if(s.v.indexOf(v.id)<0){ s.v.push(v.id); save(); var h=(location.hash||"").slice(1).split("/"); var c=course(h[0]); if(c) side(c,h.slice(1).join("/")); } }
   function side(c,cur){
-    var n=$("acSide"); n.replaceChildren(); var s=st(c.id);
-    c.lessons.forEach(function(l,i){ var a=el("a",s.l.indexOf(i+1)>=0?"done":""); a.href="#"+c.id+"/"+(i+1); if(cur===String(i+1)) a.setAttribute("aria-current","page");
-      a.appendChild(el("span","d",s.l.indexOf(i+1)>=0?"✓":String(i+1))); a.appendChild(el("span",null,L(l[0]))); n.appendChild(a); });
-    var q=el("a",s.q>=4?"done":""); q.href="#"+c.id+"/quiz"; if(cur==="quiz") q.setAttribute("aria-current","page"); q.appendChild(el("span","d",s.q>=4?"✓":"?")); q.appendChild(el("span",null,SW()?"Maswali":"Quiz")); n.appendChild(q);
-    var ce=el("a",(s.cert?"done":"")+(s.q>=4?"":" lock")); ce.href="#"+c.id+"/cert"; if(cur==="cert") ce.setAttribute("aria-current","page"); ce.appendChild(el("span","d",s.cert?"✓":"★")); ce.appendChild(el("span",null,SW()?"Cheti":"Certificate")); n.appendChild(ce);
+    var n=$("acSide"), s=st(c.id), A=acts(c); n.replaceChildren(); n.appendChild(el("h4",null,SW()?"Maudhui ya kozi":"Course content"));
+    function item(a){ var x=el("a",(a.done?"done":"")+(a.lock?" lock":"")); x.href=a.h; if(a.k===cur) x.setAttribute("aria-current","page");
+      x.appendChild(el("span","dot")); x.appendChild(el("span",null,a.t)); x.addEventListener("click",function(){ $("acMain").classList.remove("open"); }); return x; }
+    n.appendChild(item(A[0]));
+    var mods=c.lessons.map(function(l,i){return {id:i+1,t:L(l[0])};}); mods.push({id:"q",t:SW()?"Maswali na cheti":"Quiz and certificate"});
+    var curMod=null; A.forEach(function(a){ if(a.k===cur) curMod=a.mod; });
+    mods.forEach(function(m){ var its=A.filter(function(a){return a.mod===m.id;}), dn=its.filter(function(a){return a.done;}).length;
+      var b=el("button","mod"+(dn===its.length?" done":dn?" half":"")); b.type="button"; var open=(m.id===curMod);
+      b.setAttribute("aria-expanded",String(open)); b.appendChild(el("span","dot")); b.appendChild(el("span","t",m.t)); b.appendChild(el("span","chev","⌄"));
+      var sub=el("div","sub"); sub.hidden=!open; its.forEach(function(a){ sub.appendChild(item(a)); });
+      b.addEventListener("click",function(){ var o=b.getAttribute("aria-expanded")!=="true"; b.setAttribute("aria-expanded",String(o)); sub.hidden=!o; });
+      n.appendChild(b); n.appendChild(sub); });
+    var p=pct(c); $("acRing").setAttribute("stroke-dashoffset",String(94.25*(1-p/100))); $("acProgT").textContent=(SW()?"Maendeleo yangu ":"My progress ")+p+"%";
+  }
+  function foot(c,cur){
+    var f=$("acFoot"), A=acts(c), i=0; f.replaceChildren(); A.forEach(function(a,j){ if(a.k===cur) i=j; });
+    if(i>0){ var pv=el("a","pv","← "+A[i-1].t); pv.href=A[i-1].h; f.appendChild(pv); }
+    if(i<A.length-1){ var nx=el("a","nx",A[i+1].t+" →"); nx.href=A[i+1].h; f.appendChild(nx); }
+  }
+  function hero(kick,title,badge){
+    var h=el("div","acp-hero"), i=el("div","in"); i.appendChild(el("span","kick",kick)); i.appendChild(el("h2",null,title)); i.appendChild(el("span","badge",badge)); h.appendChild(i);
+    var m=el("div","mark"); m.innerHTML='<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4.5c-5 0-9 3.9-9 8.8 0 6.3 9 13.2 9 13.2s9-6.9 9-13.2c0-4.9-4-8.8-9-8.8Z" fill="#388539"/><circle cx="16" cy="13.3" r="3.4" fill="#fff"/></svg>'; h.appendChild(m); return h; }
+  function videoPage(c,n,k){
+    var vs=V.filter(function(v){return v.c===c.id&&v.l===n;}), v=vs[k-1], b=$("acBody"); b.replaceChildren(); if(!v){ lesson(c,n); return; }
+    b.appendChild(el("span","cm-eb",(SW()?"Somo ":"Lesson ")+n+" · "+L(c.lessons[n-1][0])+" · "+(SW()?"Video kwa Kiingereza":"Video in English")));
+    b.appendChild(el("h2",null,L(v.t)));
+    var w=el("div","acp-big"); w.appendChild(player(v)); b.appendChild(w);
+    var src=el("p","ac-vnote",(SW()?"Imetengenezwa na ":"By ")+v.ch+" · "); var yt=el("a",null,SW()?"Fungua YouTube":"Open on YouTube"); yt.href="https://www.youtube.com/watch?v="+v.id; yt.target="_blank"; yt.rel="noopener"; yt.style.color="var(--brand)"; src.appendChild(yt); b.appendChild(src);
+    b.appendChild(el("p","ac-vnote",L(VN)));
+  }
+  function resume(c,cur){
+    var r=$("acResume"), s=st(c.id); r.replaceChildren(); r.hidden=true;
+    if(cur!==""||!s.en||s.noResume||!pct(c)||nextStep(c)==="1") return;
+    r.hidden=false; r.appendChild(el("p",null,SW()?"Ungependa kuendelea ulipoishia?":"Would you like to resume where you left off?"));
+    var a=el("a","hb-btn",SW()?"Endelea":"Resume"); a.href="#"+c.id+"/"+nextStep(c); r.appendChild(a);
+    var no=el("button","hb-btn g",SW()?"Usionyeshe tena":"Do not show again"); no.type="button"; no.addEventListener("click",function(){ s.noResume=1; save(); r.hidden=true; }); r.appendChild(no);
+    var x=el("button","x","✕"); x.type="button"; x.setAttribute("aria-label",SW()?"Funga":"Close"); x.addEventListener("click",function(){ r.hidden=true; }); r.appendChild(x);
+  }
+  var fbBack=null;
+  function feedback(c,cur){
+    if(!fbBack){ fbBack=el("div","hb-back"); fbBack.hidden=true; fbBack.innerHTML='<div class="hb-modal" role="dialog" aria-modal="true" aria-labelledby="fb-t"><h2 id="fb-t"></h2><p id="fb-p"></p><form novalidate id="fb-f"><div class="hb-f"><label for="fb-m" id="fb-lm"></label><textarea id="fb-m" rows="5" style="width:100%;font:inherit;padding:10px;border-radius:10px;border:1px solid var(--line)"></textarea></div><div class="hb-f"><label for="fb-e" id="fb-le"></label><input id="fb-e" type="email" autocomplete="email"></div><span class="hb-err" id="fb-err" aria-live="polite"></span><div class="hb-acts" style="justify-content:space-between"><button type="button" class="hb-btn g sm" id="fb-x"></button><button type="submit" class="hb-btn" id="fb-go"></button></div></form></div>'; document.body.appendChild(fbBack);
+      $("fb-x").addEventListener("click",function(){ fbBack.hidden=true; }); fbBack.addEventListener("click",function(e){ if(e.target===fbBack) fbBack.hidden=true; }); }
+    var m=who(); $("fb-t").textContent=SW()?"Tupe maoni":"Give feedback"; $("fb-p").textContent=SW()?"Nini kilikusaidia, nini hakikueleweka, au kozi gani tuongeze?":"What helped, what was unclear, or which course should we add next?";
+    $("fb-lm").textContent=SW()?"Maoni yako":"Your feedback"; $("fb-le").textContent=SW()?"Barua pepe":"Email"; $("fb-e").value=m&&m.email||""; $("fb-x").textContent=SW()?"Funga":"Close"; $("fb-go").textContent=SW()?"Tuma":"Send"; $("fb-err").textContent=""; $("fb-m").value="";
+    var f=$("fb-f"), nf=f.cloneNode(true); f.parentNode.replaceChild(nf,f); $("fb-x").addEventListener("click",function(){ fbBack.hidden=true; });
+    nf.addEventListener("submit",function(e){ e.preventDefault(); var msg=$("fb-m").value.trim(), em=$("fb-e").value.trim().toLowerCase();
+      if(msg.length<3){ $("fb-err").textContent=SW()?"Tafadhali andika maoni yako.":"Please write your feedback."; return; }
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ $("fb-err").textContent=SW()?"Tafadhali andika barua pepe sahihi.":"Please enter a valid email address."; return; }
+      if(window.RAMANI&&RAMANI.send) RAMANI.send("request",{topic:"academy_feedback",course:c.id,step:cur,message:msg.slice(0,2000),email:em,name:m&&m.name||"",page:"academy"},{quiet:true});
+      $("fb-p").textContent=SW()?"Asante! Tumepokea maoni yako.":"Thank you! We have your feedback."; nf.hidden=true; setTimeout(function(){ fbBack.hidden=true; nf.hidden=false; },1600); });
+    fbBack.hidden=false; $("fb-m").focus();
   }
   function lesson(c,n){
     var l=c.lessons[n-1], b=$("acBody"), s=st(c.id); b.replaceChildren();
     if(s.l.indexOf(n)<0){ s.l.push(n); save(); }
-    b.appendChild(el("span","cm-eb",(SW()?"Somo ":"Lesson ")+n+(SW()?" kati ya ":" of ")+c.lessons.length)); b.appendChild(el("h2",null,L(l[0])));
+    b.appendChild(hero((SW()?"Somo ":"Lesson ")+n+(SW()?" kati ya ":" of ")+c.lessons.length+" · "+L(c.title),L(l[0]),SW()?"SOMO":"LESSON"));
     l[1].forEach(function(p){ b.appendChild(el("p","para",L(p))); });
     var x=EX[c.id].l[n-1];
     var k=el("div","ac-box ac-key"); k.appendChild(el("span","cm-eb",SW()?"Jambo kuu":"Key takeaway")); k.appendChild(el("p",null,L(x.k))); b.appendChild(k);
     var d=el("div","ac-box ac-do"); d.appendChild(el("span","cm-eb",SW()?"Fanya sasa":"Do this now")); d.appendChild(el("p",null,L(x.a)));
     if(l[2]){ var t=el("a","hb-btn g",L(x.tl)+" →"); t.href=l[2]; t.target="_blank"; t.rel="noopener"; d.appendChild(t); } b.appendChild(d);
-    var acts=el("div","hb-acts"); acts.style.marginTop="18px";
-    if(n>1){ var pv=el("a","hb-btn g",SW()?"← Somo lililopita":"← Previous lesson"); pv.href="#"+c.id+"/"+(n-1); acts.appendChild(pv); }
-    var nx=el("a","hb-btn",n<c.lessons.length?(SW()?"Somo linalofuata →":"Next lesson →"):(SW()?"Fanya maswali →":"Take the quiz →")); nx.href="#"+c.id+"/"+(n<c.lessons.length?n+1:"quiz"); acts.appendChild(nx); b.appendChild(acts);
-    lessonVideos(c,n,b);
     if(window.rtrack) rtrack("tool_used",{tool:"academy",course:c.id,lesson:n});
   }
   function quiz(c){
@@ -583,16 +704,18 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
   }
   function route(){
     var h=(location.hash||"").slice(1).split("/"), c=course(h[0]);
-    if(!c){ home(); return; }
-    $("acHome").hidden=true; $("acCourse").hidden=false; $("acCt").textContent=L(c.title);
-    var p=h[1]||"";
-    $("acCourse").classList.toggle("ac-isov",!p);
-    if(!p||!who()||!st(c.id).en){ overview(c); window.scrollTo({top:0}); if(p) enrol(c,route); return; }
-    side(c,p);
-    if(p==="quiz") quiz(c); else if(p==="cert") cert(c); else lesson(c,Math.min(c.lessons.length,Math.max(1,+p||1)));
-    side(c,p); window.scrollTo({top:0});
+    if(!c){ document.body.classList.remove("ac-playing"); $("acCourse").hidden=true; home(); return; }
+    $("acHome").hidden=true; $("acCourse").hidden=false; document.body.classList.add("ac-playing"); $("acCt").textContent=L(c.title); $("acFbBtn").textContent=SW()?"Tupe maoni":"Give feedback";
+    var p=h[1]||"", sub=h[2]||"", cur=p+(sub?"/"+sub:"");
+    if(!p||!who()||!st(c.id).en){ cur=""; overview(c); }
+    else if(p==="quiz") quiz(c); else if(p==="cert") cert(c);
+    else { var n=Math.min(c.lessons.length,Math.max(1,+p||1)); if(/^v\d+$/.test(sub)) videoPage(c,n,+sub.slice(1)); else { cur=String(n); lesson(c,n); } }
+    side(c,cur); foot(c,cur); resume(c,cur); $("acScroll").scrollTop=0; window.scrollTo({top:0});
+    if(p&&(!who()||!st(c.id).en)) enrol(c,route);
   }
   $("acBack").addEventListener("click",function(e){ e.preventDefault(); history.pushState(null,"",location.pathname+location.search); route(); });
+  $("acTog").addEventListener("click",function(){ var m=$("acMain"); if(window.innerWidth<=900) m.classList.toggle("open"); else m.classList.toggle("closed"); });
+  $("acFbBtn").addEventListener("click",function(){ var h=(location.hash||"").slice(1).split("/"), c=course(h[0]); if(c) feedback(c,h.slice(1).join("/")); });
   window.addEventListener("hashchange",route); window.addEventListener("rg-lang",route);
   route();
 })();
