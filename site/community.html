@@ -389,17 +389,20 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     <div>
       <span class="cm-eb">How to join</span>
       <h2 class="cm-h" id="cm-j">Get your invite</h2>
-      <p class="cm-lede">Biashara Tanzania opens soon. Tell us about your business and we will send your invite link first.</p>
+      <p class="cm-lede">Fill in your details and RSVP for the next importers meetup. The Ramani team reviews every request and sends your personal invite to Biashara Tanzania.</p>
       <ol class="cm-steps">
-        <li><div><b>Tell us about your business</b><span>Your name, phone number and what you import.</span></div></li>
-        <li><div><b>Get your invite link</b><span>We send it by SMS when the community opens.</span></div></li>
-        <li><div><b>Create your free account</b><span>Set up your profile and join your spaces. It works in any phone browser.</span></div></li>
+        <li><div><b>Fill in your details</b><span>Your name, email, phone number and what you import.</span></div></li>
+        <li><div><b>RSVP for the meetup</b><span>Tell us if you will join us in person at Isale House, Mikocheni.</span></div></li>
+        <li><div><b>Get your invite</b><span>We email your personal invite link. Set up your profile and join your spaces in any phone browser.</span></div></li>
       </ol>
     </div>
     <div>
       <form class="cm-form" id="cmForm" novalidate>
         <div class="cm-two">
           <div class="cm-f"><label for="cm-name">Your name</label><input id="cm-name" autocomplete="name"></div>
+          <div class="cm-f"><label for="cm-email">Email</label><input id="cm-email" type="email" inputmode="email" autocomplete="email" placeholder="jina@mfano.co.tz"></div>
+        </div>
+        <div class="cm-two">
           <div class="cm-f"><label for="cm-phone">Phone number</label><input id="cm-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+255 7xx xxx xxx"></div>
         </div>
         <div class="cm-two">
@@ -420,15 +423,19 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
           </div></div>
         <div class="cm-f"><label for="cm-years">How long has your business been trading?</label>
           <select id="cm-years"><option value="">Choose one</option><option>Less than 6 months</option><option>6 to 12 months</option><option>1 to 3 years</option><option>More than 3 years</option></select></div>
-        <label class="cm-consent"><input type="checkbox" id="cm-meet"> <span>I would like a seat at the next importers meetup.</span></label>
-        <label class="cm-consent"><input type="checkbox" id="cm-ok"> <span>I agree that Ramani may send me community updates by SMS and store my details under its <a class="cm-link" href="https://www.ramani.io/privacy-policy" target="_blank" rel="noopener">privacy policy</a>. I can stop at any time by replying SIMAMA.</span></label>
+        <div class="cm-f"><span class="lb" id="cm-rsvp-l">RSVP: will you come to the next importers meetup? (3rd week of the month, Isale House, Mikocheni)</span>
+          <div class="cm-opts" role="radiogroup" aria-labelledby="cm-rsvp-l">
+            <label><input type="radio" name="cm-rsvp" value="Yes"> Yes, save me a seat</label>
+            <label><input type="radio" name="cm-rsvp" value="Maybe"> Maybe, send me the date</label>
+            <label><input type="radio" name="cm-rsvp" value="No"> Not this time, online only</label>
+          </div></div>
+        <label class="cm-consent"><input type="checkbox" id="cm-ok"> <span>I agree that Ramani may send me my invite and community updates by email and SMS and store my details under its <a class="cm-link" href="https://www.ramani.io/privacy-policy" target="_blank" rel="noopener">privacy policy</a>. I can unsubscribe at any time, or reply STOP to an SMS.</span></label>
         <div class="cm-err" id="cmErr" aria-live="polite"></div>
-        <button class="cm-btn p" type="submit" style="justify-self:start">Get my invite</button>
+        <button class="cm-btn p" type="submit" style="justify-self:start">Send my details and RSVP</button>
       </form>
       <div class="cm-ok" id="cmOk" hidden tabindex="-1">
         <h3 id="cmOkT">Karibu!</h3>
         <p id="cmOkP"></p>
-        <p class="small" style="margin:0">Test version: your details were saved to the test inbox only.</p>
       </div>
     </div>
   </div>
@@ -473,33 +480,36 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
   var $=function(id){return document.getElementById(id)};
   var SW=function(){return document.documentElement.lang==="sw";};
   if(COMMUNITY_URL) document.querySelectorAll("[data-join]").forEach(function(a){ a.href=COMMUNITY_URL; a.target="_blank"; a.rel="noopener"; });
-  document.querySelectorAll("[data-meetup]").forEach(function(a){ a.addEventListener("click",function(){ $("cm-meet").checked=true; }); });
+  document.querySelectorAll("[data-meetup]").forEach(function(a){ a.addEventListener("click",function(){ var y=document.querySelector('input[name="cm-rsvp"][value="Yes"]'); if(y) y.checked=true; }); });
   var P=window.RAMANI&&RAMANI.people, ME=P&&P.me();
-  if(ME){ if(ME.name) $("cm-name").value=ME.name; if(ME.phone) $("cm-phone").value=ME.phone; }
+  if(ME){ if(ME.name) $("cm-name").value=ME.name; if(ME.phone) $("cm-phone").value=ME.phone; if(ME.email) $("cm-email").value=ME.email; }
   if(P&&P.has("community_join")){
     $("cmOkT").textContent=SW()?"Tayari uko kwenye orodha":"You are already on the list";
-    $("cmOkP").textContent=SW()?"Tumeshapokea ombi lako la kujiunga na Biashara Tanzania. Tutakutumia kiungo cha mwaliko kwa SMS, huna haja ya kujaza tena.":"We already have your request to join Biashara Tanzania. We will send your invite link by SMS, so there is no need to fill this in again.";
+    $("cmOkP").textContent=SW()?"Tumeshapokea taarifa zako na jibu lako la mkutano. Timu ya Ramani itakutumia mwaliko wa Biashara Tanzania kwa barua pepe, huna haja ya kujaza tena.":"We already have your details and RSVP. The Ramani team will email your invite to Biashara Tanzania, so there is no need to fill this in again.";
     $("cmForm").hidden=true; $("cmOk").hidden=false;
   }
   $("cmForm").addEventListener("submit",function(e){
     e.preventDefault();
-    var name=$("cm-name").value.trim(), ph=$("cm-phone").value.replace(/[\s()-]/g,""), biz=$("cm-biz").value.trim(), goods=$("cm-goods").value.trim();
+    var em=$("cm-email").value.trim().toLowerCase(), rs=document.querySelector('input[name="cm-rsvp"]:checked'), name=$("cm-name").value.trim(), ph=$("cm-phone").value.replace(/[\s()-]/g,""), biz=$("cm-biz").value.trim(), goods=$("cm-goods").value.trim();
     var t=document.querySelector('input[name="cm-type"]:checked'), yrs=$("cm-years").value, err=$("cmErr");
-    var M=SW()?{n:"Tafadhali andika jina lako.",p:"Tafadhali andika namba ya simu ya Tanzania, kwa mfano +255 712 345 678.",g:"Tafadhali tuambie unaagiza nini.",t:"Tafadhali chagua jinsi unavyoagiza sasa.",y:"Tafadhali chagua muda ambao biashara yako imefanya kazi.",c:"Tafadhali kubali kupokea taarifa ili tukutumie mwaliko."}:{n:"Please enter your name.",p:"Please enter a Tanzanian phone number, for example +255 712 345 678.",g:"Please tell us what you import.",t:"Please choose how you import today.",y:"Please choose how long your business has been trading.",c:"Please agree to receive community updates so we can send your invite."};
+    var M=SW()?{n:"Tafadhali andika jina lako.",p:"Tafadhali andika namba ya simu ya Tanzania, kwa mfano +255 712 345 678.",g:"Tafadhali tuambie unaagiza nini.",t:"Tafadhali chagua jinsi unavyoagiza sasa.",y:"Tafadhali chagua muda ambao biashara yako imefanya kazi.",c:"Tafadhali kubali kupokea taarifa ili tukutumie mwaliko.",e:"Tafadhali andika barua pepe sahihi ili tukutumie mwaliko.",r:"Tafadhali tuambie kama utakuja kwenye mkutano."}:{n:"Please enter your name.",p:"Please enter a Tanzanian phone number, for example +255 712 345 678.",g:"Please tell us what you import.",t:"Please choose how you import today.",y:"Please choose how long your business has been trading.",c:"Please agree to receive community updates so we can send your invite.",e:"Please enter a valid email so we can send your invite.",r:"Please tell us if you will come to the meetup."};
     if(!name){ err.textContent=M.n; $("cm-name").focus(); return; }
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ err.textContent=M.e; $("cm-email").focus(); return; }
     if(!/^(\+?255|0)[67]\d{8}$/.test(ph)){ err.textContent=M.p; $("cm-phone").focus(); return; }
     if(!goods){ err.textContent=M.g; $("cm-goods").focus(); return; }
     if(!t){ err.textContent=M.t; return; }
     if(!yrs){ err.textContent=M.y; $("cm-years").focus(); return; }
+    if(!rs){ err.textContent=M.r; return; }
     if(!$("cm-ok").checked){ err.textContent=M.c; return; }
     err.textContent="";
     var region=$("cm-region").value, space=t.value==="Full containers"?"Waagizaji wa Kontena":"Waagizaji Wapya";
     if(region!=="Dar es Salaam"&&region!=="Zanzibar"&&t.value!=="Planning my first import") space="Waagizaji wa Mikoani";
-    var data={community:"Biashara Tanzania",platform:"FluentCommunity",name:name,phone:ph,business:biz,region:region,goods:goods,origin:$("cm-from").value,import_type:t.value,trading:yrs,space:space,meetup_seat:$("cm-meet").checked,marketing_consent:true,language:SW()?"sw":"en",source:"community_page"};
-    var after=function(r){ if(r&&r.duplicate){ $("cmOkT").textContent=SW()?"Tayari uko kwenye orodha":"You are already on the list"; $("cmOkP").textContent=SW()?"Namba hii tayari imeomba kujiunga na Biashara Tanzania. Tutakutumia kiungo cha mwaliko kwa SMS.":"This number has already asked to join Biashara Tanzania. We will send your invite link by SMS."; } };
-    if(window.RAMANI&&RAMANI.send) RAMANI.send("community_join",data).then(after,function(){});
+    var data={community:"Biashara Tanzania",platform:"FluentCommunity",name:name,email:em,phone:ph,business:biz,region:region,goods:goods,origin:$("cm-from").value,import_type:t.value,trading:yrs,space:space,rsvp:rs.value,meetup_seat:rs.value==="Yes",marketing_consent:true,language:SW()?"sw":"en",source:"community_page"};
+    var after=function(r){ if(r&&r.duplicate){ $("cmOkT").textContent=SW()?"Tayari uko kwenye orodha":"You are already on the list"; $("cmOkP").textContent=SW()?"Tayari umeomba kujiunga na Biashara Tanzania. Timu ya Ramani itakutumia mwaliko kwa barua pepe hivi karibuni.":"You have already asked to join Biashara Tanzania. The Ramani team will email your invite soon."; } };
+    if(window.RAMANI&&RAMANI.send){ RAMANI.send("community_join",data).then(after,function(){}); if(rs.value!=="No") RAMANI.send("meetup_rsvp",{item:"monthly_meetup",rsvp:rs.value,name:name,email:em,phone:ph,language:data.language,source:"community_page"},{quiet:true}); }
     $("cmOkT").textContent="Karibu, "+name.split(" ")[0]+"!";
-    $("cmOkP").textContent=SW()?("Tutakutumia kiungo cha mwaliko kwa SMS Biashara Tanzania itakapofunguliwa. Utaanzia kwenye "+space+($("cm-meet").checked?", na tutakutumia tarehe ya mkutano ujao.":".")):("We will send your invite link by SMS when Biashara Tanzania opens. You will start in "+space+($("cm-meet").checked?", and we will send the date of the next importers meetup.":"."));
+    var rsT={Yes:[" You have a seat at the next meetup and we will send the date and time."," Umepata nafasi kwenye mkutano ujao na tutakutumia tarehe na saa."],Maybe:[" We will send you the meetup date so you can decide."," Tutakutumia tarehe ya mkutano ili uamue."],No:[" We will keep you posted about online sessions."," Tutakujulisha kuhusu vipindi vya mtandaoni."]}[rs.value];
+    $("cmOkP").textContent=SW()?("Asante! Tumepokea taarifa zako. Timu ya Ramani itakutumia mwaliko wako wa Biashara Tanzania kwa barua pepe ("+em+"). Utaanzia kwenye "+space+"."+rsT[1]):("Thank you! We have your details. The Ramani team will email your invite to Biashara Tanzania ("+em+"). You will start in "+space+"."+rsT[0]);
     $("cmForm").hidden=true; $("cmOk").hidden=false; $("cmOk").focus();
   });
 })();
