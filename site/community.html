@@ -387,8 +387,8 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
   <div class="cm-wrap">
     <div>
       <span class="cm-eb">How to join</span>
-      <h2 class="cm-h" id="cm-j">Join in two minutes</h2>
-      <p class="cm-lede">Biashara Tanzania is open. <a href="biashara.html" style="color:var(--brand);font-weight:700">Join free with your email</a>, or leave your phone number here and we will text you the link.</p>
+      <h2 class="cm-h" id="cm-j">Get your invite</h2>
+      <p class="cm-lede">Biashara Tanzania opens soon. Tell us about your business and we will send your invite link first.</p>
       <ol class="cm-steps">
         <li><div><b>Tell us about your business</b><span>Your name, phone number and what you import.</span></div></li>
         <li><div><b>Get your invite link</b><span>We send it by SMS when the community opens.</span></div></li>
@@ -468,10 +468,10 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 </main>
 <script>
 (function(){
-  var COMMUNITY_URL="biashara.html"; /* the Biashara Tanzania community app on this site */
+  var COMMUNITY_URL=""; /* set to the FluentCommunity address when it is live */
   var $=function(id){return document.getElementById(id)};
   var SW=function(){return document.documentElement.lang==="sw";};
-  if(COMMUNITY_URL) document.querySelectorAll("[data-join]").forEach(function(a){ a.href=COMMUNITY_URL; });
+  if(COMMUNITY_URL) document.querySelectorAll("[data-join]").forEach(function(a){ a.href=COMMUNITY_URL; a.target="_blank"; a.rel="noopener"; });
   document.querySelectorAll("[data-meetup]").forEach(function(a){ a.addEventListener("click",function(){ $("cm-meet").checked=true; }); });
   var P=window.RAMANI&&RAMANI.people, ME=P&&P.me();
   if(ME){ if(ME.name) $("cm-name").value=ME.name; if(ME.phone) $("cm-phone").value=ME.phone; }
