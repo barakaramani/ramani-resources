@@ -5,14 +5,14 @@ import { segmentWhere, formatBody } from "../../../lib/segments.js";
 import { sendToPerson } from "../../../lib/email.js";
 
 export async function onRequestGet({ request, env }) {
-  if (!staff(request)) return json({ error: "staff_only" }, 401);
+  if (!(await staff(request, env))) return json({ error: "staff_only" }, 401);
   try { const [w, a] = segmentWhere(new URL(request.url).searchParams.get("segment"));
     const r = await env.DB.prepare("SELECT COUNT(*) AS n FROM people WHERE " + w).bind(...a).first(); return json({ count: r.n }); }
   catch (e) { return json({ error: e.message }, 400); }
 }
 
 export async function onRequestPost({ request, env }) {
-  const who = staff(request); if (!who) return json({ error: "staff_only" }, 401);
+  const who = (await staff(request, env)); if (!who) return json({ error: "staff_only" }, 401);
   const b = await request.json().catch(() => ({}));
   const subject = String(b.subject || "").trim().slice(0, 150), body = String(b.body || "").slice(0, 20000), pre = String(b.preheader || "").slice(0, 150);
   if (!subject || !body) return json({ error: "subject_and_body_needed" }, 400);

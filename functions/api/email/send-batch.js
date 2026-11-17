@@ -4,7 +4,7 @@ import { formatBody } from "../../../lib/segments.js";
 import { sendToPerson } from "../../../lib/email.js";
 
 export async function onRequestPost({ request, env }) {
-  if (!staff(request)) return json({ error: "staff_only" }, 401);
+  if (!(await staff(request, env))) return json({ error: "staff_only" }, 401);
   const b = await request.json().catch(() => ({}));
   const c = await env.DB.prepare("SELECT * FROM campaigns WHERE id = ?1").bind(String(b.campaign_id || "")).first();
   if (!c) return json({ error: "not_found" }, 404);
