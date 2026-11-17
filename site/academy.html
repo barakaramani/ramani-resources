@@ -1,0 +1,471 @@
+<!doctype html><html lang="en"><head><script src="/config.js"></script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<title>Ramani Import Academy: Free Courses for Importers | Ramani</title>
+<style>
+:root{--bg:#fbfaf6;--surface:#ffffff;--sunk:#f3f1ea;--ink:#16211a;--ink2:#2c3a31;--muted:#5f6d63;--line:#e4e1d6;--line2:#d4d0c2;
+--brand:#388539;--brand-deep:#24602a;--brand-ink:#ffffff;--brand-soft:#e7f1e3;--accent:#d98a1c;--accent-soft:#fbefd9;--warn:#b5432c;--warn-soft:#f8e3dd;
+--sans:"Plus Jakarta Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;--gut:max(16px,env(safe-area-inset-left,0px));--gutr:max(16px,env(safe-area-inset-right,0px))}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1511;--surface:#161e19;--sunk:#1c2620;--ink:#e9eee8;--ink2:#cdd6cf;--muted:#9aa89e;--line:#27322b;--line2:#33413a;--brand:#6cc06d;--brand-deep:#8fd38f;--brand-ink:#0b140d;--brand-soft:#1d3121;--accent:#efb054;--accent-soft:#33291a;--warn:#ef8a74;--warn-soft:#3a221d}}
+:root[data-theme="dark"]{--bg:#0f1511;--surface:#161e19;--sunk:#1c2620;--ink:#e9eee8;--ink2:#cdd6cf;--muted:#9aa89e;--line:#27322b;--line2:#33413a;--brand:#6cc06d;--brand-deep:#8fd38f;--brand-ink:#0b140d;--brand-soft:#1d3121;--accent:#efb054;--accent-soft:#33291a;--warn:#ef8a74;--warn-soft:#3a221d}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:4px}
+.cm-wrap{max-width:1120px;margin:0 auto;padding:0 var(--gutr) 0 var(--gut)}
+.cm-eb{font:600 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--brand)}
+.cm-btn{display:inline-flex;align-items:center;gap:8px;font:700 15px var(--sans);text-decoration:none;border-radius:999px;padding:13px 22px;border:1px solid transparent;cursor:pointer}
+.cm-btn.p{background:var(--brand);color:var(--brand-ink)}.cm-btn.p:hover{background:var(--brand-deep)}
+.cm-btn.g{background:transparent;color:var(--ink);border-color:var(--line2)}.cm-btn.g:hover{border-color:var(--ink)}
+.cm-btn.sm{padding:9px 16px;font-size:14px}
+.cm-link{color:var(--brand);font-weight:700;text-decoration:none;background:none;border:0;padding:0;font:inherit;font-weight:700;cursor:pointer}.cm-link:hover{text-decoration:underline}
+section{padding:64px 0}
+h2.cm-h{font-size:clamp(26px,3.4vw,38px);line-height:1.15;letter-spacing:-.025em;font-weight:800;margin:10px 0 12px}
+.cm-lede{color:var(--muted);font-size:17px;max-width:42rem;margin:0}
+.pg-hero{padding:52px 0 28px}
+.pg-hero h1{font-size:clamp(32px,4.6vw,52px);line-height:1.06;letter-spacing:-.035em;font-weight:800;margin:12px 0 14px;text-wrap:balance}
+.pg-hero p{color:var(--muted);font-size:18px;margin:0;max-width:42rem}
+.cm-f{display:grid;gap:5px;min-width:0}
+.cm-f label,.cm-f .lb{font-weight:600;font-size:14px}
+.cm-f input,.cm-f select{font:500 16px var(--sans);color:var(--ink);background:var(--bg);border:1px solid var(--line2);border-radius:10px;padding:11px 13px;width:100%;min-width:0}
+.cm-two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cm-consent{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink2)}
+.cm-consent input{margin-top:3px;accent-color:var(--brand);width:16px;height:16px;flex:none}
+.cm-err{color:var(--warn);font-size:13.5px;font-weight:600;min-height:1em}
+.small{font-size:13.5px;color:var(--muted)}
+@media (max-width:600px){section{padding:44px 0}.cm-two{grid-template-columns:minmax(0,1fr)}}
+</style>
+<script>
+(function(){
+  // One record per person. A person is matched by email OR phone (normalised to +255...).
+  // ONCE types are kept only the first time a person submits them; other types are kept
+  // but linked to the existing person, so the same person never becomes two leads.
+  // In the live site the server (functions/api/lead.js) enforces the same rules for every device.
+  var R=window.RAMANI=window.RAMANI||{};
+  var PK="ramani_people", MK="ramani_me";
+  var ONCE={tool_lead:1,newsletter:1,community_join:1,registration:1,trip_alerts:1,rate_alert:1,freedays_alert:1,partner_review:1,dataroom_request:1,download:"item",download_notify:"item",academy_certificate:"item",importer_survey:1,report_notify:1,meetup_rsvp:"item",meetup_interest:"item"};
+  var THIRD={agent_referral:["client_phone"],bank_referral:["phone"]};
+  function get(k,d){ try{ var v=JSON.parse(localStorage.getItem(k)||"null"); return v==null?d:v; }catch(e){ return (R._m&&R._m[k])||d; } }
+  function put(k,v){ R._m=R._m||{}; R._m[k]=v; try{ if(v==null) localStorage.removeItem(k); else localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+  function phone(p){
+    p=String(p||"").replace(/[^\d+]/g,""); if(p.charAt(0)==="+") p=p.slice(1); if(p.slice(0,2)==="00") p=p.slice(2);
+    if(/^0[67]\d{8}$/.test(p)) p="255"+p.slice(1); else if(/^[67]\d{8}$/.test(p)) p="255"+p;
+    return /^\d{9,15}$/.test(p)?"+"+p:"";
+  }
+  function email(e){ e=String(e||"").trim().toLowerCase(); return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)?e:""; }
+  function keysOf(type,d){
+    var k=[];
+    if(THIRD[type]){ THIRD[type].forEach(function(f){ var p=phone(d[f]); if(p) k.push("p:"+p); }); return k; }
+    var e=email(d.email), p=phone(d.phone||d.whatsapp);
+    if(e) k.push("e:"+e); if(p) k.push("p:"+p);
+    return k;
+  }
+  function action(type,d){ if(THIRD[type]) return type; var o=ONCE[type]; if(!o) return ""; return o==="item"?type+":"+(d.item||""):type; }
+  function load(){ var db=get(PK,null); if(!db||!db.p) db={p:{},i:{},blocked:0}; return db; }
+
+  var toastEl=null, toastT=0;
+  function toast(text){
+    if(!document.body) return;
+    if(!toastEl){
+      toastEl=document.createElement("div"); toastEl.setAttribute("role","status"); toastEl.setAttribute("aria-live","polite");
+      toastEl.style.cssText="position:fixed;left:50%;top:16px;transform:translateX(-50%);z-index:90;max-width:min(92vw,460px);background:var(--deep,#16301b);color:var(--deep-ink,#fff);font:600 14px/1.4 var(--sans,system-ui,sans-serif);padding:12px 16px;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.25);text-align:center";
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent=text; toastEl.hidden=false; clearTimeout(toastT); toastT=setTimeout(function(){ toastEl.hidden=true; },5000);
+  }
+
+  R.people={
+    phone:phone, email:email, toast:toast,
+    me:function(){ return get(MK,null); },
+    forgetMe:function(){ put(MK,null); },
+    clear:function(){ put(PK,null); put(MK,null); },
+    stats:function(){ var db=load(); return {people:Object.keys(db.p).length,blocked:db.blocked||0}; },
+    has:function(type,item){ var me=get(MK,null); if(!me||!me.id) return false; var p=load().p[me.id]; var a=ONCE[type]==="item"?type+":"+(item||""):type; return !!(p&&p.a.indexOf(a)>=0); },
+    register:function(type,d){
+      d=d||{}; var keys=keysOf(type,d); if(!keys.length) return {id:"",isNew:false,duplicate:false};
+      var db=load(), id=null, now=new Date().toISOString();
+      keys.forEach(function(k){ if(!id&&db.i[k]) id=db.i[k]; });
+      keys.forEach(function(k){ var o=db.i[k]; if(o&&o!==id&&db.p[o]){ // email and phone were two records: merge into one
+        var a=db.p[id], b=db.p[o]; b.a.forEach(function(x){ if(a.a.indexOf(x)<0) a.a.push(x); }); if(!a.name) a.name=b.name; if(!a.email) a.email=b.email; if(!a.phone) a.phone=b.phone; if(b.first<a.first) a.first=b.first;
+        for(var j in db.i) if(db.i[j]===o) db.i[j]=id; delete db.p[o]; } });
+      var isNew=!id;
+      if(isNew){ id="c"+Date.now().toString(36)+Math.random().toString(36).slice(2,6); db.p[id]={id:id,first:now,a:[],referred:!!THIRD[type]}; }
+      var p=db.p[id]; keys.forEach(function(k){ if(!db.i[k]) db.i[k]=id; });
+      var nm=THIRD[type]?(d.client||d.customer):d.name;
+      if(nm&&!p.name) p.name=nm;
+      keys.forEach(function(k){ if(k.charAt(0)==="e"&&!p.email) p.email=k.slice(2); if(k.charAt(0)==="p"&&!p.phone) p.phone=k.slice(2); });
+      p.last=now;
+      var act=action(type,d), dup=!!(act&&p.a.indexOf(act)>=0);
+      if(dup) db.blocked=(db.blocked||0)+1; else if(act) p.a.push(act);
+      put(PK,db);
+      if(!THIRD[type]){ var me={id:id}; if(p.name) me.name=p.name; if(p.email) me.email=p.email; if(p.phone) me.phone=p.phone; put(MK,me); }
+      return {id:id,isNew:isNew,duplicate:dup};
+    }
+  };
+})();
+(function(){
+  // Test version: every form submission is also saved to a test inbox in this browser,
+  // so testers can see exactly what Ramani would receive. The Tools home page shows it.
+  var R=window.RAMANI=window.RAMANI||{};
+  if(typeof R.endpoint!=="string") R.endpoint="";
+  var KEY="ramani_test_inbox";
+  function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||"[]")||[]; }catch(e){ return R._mem||[]; } }
+  function save(list){ R._mem=list; try{ localStorage.setItem(KEY,JSON.stringify(list)); }catch(e){} }
+  R.inbox={load:load,save:save,key:KEY};
+  function count(){ var a=document.getElementById("inboxLink"); if(a) a.textContent="Test inbox ("+load().length+")"; }
+  function dupNote(type){ try{ window.dispatchEvent(new CustomEvent("ramani-duplicate",{detail:{type:type}})); }catch(e){} if(R.people) R.people.toast(/referral$/.test(type||"")?"This client has already been referred, so they were not added twice.":"We already have your details, so nothing was added twice."); }
+  R.send=function(type,data,opts){
+    var payload={id:"t"+Date.now().toString(36)+Math.random().toString(36).slice(2,7),type:type,page:(location.pathname.split("/").pop()||"index.html"),hash:location.hash||"",at:new Date().toISOString(),data:data||{}};
+    var reg=R.people?R.people.register(type,payload.data):{};
+    R.lastDuplicate=!!reg.duplicate;
+    if(reg.duplicate){ if(!(opts&&opts.quiet)) dupNote(type); return Promise.resolve({ok:true,test:true,duplicate:true,contact_id:reg.id}); }
+    if(reg.id){ payload.contact_id=reg.id; payload.contact_status=reg.isNew?"new":"existing"; }
+    var list=load(); list.unshift(payload); if(list.length>300) list.length=300; save(list); count();
+    try{ window.dispatchEvent(new CustomEvent("ramani-inbox")); }catch(e){}
+    if(!R.endpoint) return Promise.resolve({ok:true,test:true,contact_id:reg.id||"",contact_status:payload.contact_status||""});
+    try{
+      return fetch(R.endpoint,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload),keepalive:true})
+        .then(function(){return {ok:true};},function(){return {ok:false};});
+    }catch(e){ return Promise.resolve({ok:false}); }
+  };
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",count); else count();
+  window.addEventListener("storage",function(e){ if(e.key===KEY) count(); });
+})();
+</script>
+</head><body>
+<script src="brain/kb.js"></script>
+<script src="brain/core.js"></script>
+<script src="brain/uliza.js" defer></script>
+
+<script src="i18n/sw.js"></script>
+<script src="i18n/engine.js"></script>
+<style id="rg-css">
+.rg{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--bg,#fff) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line,#ddd);font-family:"Plus Jakarta Sans",system-ui,sans-serif}
+.rg-in{max-width:1180px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));height:58px;display:flex;align-items:center;gap:14px}
+.rg a{color:inherit}
+.rg-logo{display:flex;align-items:center;gap:8px;text-decoration:none;font:800 19px/1 "Plus Jakarta Sans",system-ui,sans-serif;letter-spacing:-.03em;color:var(--ink,#142016)}
+.rg-logo svg{width:26px;height:26px}
+.rg-nav{display:flex;align-items:center;gap:2px;margin-left:8px}
+.rg-nav>a,.rg-res{background:none;border:0;text-decoration:none;font:600 14.5px "Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink,#142016);padding:8px 12px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.rg-nav>a:hover,.rg-res:hover,.rg-res[aria-expanded=true]{background:var(--brand-soft,#e6f1e5)}
+.rg-dd{position:relative}
+.rg-menu{position:absolute;top:calc(100% + 8px);left:-8px;width:340px;background:var(--surface,#fff);border:1px solid var(--line,#ddd);border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.18);padding:8px;display:none;z-index:70}
+.rg-menu.open{display:block}
+.rg-menu a,.rg-menu .rg-soon{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;text-decoration:none;padding:10px;border-radius:12px;color:var(--ink,#142016)}
+.rg-menu a:hover,.rg-menu a[aria-current=page]{background:var(--brand-soft,#e6f1e5)}
+.rg-menu .rg-soon{opacity:.7;cursor:default}
+.rg-mi{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:var(--brand-soft,#e6f1e5);color:var(--brand,#388539)}
+.rg-mi svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.rg-menu b{display:block;font-size:15px}
+.rg-menu small{display:block;font-size:13px;color:var(--muted,#56685a);line-height:1.4}
+.rg-menu em{display:inline-block;font:700 10px/1 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;padding:3px 6px;border-radius:5px;margin-left:6px;vertical-align:2px;font-style:normal;background:var(--bg,#f4f7f3);color:var(--muted,#56685a)}
+.rg-sp{flex:1}
+.rg-lang{font:700 13px "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.04em;border:1px solid var(--line,#ddd);background:var(--surface,#fff);color:var(--ink,#142016);border-radius:999px;height:36px;min-width:44px;padding:0 10px;cursor:pointer}
+.rg-lang:hover{border-color:var(--brand,#388539);color:var(--brand,#388539)}
+.rg-cta{background:var(--brand,#388539);color:var(--brand-ink,#fff)!important;text-decoration:none;border-radius:999px;padding:9px 16px;font:700 14px "Plus Jakarta Sans",system-ui,sans-serif;white-space:nowrap}
+@media (max-width:760px){.rg-nav>a{display:none}.rg-nav{margin-left:auto}.rg-sp{display:none}.rg-menu{position:fixed;top:62px;left:16px;right:16px;width:auto;max-height:calc(100vh - 80px);overflow-y:auto}}
+@media (max-width:420px){.rg-cta{display:none}}
+</style>
+<header class="rg"><div class="rg-in">
+<a class="rg-logo" href="index.html#learn" aria-label="Ramani"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#388539"/><path d="M16 7.5c-3.9 0-7 3-7 6.8 0 4.9 7 10.2 7 10.2s7-5.3 7-10.2c0-3.8-3.1-6.8-7-6.8Z" fill="none" stroke="#fff" stroke-width="2.2"/><circle cx="16" cy="14.2" r="2.4" fill="#fde9a8"/></svg>ramani</a>
+<nav class="rg-nav" aria-label="Main">
+<a href="https://www.ramani.io" target="_blank" rel="noopener">Import finance</a>
+<div class="rg-dd"><button type="button" class="rg-res" aria-expanded="false" aria-controls="rgMenu">Resources <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>
+<div class="rg-menu" id="rgMenu">
+<a href="resources.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M4 4h4v16H4zM10 4h4v16h-4z"/><path d="m16 5 3.5-1 2.5 15-3.5 1z"/></svg></span><span><b>Resource library <em>New</em></b><small>Every tool, template, guide and course in one place</small></span></a>
+<a href="tools.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2M8 18h2M12 18h4"/></svg></span><span><b>Tools</b><small>Free calculators, planners and checklists for importers, wholesalers, agents and banks</small></span></a>
+<a href="index.html#learn"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5v-15Z"/><path d="M9 8h7M9 11h5"/></svg></span><span><b>Learn</b><small>Guides, numbers and stories to import with less risk</small></span></a>
+<a href="community.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></span><span><b>Community <em>New</em></b><small>Biashara Tanzania: the online community and monthly meetup for importers</small></span></a>
+<span class="rg-soon" aria-disabled="true"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V10l7-5 7 5v11"/><path d="M9 21v-6h6v6"/></svg></span><span><b>Case studies <em>Coming soon</em></b><small>Traders who grew with Ramani, in their own words</small></span></span>
+<a href="glossary.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4V4Z"/><path d="M8 9h8M8 13h5"/></svg></span><span><b>Glossary <em>New</em></b><small>The words importers use, in Kiswahili and English</small></span></a>
+<a href="downloadables.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></span><span><b>Downloadables <em>New</em></b><small>Checklists, worksheets, import data and webinar recordings</small></span></a>
+<a href="academy.html" aria-current="page"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5-10-5Z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg></span><span><b>Academy <em>New</em></b><small>Free short courses with a certificate to share</small></span></a>
+<a href="state-of-tanzanian-importers-2026.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><span><b>Latest report <em>New</em></b><small>State of Tanzanian Importers 2026: take the survey</small></span></a>
+</div></div>
+<a href="https://www.ramani.io/contact" target="_blank" rel="noopener">Contact</a>
+</nav>
+<span class="rg-sp"></span>
+<button type="button" class="rg-lang" data-noi18n>SW</button>
+<a class="rg-cta" href="https://www.ramani.io/apply/start" target="_blank" rel="noopener">Get started</a>
+</div></header>
+<script>(function(){var b=document.querySelector(".rg-res"),m=document.getElementById("rgMenu");if(!b)return;function s(o){b.setAttribute("aria-expanded",String(o));m.classList.toggle("open",o);}
+b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contains("open"));});document.addEventListener("click",function(e){if(!e.target.closest(".rg-dd"))s(false);});document.addEventListener("keydown",function(e){if(e.key==="Escape")s(false);});})();</script>
+
+<style>
+.hb-wrap{max-width:1120px;margin:0 auto;padding:0 var(--gutr) 0 var(--gut)}
+.hb-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px}
+.hb-grid{display:grid;gap:14px}
+.hb-g2{grid-template-columns:repeat(2,minmax(0,1fr))}.hb-g3{grid-template-columns:repeat(3,minmax(0,1fr))}.hb-g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.hb-ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--brand-soft);color:var(--brand);flex:none}
+.hb-ic svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.hb-pill{display:inline-flex;align-items:center;gap:6px;font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:4px 10px;background:var(--sunk);color:var(--muted)}
+.hb-pill.new{background:var(--accent-soft);color:var(--accent)}
+.hb-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 15px var(--sans);text-decoration:none;border-radius:12px;padding:12px 18px;border:1px solid transparent;cursor:pointer;background:var(--brand);color:var(--brand-ink)}
+.hb-btn:hover{background:var(--brand-deep)}
+.hb-btn.g{background:transparent;color:var(--ink);border-color:var(--line2)}.hb-btn.g:hover{border-color:var(--ink)}
+.hb-btn.sm{padding:9px 14px;font-size:14px;border-radius:10px}
+.hb-btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.hb-acts{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hb-f{display:grid;gap:6px;min-width:0}
+.hb-f label,.hb-f .lb{font-weight:600;font-size:14px}
+.hb-f input,.hb-f select,.hb-f textarea{font:500 16px var(--sans);color:var(--ink);background:var(--bg);border:1px solid var(--line2);border-radius:10px;padding:11px 13px;width:100%;min-width:0}
+.hb-f textarea{min-height:80px;resize:vertical}
+.hb-note{font-size:13.5px;color:var(--muted)}
+.hb-kpi{background:var(--sunk);border-radius:14px;padding:14px 16px;min-width:0}
+.hb-kpi .k{font-size:13px;color:var(--muted);font-weight:600}
+.hb-kpi .v{font:600 clamp(20px,2.4vw,26px)/1.2 var(--mono);letter-spacing:-.02em;margin-top:4px;overflow-wrap:anywhere}
+.hb-kpi .d{font-size:12.5px;color:var(--muted);margin-top:2px}
+.hb-msg{font-size:14px;font-weight:600;color:var(--brand);min-height:1em}
+.hb-err{color:var(--warn);font-size:13.5px;font-weight:600;min-height:1em}
+.hb-sec{padding:40px 0}
+.hb-h2{font-size:clamp(24px,3vw,32px);line-height:1.15;letter-spacing:-.02em;font-weight:800;margin:8px 0 10px}
+.hb-lede{color:var(--muted);font-size:17px;max-width:44rem;margin:0}
+.hb-crumb{font-size:14px;color:var(--muted);margin-bottom:6px}.hb-crumb a{color:var(--brand);text-decoration:none;font-weight:600}
+.hb-back{position:fixed;inset:0;z-index:80;background:rgba(8,20,10,.55);display:grid;place-items:center;padding:16px}
+.hb-modal{background:var(--surface);color:var(--ink);border-radius:18px;padding:24px;width:100%;max-width:440px;max-height:92vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.3)}
+.hb-modal h2{margin:0 0 6px;font-size:22px;font-weight:800;letter-spacing:-.02em}
+.hb-modal p{margin:0 0 14px;color:var(--muted);font-size:14.5px}
+.hb-modal form{display:grid;gap:12px}
+.hb-cons{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--ink2)}
+.hb-cons input{margin-top:3px;accent-color:var(--brand);width:16px;height:16px;flex:none}
+@media (max-width:900px){.hb-g3,.hb-g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){.hb-g2,.hb-g3,.hb-g4{grid-template-columns:minmax(0,1fr)}.hb-card{padding:18px}}
+@media print{.rg,.rn,.hb-noprint,header,nav{display:none!important}body{background:#fff}.hb-card{border:0;padding:0}}
+</style>
+<script src="data/live.js"></script>
+<script>
+(function(){
+  var SW=function(){return document.documentElement.lang==="sw";};
+  function me(){ var P=window.RAMANI&&RAMANI.people; return P?P.me():null; }
+  var back=null, cb=null, ctx="";
+  function build(){
+    back=document.createElement("div"); back.className="hb-back"; back.hidden=true;
+    back.innerHTML='<div class="hb-modal" role="dialog" aria-modal="true" aria-labelledby="hg-t"><h2 id="hg-t"></h2><p id="hg-p"></p>'+
+      '<form novalidate id="hg-f"><div class="hb-f"><label for="hg-name" id="hg-ln"></label><input id="hg-name" autocomplete="name"></div>'+
+      '<div class="hb-f"><label for="hg-phone" id="hg-lp"></label><input id="hg-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+255 7xx xxx xxx"></div>'+
+      '<div class="hb-f"><label for="hg-email" id="hg-le"></label><input id="hg-email" type="email" autocomplete="email"></div>'+
+      '<label class="hb-cons"><input type="checkbox" id="hg-ok"><span id="hg-lc"></span></label>'+
+      '<span class="hb-err" id="hg-err" aria-live="polite"></span>'+
+      '<div class="hb-acts" style="justify-content:space-between"><button type="button" class="hb-btn g sm" id="hg-x"></button><button type="submit" class="hb-btn" id="hg-go"></button></div></form></div>';
+    document.body.appendChild(back);
+    var $=function(i){return document.getElementById(i);};
+    $("hg-x").addEventListener("click",close);
+    back.addEventListener("click",function(e){ if(e.target===back) close(); });
+    back.addEventListener("keydown",function(e){ if(e.key==="Escape") close(); });
+    $("hg-f").addEventListener("submit",function(e){
+      e.preventDefault();
+      var n=$("hg-name").value.trim(), ph=$("hg-phone").value.replace(/[\s()-]/g,""), em=$("hg-email").value.trim().toLowerCase(), err="";
+      if(!n) err=SW()?"Tafadhali andika jina lako.":"Please enter your name.";
+      else if(!/^(\+?255|0)[67]\d{8}$/.test(ph)) err=SW()?"Tafadhali andika namba ya simu ya Tanzania, kwa mfano +255 712 345 678.":"Please enter a Tanzanian phone number, for example +255 712 345 678.";
+      else if(em&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) err=SW()?"Barua pepe si sahihi.":"That email address does not look right.";
+      else if(!$("hg-ok").checked) err=SW()?"Tafadhali kubali tukutumie ulichoomba.":"Please agree so we can send you what you asked for.";
+      $("hg-err").textContent=err; if(err) return;
+      var d={name:n,phone:ph,marketing_consent:true,tools_page:ctx,language:SW()?"sw":"en"}; if(em) d.email=em;
+      if(window.RAMANI&&RAMANI.send) RAMANI.send("tool_lead",d,{quiet:true});
+      var f=cb; back.hidden=true; cb=null; if(f) f(me()||{name:n,phone:ph,email:em});
+    });
+  }
+  function close(){ if(back) back.hidden=true; cb=null; }
+  window.RGate={
+    me:me,
+    need:function(context,title,fn){
+      var m=me(); if(m&&m.phone){ fn(m); return; }
+      if(!back) build(); ctx=context||""; cb=fn;
+      var $=function(i){return document.getElementById(i);};
+      $("hg-t").textContent=title||(SW()?"Karibu":"One quick step");
+      $("hg-p").textContent=SW()?"Ni bure. Acha jina na namba yako ya simu mara moja tu, hatutakuuliza tena kwenye zana yoyote ya Ramani.":"It is free. Leave your name and phone number once and we will not ask again on any Ramani tool.";
+      $("hg-ln").textContent=SW()?"Jina kamili":"Full name"; $("hg-lp").textContent=SW()?"Namba ya simu":"Phone number"; $("hg-le").textContent=SW()?"Barua pepe (si lazima)":"Email (optional)";
+      $("hg-lc").textContent=SW()?"Ndiyo, Ramani inaweza kunitumia nilichoomba pamoja na vidokezo na zana mpya kwa SMS na barua pepe. Naweza kujiondoa wakati wowote.":"Yes, Ramani may send me what I asked for, plus tips and new tools, by SMS and email. I can unsubscribe at any time.";
+      $("hg-x").textContent=SW()?"Si sasa":"Not now"; $("hg-go").textContent=SW()?"Endelea":"Continue"; $("hg-err").textContent="";
+      if(m){ if(m.name) $("hg-name").value=m.name; if(m.email) $("hg-email").value=m.email; }
+      back.hidden=false; $("hg-name").focus();
+    }
+  };
+  // Save a file through the viewer's downloads permission, else a normal browser download.
+  window.RSave=function(name,data,type,done){
+    done=done||function(){};
+    var fallback=function(){ try{ var b=data instanceof Blob?data:new Blob([data],{type:type||"text/plain"}); var a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download=name; document.body.appendChild(a); a.click(); a.remove(); done(true); }catch(e){ done(false); } };
+    var p=window.claude&&window.claude.use?window.claude.use("downloads"):Promise.resolve(null);
+    p.then(function(dl){ if(!dl) return fallback(); dl.save({filename:name,data:data}).then(function(){ done(true); },function(e){ if(e&&e.code==="declined") done(false); else fallback(); }); },fallback);
+  };
+})();
+</script>
+<style>
+.ac-hero{padding:48px 0 18px}
+.ac-hero h1{font-size:clamp(30px,4.4vw,48px);line-height:1.06;letter-spacing:-.035em;font-weight:800;margin:10px 0 12px;text-wrap:balance}
+.ac-hero p{color:var(--muted);font-size:18px;margin:0;max-width:44rem}
+.ac-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:20px}
+.ac-steps div{background:var(--sunk);border-radius:14px;padding:14px;font-size:14.5px}.ac-steps b{display:block;margin-bottom:2px}
+.ac-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.ac-c{display:flex;flex-direction:column;gap:10px}
+.ac-c h3{margin:0;font-size:20px;letter-spacing:-.01em;line-height:1.25}
+.ac-c p{margin:0;color:var(--muted);font-size:14.5px}
+.ac-c .meta{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);font-weight:600;margin-top:auto}
+.ac-pg{height:7px;border-radius:9px;background:var(--sunk);overflow:hidden}.ac-pg i{display:block;height:100%;background:var(--brand)}
+.ac-view{display:grid;grid-template-columns:260px minmax(0,1fr);gap:20px;align-items:start}
+.ac-side{position:sticky;top:76px;display:grid;gap:6px}
+.ac-side a{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--ink);padding:10px 12px;border-radius:12px;font-weight:600;font-size:14.5px}
+.ac-side a:hover{background:var(--sunk)}.ac-side a[aria-current=page]{background:var(--brand-soft);color:var(--brand)}
+.ac-side a .d{width:22px;height:22px;border-radius:50%;border:2px solid var(--line2);flex:none;display:grid;place-items:center;font:700 11px var(--mono);color:var(--muted)}
+.ac-side a.done .d{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+.ac-side a.lock{opacity:.55}
+.ac-body h2{font-size:clamp(24px,3vw,32px);letter-spacing:-.02em;margin:6px 0 14px;line-height:1.2}
+.ac-body p.para{font-size:17px;line-height:1.65;margin:0 0 14px;max-width:42rem}
+.ac-q{border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+.ac-q legend{font-weight:700;padding:0 4px;font-size:16px}
+.ac-q label{display:flex;gap:10px;align-items:flex-start;padding:8px 6px;border-radius:10px;cursor:pointer;font-size:15px}
+.ac-q label:hover{background:var(--sunk)}
+.ac-q input{accent-color:var(--brand);margin-top:4px;width:17px;height:17px;flex:none}
+.ac-q.ok{border-color:var(--brand)}.ac-q.no{border-color:var(--warn)}
+.ac-cert canvas{width:100%;height:auto;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.15);display:block}
+@media (max-width:900px){.ac-cards,.ac-steps{grid-template-columns:minmax(0,1fr)}.ac-view{grid-template-columns:minmax(0,1fr)}.ac-side{position:static;grid-template-columns:repeat(3,minmax(0,1fr))}.ac-side a{padding:8px;font-size:13px}}
+@media (max-width:480px){.ac-side{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<main>
+<div id="acHome">
+<section class="ac-hero"><div class="hb-wrap">
+  <div class="hb-crumb"><a href="resources.html">Resource library</a> / Courses</div>
+  <span class="cm-eb">Free courses</span>
+  <h1>Ramani Import Academy</h1>
+  <p>Short free courses for Tanzanian importers, in Kiswahili and English. Read four short lessons, pass a five question quiz and get a certificate you can share on WhatsApp Status and LinkedIn.</p>
+  <div class="ac-steps">
+    <div><b>1. Learn</b>Four lessons, about 3 minutes each, with the Ramani tool for each step.</div>
+    <div><b>2. Pass the quiz</b>Get at least 4 of 5 questions right. You can try again.</div>
+    <div><b>3. Share your certificate</b>Download it with your name and show buyers and lenders what you know.</div>
+  </div>
+</div></section>
+<section class="hb-sec" style="padding-top:8px"><div class="hb-wrap"><div class="ac-cards" id="acCards" data-noi18n></div>
+  <p class="hb-note" style="margin-top:16px">Want to learn with other importers? The courses are also inside <a href="community.html" style="color:var(--brand);font-weight:700">Biashara Tanzania</a>.</p>
+</div></section>
+</div>
+<section class="hb-sec" id="acCourse" hidden><div class="hb-wrap">
+  <div class="hb-crumb"><a href="#" id="acBack">All courses</a> / <span id="acCt" data-noi18n></span></div>
+  <div class="ac-view" style="margin-top:12px">
+    <nav class="ac-side" id="acSide" aria-label="Course" data-noi18n></nav>
+    <div class="hb-card ac-body" id="acBody" data-noi18n></div>
+  </div>
+</div></section>
+</main>
+<script>
+(function(){
+  var SW=function(){return document.documentElement.lang==="sw";}, $=function(i){return document.getElementById(i);}, L=function(o){return SW()?o[1]:o[0];};
+  var C=[{"id": "first", "level": ["Beginner", "Mwanzo"], "title": ["Your first import from China", "Uagizaji wako wa kwanza kutoka China"], "desc": ["Choose what to import, find and check a supplier, pay safely and ship with a cargo agent.", "Chagua cha kuagiza, tafuta na mkague msambazaji, lipa kwa usalama na safirisha kupitia wakala wa mizigo."], "lessons": [[["Choose what to import", "Chagua cha kuagiza"], [["Start with goods you already sell or know well. You understand the price your buyers pay, how fast they sell and what good quality looks like.", "Anza na bidhaa unazouza tayari au unazozifahamu vizuri. Unajua bei wanunuzi wako wanalipa, zinavyouzika haraka na ubora mzuri unavyoonekana."], ["Check the rules before you choose. Many goods need a TBS certificate of conformity, and food, cosmetics and medicines need registration and permits before they ship.", "Angalia sheria kabla ya kuchagua. Bidhaa nyingi zinahitaji cheti cha ulinganifu cha TBS, na vyakula, vipodozi na dawa vinahitaji usajili na vibali kabla ya kusafirishwa."], ["Start small. A first order of USD 2,000 to 5,000 in a shared load teaches you the whole process without risking all your cash.", "Anza kidogo. Oda ya kwanza ya USD 2,000 hadi 5,000 kwenye mzigo wa pamoja inakufundisha mchakato wote bila kuhatarisha pesa zako zote."]], "import-permit-finder.html"], [["Find and check a supplier", "Tafuta na mkague msambazaji"], [["On Alibaba and 1688 you will find factories and trading companies. Factories are often cheaper; trading companies are easier for small, mixed orders.", "Kwenye Alibaba na 1688 utapata viwanda na kampuni za biashara. Viwanda mara nyingi ni nafuu; kampuni za biashara ni rahisi kwa oda ndogo zenye bidhaa mchanganyiko."], ["Before you pay, do a video call, ask to see the factory and your product, check the business licence and ask for customers you can call in East Africa.", "Kabla ya kulipa, piga simu ya video, omba kuona kiwanda na bidhaa yako, kagua leseni ya biashara na uombe wateja wa Afrika Mashariki unaoweza kuwapigia."], ["Always order samples first, and compare at least three suppliers on price, minimum order, production time and payment terms.", "Daima agiza sampuli kwanza, na linganisha angalau wasambazaji watatu kwa bei, oda ya chini, muda wa uzalishaji na masharti ya malipo."]], "chatgpt-prompts-for-importers.html"], [["Pay safely", "Lipa kwa usalama"], [["Agree a deposit of about 30% before production and the balance after you see photos or an inspection report.", "Kubalianeni malipo ya awali ya takriban 30% kabla ya uzalishaji na salio baada ya kuona picha au ripoti ya ukaguzi."], ["Pay by bank transfer from your business account where you can. The SWIFT receipt is your proof for customs and for any future finance.", "Lipa kwa uhamisho wa benki kutoka akaunti ya biashara inapowezekana. Risiti ya SWIFT ni ushahidi wako kwa forodha na kwa ufadhili wowote wa baadaye."], ["If a supplier sends new bank details by email, stop. Call someone you know at the supplier to confirm before you pay anything.", "Msambazaji akituma taarifa mpya za benki kwa barua pepe, simama. Mpigie mtu unayemjua kwa msambazaji kuthibitisha kabla ya kulipa chochote."]], "pay-your-supplier.html"], [["Ship with a cargo agent", "Safirisha kupitia wakala wa mizigo"], [["For a first order, a cargo agent in Kariakoo can collect your goods in China, ship them in a shared container and deliver them in Dar es Salaam.", "Kwa oda ya kwanza, wakala wa mizigo Kariakoo anaweza kuchukua bidhaa zako China, kuzisafirisha kwenye kontena la pamoja na kuzifikisha Dar es Salaam."], ["Agree the price per cubic metre in writing, what it includes (duty, clearing, delivery) and the expected date. Get a receipt and a tracking number.", "Kubalianeni kwa maandishi bei kwa mita moja ya ujazo, kilichojumuishwa (ushuru, kutoa mzigo, kufikisha) na tarehe inayotarajiwa. Pata risiti na namba ya kufuatilia."], ["Work out your landed cost per piece before you order, so you know your selling price and margin.", "Kokotoa gharama ya kipande kimoja kikifika kabla ya kuagiza, ili ujue bei ya kuuza na faida."]], "landed-cost-calculator.html"]], "quiz": [[["What is the safest size for a first import?", "Ukubwa upi ni salama zaidi kwa uagizaji wa kwanza?"], [["A full 40ft container", "Kontena zima la futi 40"], ["A small order in a shared load", "Oda ndogo kwenye mzigo wa pamoja"], ["Whatever the supplier suggests", "Chochote msambazaji anachopendekeza"]], 1], [["What should you do before paying a new supplier?", "Ufanye nini kabla ya kumlipa msambazaji mpya?"], [["Video call, check the licence and order samples", "Simu ya video, kagua leseni na agiza sampuli"], ["Pay quickly to get a better price", "Lipa haraka upate bei nzuri"], ["Nothing, Alibaba checks everyone", "Hakuna, Alibaba inamkagua kila mtu"]], 0], [["A usual payment split with a supplier is:", "Mgawanyo wa kawaida wa malipo kwa msambazaji ni:"], [["100% before production", "100% kabla ya uzalishaji"], ["About 30% deposit and 70% after inspection", "Takriban 30% awali na 70% baada ya ukaguzi"], ["Nothing until the goods reach Dar", "Hakuna hadi bidhaa zifike Dar"]], 1], [["The supplier emails new bank details. What do you do?", "Msambazaji anatuma taarifa mpya za benki kwa barua pepe. Unafanya nini?"], [["Pay the new account", "Lipa akaunti mpya"], ["Call someone you know at the supplier to confirm first", "Mpigie mtu unayemjua kwa msambazaji kuthibitisha kwanza"], ["Ask a friend which account to use", "Muulize rafiki akaunti ipi itumike"]], 1], [["Why work out the landed cost before ordering?", "Kwa nini ukokotoe gharama ya mzigo kufika kabla ya kuagiza?"], [["To know your selling price and margin", "Kujua bei ya kuuza na faida"], ["Because TRA asks for it", "Kwa sababu TRA inaiomba"], ["It is not needed", "Haihitajiki"]], 0]]}, {"id": "container", "level": ["Intermediate", "Kati"], "title": ["From shared loads to a full container", "Kutoka mzigo wa pamoja hadi kontena zima"], "desc": ["When a full container pays, how to plan the order backwards and how to fund your first container.", "Lini kontena zima linalipa, jinsi ya kupanga oda kurudi nyuma na jinsi ya kugharamia kontena lako la kwanza."], "lessons": [[["When a full container pays", "Lini kontena zima linalipa"], [["In a shared load you pay per cubic metre. In a full container you pay one price for the whole box, whatever you put in it.", "Kwenye mzigo wa pamoja unalipa kwa mita moja ya ujazo. Kwenye kontena zima unalipa bei moja kwa kontena lote, bila kujali unaweka nini."], ["A 20ft container holds about 28 cubic metres of cartons and a 40ft about 58. When your order passes about 15 cubic metres, a 20ft is often cheaper per carton.", "Kontena la futi 20 linabeba takriban mita za ujazo 28 za katoni na la futi 40 takriban 58. Oda yako ikizidi takriban mita za ujazo 15, futi 20 mara nyingi ni nafuu kwa kila katoni."], ["Heavy goods such as tiles and steel fill the weight limit before the space, so check both.", "Bidhaa nzito kama vigae na chuma hujaza kikomo cha uzito kabla ya nafasi, hivyo angalia vyote viwili."]], "container-load-calculator.html"], [["Plan the order backwards", "Panga oda kurudi nyuma"], [["Start from the day you need stock in the shop and count back: transport, clearing, sea time, waiting for a ship, production and the deposit.", "Anza na siku unayohitaji stoku dukani na uhesabu kurudi nyuma: usafiri, kutoa mzigo, safari ya baharini, kusubiri meli, uzalishaji na malipo ya awali."], ["From China, plan about 75 days from deposit to shop. Add three weeks around Chinese New Year and a week for Golden Week in October.", "Kutoka China, panga takriban siku 75 kuanzia malipo ya awali hadi dukani. Ongeza wiki tatu wakati wa Mwaka Mpya wa China na wiki moja kwa Golden Week mwezi Oktoba."], ["Dar port is busiest from November to January. Order early for the Christmas and January school season.", "Bandari ya Dar ina msongamano zaidi kuanzia Novemba hadi Januari. Agiza mapema kwa msimu wa Krismasi na shule wa Januari."]], "import-order-timeline.html"], [["The cash a container needs", "Pesa zinazohitajika kwa kontena"], [["A container needs cash at four moments: the deposit, the balance before loading, freight and duty when it arrives, and transport to your store.", "Kontena linahitaji pesa nyakati nne: malipo ya awali, salio kabla ya kupakia, usafirishaji na ushuru likifika, na usafiri hadi stoo yako."], ["Duty, VAT and port charges often add 30% to 50% to the goods value. Know this number before you order.", "Ushuru, VAT na gharama za bandari mara nyingi huongeza 30% hadi 50% kwenye thamani ya bidhaa. Jua namba hii kabla ya kuagiza."], ["Pay port charges quickly. Every day after the free days adds storage and demurrage.", "Lipa gharama za bandari haraka. Kila siku baada ya siku za bure inaongeza gharama za kuhifadhi na demurrage."]], "import-plan-generator.html"], [["Funding your first container", "Kugharamia kontena lako la kwanza"], [["Most importers mix sources: their own cash, deposits from regular buyers who pre order, supplier credit after a few orders, and import finance.", "Waagizaji wengi huchanganya vyanzo: pesa zao, malipo ya awali kutoka kwa wanunuzi wa kudumu wanaoagiza mapema, mkopo wa msambazaji baada ya oda kadhaa, na ufadhili wa uagizaji."], ["Lenders look for a registered business, a TIN, sales going through a bank account, records and a history of imports in your own name.", "Wakopeshaji huangalia biashara iliyosajiliwa, TIN, mauzo yanayopita kwenye akaunti ya benki, kumbukumbu na historia ya uagizaji kwa jina lako."], ["Ramani can pay your supplier and let you repay as you sell, subject to assessment. Check how ready you are with the readiness score.", "Ramani inaweza kumlipa msambazaji wako na ukarejesha unapouza, kwa kutegemea tathmini. Angalia utayari wako kwa kipimo cha utayari."]], "import-finance-readiness-score.html"]], "quiz": [[["About how many cubic metres does a 20ft container hold?", "Kontena la futi 20 linabeba takriban mita za ujazo ngapi?"], [["10", "10"], ["28", "28"], ["58", "58"]], 1], [["When does a full container often become cheaper per carton?", "Kontena zima mara nyingi linakuwa nafuu kwa kila katoni lini?"], [["Above about 15 cubic metres", "Juu ya takriban mita za ujazo 15"], ["Above 2 cubic metres", "Juu ya mita za ujazo 2"], ["Never", "Kamwe"]], 0], [["How should you plan an order?", "Unapaswa kupanga oda vipi?"], [["Backwards from the day you need stock", "Kurudi nyuma kuanzia siku unayohitaji stoku"], ["Forwards from when the supplier is free", "Mbele kuanzia msambazaji anapopata nafasi"], ["Order and hope", "Agiza na utumaini"]], 0], [["Duty, VAT and port charges often add:", "Ushuru, VAT na gharama za bandari mara nyingi huongeza:"], [["About 5%", "Takriban 5%"], ["30% to 50% of the goods value", "30% hadi 50% ya thamani ya bidhaa"], ["Nothing for small traders", "Hakuna kwa wafanyabiashara wadogo"]], 1], [["What helps most when you ask for import finance?", "Nini husaidia zaidi unapoomba ufadhili wa uagizaji?"], [["Sales through a bank account and records", "Mauzo kupitia akaunti ya benki na kumbukumbu"], ["Only cash sales", "Mauzo ya taslimu tu"], ["A big shop sign", "Bango kubwa la duka"]], 0]]}, {"id": "clearing", "level": ["All levels", "Ngazi zote"], "title": ["Clearing without surprises", "Kutoa mzigo bila mshangao"], "desc": ["Documents, duty, port charges and free days, and how to work with your clearing agent.", "Nyaraka, ushuru, gharama za bandari na siku za bure, na jinsi ya kufanya kazi na wakala wako wa forodha."], "lessons": [[["The documents you need", "Nyaraka unazohitaji"], [["Every shipment needs a commercial invoice and packing list in your business name with your TIN, the bill of lading, a certificate of origin and marine insurance from a Tanzanian insurer.", "Kila mzigo unahitaji invoice ya biashara na packing list kwa jina la biashara yako na TIN, bill of lading, cheti cha asili na bima ya baharini kutoka kampuni ya Tanzania."], ["Many goods also need a TBS certificate of conformity before loading, and some need permits from TMDA, TPHPA or TCRA.", "Bidhaa nyingi pia zinahitaji cheti cha ulinganifu cha TBS kabla ya kupakia, na baadhi zinahitaji vibali kutoka TMDA, TPHPA au TCRA."], ["Check that names, quantities and values match on every document. Small mismatches cause most clearing delays.", "Hakikisha majina, idadi na thamani zinalingana kwenye kila hati. Tofauti ndogo husababisha ucheleweshaji mwingi wa kutoa mzigo."]], "import-document-check.html"], [["Duty and taxes", "Ushuru na kodi"], [["Customs value is usually the CIF value: goods, freight and insurance, changed to TZS at the customs exchange rate.", "Thamani ya forodha kwa kawaida ni thamani ya CIF: bidhaa, usafirishaji na bima, ikibadilishwa kuwa TZS kwa kiwango cha forodha."], ["Import duty follows the EAC tariff bands of 0%, 10%, 25% and 35%, set by the HS code of your goods. Some goods also pay excise.", "Ushuru wa uagizaji unafuata viwango vya EAC vya 0%, 10%, 25% na 35%, kulingana na HS code ya bidhaa zako. Baadhi ya bidhaa hulipa pia ushuru wa bidhaa (excise)."], ["VAT of 18% is charged on the customs value plus duty. If you are VAT registered you can claim it back.", "VAT ya 18% inatozwa juu ya thamani ya forodha pamoja na ushuru. Ukiwa umesajiliwa VAT unaweza kuidai tena."]], "clearing-cost-calculator.html"], [["Port charges and free days", "Gharama za bandari na siku za bure"], [["The shipping line gives you a few free days to return the container. After that you pay demurrage every day.", "Laini ya meli inakupa siku chache za bure kurudisha kontena. Baada ya hapo unalipa demurrage kila siku."], ["The port or container depot also charges storage after its own free days. The two charges add up quickly.", "Bandari au bohari ya kontena pia hutoza gharama za kuhifadhi baada ya siku zake za bure. Gharama hizi mbili huongezeka haraka."], ["To avoid them, send documents to your agent before the ship arrives and have the cash for duty ready.", "Ili kuziepuka, mtumie wakala wako nyaraka kabla meli haijafika na uwe na pesa za ushuru tayari."]], "demurrage-calculator.html"], [["Working with your clearing agent", "Kufanya kazi na wakala wako wa forodha"], [["Only a licensed clearing agent can lodge your declaration in TANCIS. Ask to see their licence.", "Ni wakala wa forodha mwenye leseni pekee anayeweza kuwasilisha tamko lako kwenye TANCIS. Omba kuona leseni yao."], ["Get a written quote that separates taxes paid to TRA from the agent's own fee, port and shipping line charges.", "Pata nukuu ya maandishi inayotenganisha kodi zinazolipwa TRA na ada ya wakala, gharama za bandari na za laini ya meli."], ["Pay taxes to TRA through the official payment control number, and keep every receipt.", "Lipa kodi kwa TRA kupitia namba rasmi ya malipo (control number), na tunza kila risiti."]], "clearing-quote-builder.html"]], "quiz": [[["Whose name and TIN should be on the commercial invoice?", "Jina na TIN ya nani viwe kwenye invoice ya biashara?"], [["Your business", "Biashara yako"], ["The cargo agent", "Wakala wa mizigo"], ["The shipping line", "Laini ya meli"]], 0], [["Customs value is usually:", "Thamani ya forodha kwa kawaida ni:"], [["The price you sell at", "Bei unayouzia"], ["Goods, freight and insurance (CIF)", "Bidhaa, usafirishaji na bima (CIF)"], ["Only the goods price", "Bei ya bidhaa tu"]], 1], [["Import VAT in Tanzania is:", "VAT ya uagizaji Tanzania ni:"], [["10%", "10%"], ["18%", "18%"], ["25%", "25%"]], 1], [["What is demurrage?", "Demurrage ni nini?"], [["A daily charge for keeping the container after the free days", "Gharama ya kila siku ya kukaa na kontena baada ya siku za bure"], ["A TRA tax", "Kodi ya TRA"], ["The agent's fee", "Ada ya wakala"]], 0], [["How should you pay taxes to TRA?", "Unapaswa kulipa kodi kwa TRA vipi?"], [["Cash to the agent's staff", "Taslimu kwa mfanyakazi wa wakala"], ["Through the official control number", "Kupitia namba rasmi ya malipo (control number)"], ["Any way the agent says", "Njia yoyote wakala anayosema"]], 1]]}];
+  var K="rg_academy", S={}; try{ S=JSON.parse(localStorage.getItem(K)||"{}")||{}; }catch(e){}
+  function save(){ try{ localStorage.setItem(K,JSON.stringify(S)); }catch(e){} }
+  function st(id){ return S[id]=S[id]||{l:[],q:0,cert:""}; }
+  function course(id){ for(var i=0;i<C.length;i++) if(C[i].id===id) return C[i]; return null; }
+  function pct(c){ var s=st(c.id); return Math.round(((s.l.length)+(s.q>=4?1:0))/(c.lessons.length+1)*100); }
+  function el(t,c,x){ var e=document.createElement(t); if(c) e.className=c; if(x!=null) e.textContent=x; return e; }
+  function home(){
+    $("acHome").hidden=false; $("acCourse").hidden=true; var w=$("acCards"); w.replaceChildren();
+    C.forEach(function(c){ var a=el("article","hb-card ac-c"); var p=pct(c), s=st(c.id);
+      a.appendChild(el("span","hb-pill",L(c.level))); a.appendChild(el("h3",null,L(c.title))); a.appendChild(el("p",null,L(c.desc)));
+      var m=el("div","meta"); m.appendChild(el("span",null,c.lessons.length+(SW()?" masomo · maswali 5":" lessons · 5 question quiz"))); m.appendChild(el("span",null,s.cert?(SW()?"Cheti ✓":"Certificate ✓"):p+"%")); a.appendChild(m);
+      var g=el("div","ac-pg"), i=el("i"); i.style.width=p+"%"; g.appendChild(i); a.appendChild(g);
+      var b=el("a","hb-btn",p?(SW()?"Endelea":"Continue"):(SW()?"Anza kozi":"Start course")); b.href="#"+c.id+"/"+Math.min(c.lessons.length,s.l.length+1); if(s.q>=4) b.href="#"+c.id+"/cert"; a.appendChild(b); w.appendChild(a); });
+  }
+  function side(c,cur){
+    var n=$("acSide"); n.replaceChildren(); var s=st(c.id);
+    c.lessons.forEach(function(l,i){ var a=el("a",s.l.indexOf(i+1)>=0?"done":""); a.href="#"+c.id+"/"+(i+1); if(cur===String(i+1)) a.setAttribute("aria-current","page");
+      a.appendChild(el("span","d",s.l.indexOf(i+1)>=0?"✓":String(i+1))); a.appendChild(el("span",null,L(l[0]))); n.appendChild(a); });
+    var q=el("a",s.q>=4?"done":""); q.href="#"+c.id+"/quiz"; if(cur==="quiz") q.setAttribute("aria-current","page"); q.appendChild(el("span","d",s.q>=4?"✓":"?")); q.appendChild(el("span",null,SW()?"Maswali":"Quiz")); n.appendChild(q);
+    var ce=el("a",(s.cert?"done":"")+(s.q>=4?"":" lock")); ce.href="#"+c.id+"/cert"; if(cur==="cert") ce.setAttribute("aria-current","page"); ce.appendChild(el("span","d",s.cert?"✓":"★")); ce.appendChild(el("span",null,SW()?"Cheti":"Certificate")); n.appendChild(ce);
+  }
+  function lesson(c,n){
+    var l=c.lessons[n-1], b=$("acBody"), s=st(c.id); b.replaceChildren();
+    if(s.l.indexOf(n)<0){ s.l.push(n); save(); }
+    b.appendChild(el("span","cm-eb",(SW()?"Somo ":"Lesson ")+n+(SW()?" kati ya ":" of ")+c.lessons.length)); b.appendChild(el("h2",null,L(l[0])));
+    l[1].forEach(function(p){ b.appendChild(el("p","para",L(p))); });
+    var acts=el("div","hb-acts"); acts.style.marginTop="18px";
+    if(l[2]){ var t=el("a","hb-btn g",SW()?"Fungua zana inayohusiana":"Open the related tool"); t.href=l[2]; acts.appendChild(t); }
+    var nx=el("a","hb-btn",n<c.lessons.length?(SW()?"Somo linalofuata →":"Next lesson →"):(SW()?"Fanya maswali →":"Take the quiz →")); nx.href="#"+c.id+"/"+(n<c.lessons.length?n+1:"quiz"); acts.appendChild(nx); b.appendChild(acts);
+    if(window.rtrack) rtrack("tool_used",{tool:"academy",course:c.id,lesson:n});
+  }
+  function quiz(c){
+    var b=$("acBody"); b.replaceChildren(); b.appendChild(el("span","cm-eb",SW()?"Maswali":"Quiz")); b.appendChild(el("h2",null,SW()?"Jibu maswali 5. Unahitaji angalau 4 sahihi.":"Answer 5 questions. You need at least 4 right."));
+    var f=el("form"); f.noValidate=true;
+    c.quiz.forEach(function(q,i){ var fs=el("fieldset","ac-q"); fs.appendChild(el("legend",null,(i+1)+". "+L(q[0])));
+      q[1].forEach(function(o,k){ var lb=el("label"), r=el("input"); r.type="radio"; r.name="q"+i; r.value=String(k); lb.appendChild(r); lb.appendChild(el("span",null,L(o))); fs.appendChild(lb); }); f.appendChild(fs); });
+    var msg=el("p","hb-msg"); var go=el("button","hb-btn",SW()?"Angalia majibu":"Check my answers"); go.type="submit";
+    f.appendChild(go); f.appendChild(msg); b.appendChild(f);
+    f.addEventListener("submit",function(e){ e.preventDefault(); var right=0, miss=0;
+      c.quiz.forEach(function(q,i){ var v=f.querySelector('input[name="q'+i+'"]:checked'), fs=f.querySelectorAll(".ac-q")[i]; fs.className="ac-q"; if(!v){ miss++; return; } if(+v.value===q[2]){ right++; fs.className="ac-q ok"; } else fs.className="ac-q no"; });
+      if(miss){ msg.style.color="var(--warn)"; msg.textContent=SW()?"Tafadhali jibu maswali yote.":"Please answer every question."; return; }
+      var s=st(c.id); s.q=Math.max(s.q,right); save(); side(c,"quiz");
+      if(right>=4){ msg.style.color="var(--brand)"; msg.textContent=(SW()?"Hongera! Umepata ":"Well done! You got ")+right+(SW()?" kati ya 5. Pata cheti chako.":" of 5. Get your certificate."); var a=el("a","hb-btn",SW()?"Pata cheti changu →":"Get my certificate →"); a.href="#"+c.id+"/cert"; a.style.marginLeft="10px"; go.after(a); }
+      else { msg.style.color="var(--warn)"; msg.textContent=(SW()?"Umepata ":"You got ")+right+(SW()?" kati ya 5. Soma masomo tena ujaribu tena.":" of 5. Read the lessons again and try once more."); }
+    });
+  }
+  function draw(cv,c,name,id){
+    var x=cv.getContext("2d"), W=cv.width, H=cv.height, dark="#16211a", green="#388539";
+    x.fillStyle="#fbfaf6"; x.fillRect(0,0,W,H); x.strokeStyle=green; x.lineWidth=14; x.strokeRect(40,40,W-80,H-80); x.strokeStyle="#d98a1c"; x.lineWidth=3; x.strokeRect(70,70,W-140,H-140);
+    x.fillStyle=green; x.beginPath(); x.roundRect?x.roundRect(W/2-34,120,68,68,16):x.rect(W/2-34,120,68,68); x.fill();
+    x.fillStyle="#fff"; x.beginPath(); x.arc(W/2,150,15,0,Math.PI*2); x.lineWidth=5; x.strokeStyle="#fff"; x.stroke();
+    x.textAlign="center"; x.fillStyle=dark; x.font="800 30px 'Plus Jakarta Sans', Arial"; x.fillText("RAMANI IMPORT ACADEMY",W/2,250);
+    x.fillStyle="#5f6d63"; x.font="500 30px 'Plus Jakarta Sans', Arial"; x.fillText(SW()?"Cheti cha kukamilisha kozi":"Certificate of completion",W/2,330);
+    x.fillStyle=dark; x.font="800 74px 'Plus Jakarta Sans', Arial"; x.fillText(name,W/2,460,W-240);
+    x.fillStyle="#5f6d63"; x.font="500 30px 'Plus Jakarta Sans', Arial"; x.fillText(SW()?"amekamilisha kozi":"has completed the course",W/2,540);
+    x.fillStyle=green; x.font="800 50px 'Plus Jakarta Sans', Arial"; x.fillText(L(c.title),W/2,620,W-240);
+    var d=new Date().toLocaleDateString(SW()?"sw-TZ":"en-GB",{day:"numeric",month:"long",year:"numeric"});
+    x.fillStyle=dark; x.font="600 26px 'IBM Plex Mono', monospace"; x.fillText(d+"   ·   "+id,W/2,760);
+    x.fillStyle="#5f6d63"; x.font="500 24px 'Plus Jakarta Sans', Arial"; x.fillText("ramani.io · Biashara Tanzania",W/2,1000);
+  }
+  function cert(c){
+    var b=$("acBody"), s=st(c.id); b.replaceChildren(); b.appendChild(el("span","cm-eb",SW()?"Cheti":"Certificate"));
+    if(s.q<4){ b.appendChild(el("h2",null,SW()?"Faulu maswali kwanza":"Pass the quiz first")); b.appendChild(el("p","para",SW()?"Pata angalau maswali 4 kati ya 5 ili kufungua cheti chako.":"Get at least 4 of 5 questions right to unlock your certificate.")); var a=el("a","hb-btn",SW()?"Fanya maswali":"Take the quiz"); a.href="#"+c.id+"/quiz"; b.appendChild(a); return; }
+    b.appendChild(el("h2",null,L(c.title)));
+    var box=el("div","ac-cert"), cv=el("canvas"); cv.width=1600; cv.height=1130; box.appendChild(cv); var msg=el("p","hb-msg");
+    var acts=el("div","hb-acts"); acts.style.marginTop="16px";
+    var dl=el("button","hb-btn",SW()?"Pakua cheti":"Download certificate"); dl.type="button"; var wa=el("button","hb-btn g",SW()?"Shiriki kwa WhatsApp":"Share on WhatsApp"); wa.type="button";
+    acts.appendChild(dl); acts.appendChild(wa); b.appendChild(el("p","para",SW()?"Weka jina lako kwenye cheti. Tutakuomba jina na namba ya simu mara moja tu.":"Put your name on the certificate. We ask for your name and phone number once only."));
+    b.appendChild(box); b.appendChild(acts); b.appendChild(msg);
+    function ready(m){ if(!s.cert){ s.cert="RA-"+c.id.slice(0,3).toUpperCase()+"-"+Date.now().toString(36).toUpperCase().slice(-6); save(); if(window.RAMANI) RAMANI.send("academy_certificate",{item:c.id,course:c.title[0],quiz_score:s.q,certificate_id:s.cert,name:m.name,phone:m.phone},{quiet:true}); side(c,"cert"); }
+      draw(cv,c,m.name||"",s.cert); return m; }
+    var m0=RGate.me(); if(m0&&m0.name&&s.cert) draw(cv,c,m0.name,s.cert); else draw(cv,c,SW()?"Jina lako":"Your name",s.cert||"RA-XXX");
+    dl.addEventListener("click",function(){ RGate.need("academy",SW()?"Pata cheti chako":"Get your certificate",function(m){ ready(m); cv.toBlob(function(bl){ RSave("ramani-certificate-"+c.id+".png",bl,"image/png",function(ok){ msg.textContent=ok?(SW()?"Cheti kimehifadhiwa. Kiweke kwenye WhatsApp Status!":"Certificate saved. Post it on your WhatsApp Status!"):(SW()?"Upakuaji umesitishwa.":"Download cancelled."); }); },"image/png"); }); });
+    wa.addEventListener("click",function(){ RGate.need("academy",SW()?"Pata cheti chako":"Get your certificate",function(m){ ready(m); var t=(SW()?"Nimekamilisha kozi \""+L(c.title)+"\" kwenye Ramani Import Academy. Ni bure kwa waagizaji wa Tanzania: ":"I completed \""+L(c.title)+"\" at Ramani Import Academy. Free for Tanzanian importers: ")+location.href.split("#")[0]; window.open("https://wa.me/?text="+encodeURIComponent(t),"_blank","noopener"); }); });
+  }
+  function route(){
+    var h=(location.hash||"").slice(1).split("/"), c=course(h[0]);
+    if(!c){ home(); return; }
+    $("acHome").hidden=true; $("acCourse").hidden=false; $("acCt").textContent=L(c.title);
+    var p=h[1]||"1"; side(c,p);
+    if(p==="quiz") quiz(c); else if(p==="cert") cert(c); else lesson(c,Math.min(c.lessons.length,Math.max(1,+p||1)));
+    side(c,p); window.scrollTo({top:0});
+  }
+  $("acBack").addEventListener("click",function(e){ e.preventDefault(); history.pushState(null,"",location.pathname+location.search); route(); });
+  window.addEventListener("hashchange",route); window.addEventListener("rg-lang",route);
+  route();
+})();
+</script>
+
+<style id="rn-css">
+.rn{max-width:1120px;margin:8px auto 48px;padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink,#142016)}
+.rn-card{background:var(--surface,#fff);border:1px solid var(--line,#d7e1d6);border-radius:18px;padding:24px;display:grid;grid-template-columns:1fr 1.1fr;gap:22px;align-items:center}
+.rn-card h2{margin:6px 0 6px;font-size:24px;font-weight:800;letter-spacing:-.02em}
+.rn-card p{margin:0;color:var(--muted,#56685a)}
+.rn-eb{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand,#388539);font-weight:700}
+.rn form{display:grid;grid-template-columns:1fr 1fr auto;gap:8px}
+.rn input{font:500 16px "Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink,#142016);background:var(--bg,#f4f7f3);border:1px solid var(--line,#d7e1d6);border-radius:10px;padding:11px 13px;width:100%;min-width:0}
+.rn button{font:700 15px "Plus Jakarta Sans",system-ui,sans-serif;border:0;border-radius:10px;padding:11px 18px;cursor:pointer;background:var(--brand,#388539);color:var(--brand-ink,#fff)}
+.rn small{display:block;grid-column:1/-1;font-size:12.5px;color:var(--muted,#56685a)}
+.rn small a{color:var(--brand,#388539)}
+.rn .rn-msg{grid-column:1/-1;font-size:14px;font-weight:600;min-height:1em}
+@media (max-width:760px){.rn-card{grid-template-columns:1fr;padding:20px}.rn form{grid-template-columns:1fr}}
+</style>
+<section class="rn" aria-labelledby="rn-t"><div class="rn-card">
+<div><span class="rn-eb">Newsletter</span><h2 id="rn-t">Get our newsletter</h2><p>The dollar and yuan rate, what moved at the port and one import tip you can use this week. Every Monday, free.</p></div>
+<form id="rn-f" novalidate>
+<input id="rn-name" type="text" autocomplete="name" placeholder="Your name" aria-label="Your name" required>
+<input id="rn-email" type="email" autocomplete="email" placeholder="Your email" aria-label="Your email" required>
+<button type="submit">Subscribe</button>
+<span class="rn-msg" id="rn-msg" aria-live="polite"></span>
+<small>By subscribing you agree to receive our newsletter. Unsubscribe at any time. <a href="https://www.ramani.io/privacy-policy" target="_blank" rel="noopener">Privacy</a></small>
+</form></div></section>
+<script>(function(){var f=document.getElementById("rn-f");if(!f)return;f.addEventListener("submit",function(e){e.preventDefault();
+var n=document.getElementById("rn-name").value.trim(),m=document.getElementById("rn-email").value.trim().toLowerCase(),o=document.getElementById("rn-msg");
+if(!n){o.style.color="var(--warn,#a35208)";o.textContent="Please enter your name.";return;}
+if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)){o.style.color="var(--warn,#a35208)";o.textContent="Please enter a valid email address.";return;}
+var done=function(r){o.style.color="var(--brand,#388539)";o.textContent=(r&&r.duplicate)?"This email is already subscribed. You will keep getting the newsletter every Monday.":"Thank you, "+n+". Our next newsletter reaches your inbox on Monday. Test version: saved to the test inbox only.";f.reset();};
+if(window.RAMANI&&window.RAMANI.send)window.RAMANI.send("newsletter",{list:"Ramani newsletter",name:n,email:m,marketing_consent:true}).then(done,done);else done();});})();</script>
+</body></html>
