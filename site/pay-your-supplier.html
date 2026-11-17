@@ -1,0 +1,362 @@
+<!doctype html><html lang="en"><head><script src="/config.js"></script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<title>Ways to Pay Your Supplier Abroad from Tanzania, Compared | Ramani</title>
+<style>
+:root{--bg:#fbfaf6;--surface:#ffffff;--sunk:#f3f1ea;--ink:#16211a;--ink2:#2c3a31;--muted:#5f6d63;--line:#e4e1d6;--line2:#d4d0c2;
+--brand:#388539;--brand-deep:#24602a;--brand-ink:#ffffff;--brand-soft:#e7f1e3;--accent:#d98a1c;--accent-soft:#fbefd9;--warn:#b5432c;--warn-soft:#f8e3dd;
+--sans:"Plus Jakarta Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;--gut:max(16px,env(safe-area-inset-left,0px));--gutr:max(16px,env(safe-area-inset-right,0px))}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1511;--surface:#161e19;--sunk:#1c2620;--ink:#e9eee8;--ink2:#cdd6cf;--muted:#9aa89e;--line:#27322b;--line2:#33413a;--brand:#6cc06d;--brand-deep:#8fd38f;--brand-ink:#0b140d;--brand-soft:#1d3121;--accent:#efb054;--accent-soft:#33291a;--warn:#ef8a74;--warn-soft:#3a221d}}
+:root[data-theme="dark"]{--bg:#0f1511;--surface:#161e19;--sunk:#1c2620;--ink:#e9eee8;--ink2:#cdd6cf;--muted:#9aa89e;--line:#27322b;--line2:#33413a;--brand:#6cc06d;--brand-deep:#8fd38f;--brand-ink:#0b140d;--brand-soft:#1d3121;--accent:#efb054;--accent-soft:#33291a;--warn:#ef8a74;--warn-soft:#3a221d}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:4px}
+.cm-wrap{max-width:1120px;margin:0 auto;padding:0 var(--gutr) 0 var(--gut)}
+.cm-eb{font:600 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--brand)}
+.cm-btn{display:inline-flex;align-items:center;gap:8px;font:700 15px var(--sans);text-decoration:none;border-radius:999px;padding:13px 22px;border:1px solid transparent;cursor:pointer}
+.cm-btn.p{background:var(--brand);color:var(--brand-ink)}.cm-btn.p:hover{background:var(--brand-deep)}
+.cm-btn.g{background:transparent;color:var(--ink);border-color:var(--line2)}.cm-btn.g:hover{border-color:var(--ink)}
+.cm-btn.sm{padding:9px 16px;font-size:14px}
+.cm-link{color:var(--brand);font-weight:700;text-decoration:none;background:none;border:0;padding:0;font:inherit;font-weight:700;cursor:pointer}.cm-link:hover{text-decoration:underline}
+section{padding:64px 0}
+h2.cm-h{font-size:clamp(26px,3.4vw,38px);line-height:1.15;letter-spacing:-.025em;font-weight:800;margin:10px 0 12px}
+.cm-lede{color:var(--muted);font-size:17px;max-width:42rem;margin:0}
+.pg-hero{padding:52px 0 28px}
+.pg-hero h1{font-size:clamp(32px,4.6vw,52px);line-height:1.06;letter-spacing:-.035em;font-weight:800;margin:12px 0 14px;text-wrap:balance}
+.pg-hero p{color:var(--muted);font-size:18px;margin:0;max-width:42rem}
+.cm-f{display:grid;gap:5px;min-width:0}
+.cm-f label,.cm-f .lb{font-weight:600;font-size:14px}
+.cm-f input,.cm-f select{font:500 16px var(--sans);color:var(--ink);background:var(--bg);border:1px solid var(--line2);border-radius:10px;padding:11px 13px;width:100%;min-width:0}
+.cm-two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cm-consent{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink2)}
+.cm-consent input{margin-top:3px;accent-color:var(--brand);width:16px;height:16px;flex:none}
+.cm-err{color:var(--warn);font-size:13.5px;font-weight:600;min-height:1em}
+.small{font-size:13.5px;color:var(--muted)}
+@media (max-width:600px){section{padding:44px 0}.cm-two{grid-template-columns:minmax(0,1fr)}}
+</style>
+<script>
+(function(){
+  // One record per person. A person is matched by email OR phone (normalised to +255...).
+  // ONCE types are kept only the first time a person submits them; other types are kept
+  // but linked to the existing person, so the same person never becomes two leads.
+  // In the live site the server (functions/api/lead.js) enforces the same rules for every device.
+  var R=window.RAMANI=window.RAMANI||{};
+  var PK="ramani_people", MK="ramani_me";
+  var ONCE={tool_lead:1,newsletter:1,community_join:1,registration:1,trip_alerts:1,rate_alert:1,freedays_alert:1,partner_review:1,dataroom_request:1,download:"item",download_notify:"item",academy_certificate:"item",importer_survey:1,report_notify:1,meetup_rsvp:"item",meetup_interest:"item"};
+  var THIRD={agent_referral:["client_phone"],bank_referral:["phone"]};
+  function get(k,d){ try{ var v=JSON.parse(localStorage.getItem(k)||"null"); return v==null?d:v; }catch(e){ return (R._m&&R._m[k])||d; } }
+  function put(k,v){ R._m=R._m||{}; R._m[k]=v; try{ if(v==null) localStorage.removeItem(k); else localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+  function phone(p){
+    p=String(p||"").replace(/[^\d+]/g,""); if(p.charAt(0)==="+") p=p.slice(1); if(p.slice(0,2)==="00") p=p.slice(2);
+    if(/^0[67]\d{8}$/.test(p)) p="255"+p.slice(1); else if(/^[67]\d{8}$/.test(p)) p="255"+p;
+    return /^\d{9,15}$/.test(p)?"+"+p:"";
+  }
+  function email(e){ e=String(e||"").trim().toLowerCase(); return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)?e:""; }
+  function keysOf(type,d){
+    var k=[];
+    if(THIRD[type]){ THIRD[type].forEach(function(f){ var p=phone(d[f]); if(p) k.push("p:"+p); }); return k; }
+    var e=email(d.email), p=phone(d.phone||d.whatsapp);
+    if(e) k.push("e:"+e); if(p) k.push("p:"+p);
+    return k;
+  }
+  function action(type,d){ if(THIRD[type]) return type; var o=ONCE[type]; if(!o) return ""; return o==="item"?type+":"+(d.item||""):type; }
+  function load(){ var db=get(PK,null); if(!db||!db.p) db={p:{},i:{},blocked:0}; return db; }
+
+  var toastEl=null, toastT=0;
+  function toast(text){
+    if(!document.body) return;
+    if(!toastEl){
+      toastEl=document.createElement("div"); toastEl.setAttribute("role","status"); toastEl.setAttribute("aria-live","polite");
+      toastEl.style.cssText="position:fixed;left:50%;top:16px;transform:translateX(-50%);z-index:90;max-width:min(92vw,460px);background:var(--deep,#16301b);color:var(--deep-ink,#fff);font:600 14px/1.4 var(--sans,system-ui,sans-serif);padding:12px 16px;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.25);text-align:center";
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent=text; toastEl.hidden=false; clearTimeout(toastT); toastT=setTimeout(function(){ toastEl.hidden=true; },5000);
+  }
+
+  R.people={
+    phone:phone, email:email, toast:toast,
+    me:function(){ return get(MK,null); },
+    forgetMe:function(){ put(MK,null); },
+    clear:function(){ put(PK,null); put(MK,null); },
+    stats:function(){ var db=load(); return {people:Object.keys(db.p).length,blocked:db.blocked||0}; },
+    has:function(type,item){ var me=get(MK,null); if(!me||!me.id) return false; var p=load().p[me.id]; var a=ONCE[type]==="item"?type+":"+(item||""):type; return !!(p&&p.a.indexOf(a)>=0); },
+    register:function(type,d){
+      d=d||{}; var keys=keysOf(type,d); if(!keys.length) return {id:"",isNew:false,duplicate:false};
+      var db=load(), id=null, now=new Date().toISOString();
+      keys.forEach(function(k){ if(!id&&db.i[k]) id=db.i[k]; });
+      keys.forEach(function(k){ var o=db.i[k]; if(o&&o!==id&&db.p[o]){ // email and phone were two records: merge into one
+        var a=db.p[id], b=db.p[o]; b.a.forEach(function(x){ if(a.a.indexOf(x)<0) a.a.push(x); }); if(!a.name) a.name=b.name; if(!a.email) a.email=b.email; if(!a.phone) a.phone=b.phone; if(b.first<a.first) a.first=b.first;
+        for(var j in db.i) if(db.i[j]===o) db.i[j]=id; delete db.p[o]; } });
+      var isNew=!id;
+      if(isNew){ id="c"+Date.now().toString(36)+Math.random().toString(36).slice(2,6); db.p[id]={id:id,first:now,a:[],referred:!!THIRD[type]}; }
+      var p=db.p[id]; keys.forEach(function(k){ if(!db.i[k]) db.i[k]=id; });
+      var nm=THIRD[type]?(d.client||d.customer):d.name;
+      if(nm&&!p.name) p.name=nm;
+      keys.forEach(function(k){ if(k.charAt(0)==="e"&&!p.email) p.email=k.slice(2); if(k.charAt(0)==="p"&&!p.phone) p.phone=k.slice(2); });
+      p.last=now;
+      var act=action(type,d), dup=!!(act&&p.a.indexOf(act)>=0);
+      if(dup) db.blocked=(db.blocked||0)+1; else if(act) p.a.push(act);
+      put(PK,db);
+      if(!THIRD[type]){ var me={id:id}; if(p.name) me.name=p.name; if(p.email) me.email=p.email; if(p.phone) me.phone=p.phone; put(MK,me); }
+      return {id:id,isNew:isNew,duplicate:dup};
+    }
+  };
+})();
+(function(){
+  // Test version: every form submission is also saved to a test inbox in this browser,
+  // so testers can see exactly what Ramani would receive. The Tools home page shows it.
+  var R=window.RAMANI=window.RAMANI||{};
+  if(typeof R.endpoint!=="string") R.endpoint="";
+  var KEY="ramani_test_inbox";
+  function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||"[]")||[]; }catch(e){ return R._mem||[]; } }
+  function save(list){ R._mem=list; try{ localStorage.setItem(KEY,JSON.stringify(list)); }catch(e){} }
+  R.inbox={load:load,save:save,key:KEY};
+  function count(){ var a=document.getElementById("inboxLink"); if(a) a.textContent="Test inbox ("+load().length+")"; }
+  function dupNote(type){ try{ window.dispatchEvent(new CustomEvent("ramani-duplicate",{detail:{type:type}})); }catch(e){} if(R.people) R.people.toast(/referral$/.test(type||"")?"This client has already been referred, so they were not added twice.":"We already have your details, so nothing was added twice."); }
+  R.send=function(type,data,opts){
+    var payload={id:"t"+Date.now().toString(36)+Math.random().toString(36).slice(2,7),type:type,page:(location.pathname.split("/").pop()||"index.html"),hash:location.hash||"",at:new Date().toISOString(),data:data||{}};
+    var reg=R.people?R.people.register(type,payload.data):{};
+    R.lastDuplicate=!!reg.duplicate;
+    if(reg.duplicate){ if(!(opts&&opts.quiet)) dupNote(type); return Promise.resolve({ok:true,test:true,duplicate:true,contact_id:reg.id}); }
+    if(reg.id){ payload.contact_id=reg.id; payload.contact_status=reg.isNew?"new":"existing"; }
+    var list=load(); list.unshift(payload); if(list.length>300) list.length=300; save(list); count();
+    try{ window.dispatchEvent(new CustomEvent("ramani-inbox")); }catch(e){}
+    if(!R.endpoint) return Promise.resolve({ok:true,test:true,contact_id:reg.id||"",contact_status:payload.contact_status||""});
+    try{
+      return fetch(R.endpoint,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload),keepalive:true})
+        .then(function(){return {ok:true};},function(){return {ok:false};});
+    }catch(e){ return Promise.resolve({ok:false}); }
+  };
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",count); else count();
+  window.addEventListener("storage",function(e){ if(e.key===KEY) count(); });
+})();
+</script>
+</head><body>
+<script src="brain/kb.js"></script>
+<script src="brain/core.js"></script>
+<script src="brain/uliza.js" defer></script>
+
+<script src="i18n/sw.js"></script>
+<script src="i18n/engine.js"></script>
+<style id="rg-css">
+.rg{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--bg,#fff) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line,#ddd);font-family:"Plus Jakarta Sans",system-ui,sans-serif}
+.rg-in{max-width:1180px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));height:58px;display:flex;align-items:center;gap:14px}
+.rg a{color:inherit}
+.rg-logo{display:flex;align-items:center;gap:8px;text-decoration:none;font:800 19px/1 "Plus Jakarta Sans",system-ui,sans-serif;letter-spacing:-.03em;color:var(--ink,#142016)}
+.rg-logo svg{width:26px;height:26px}
+.rg-nav{display:flex;align-items:center;gap:2px;margin-left:8px}
+.rg-nav>a,.rg-res{background:none;border:0;text-decoration:none;font:600 14.5px "Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink,#142016);padding:8px 12px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.rg-nav>a:hover,.rg-res:hover,.rg-res[aria-expanded=true]{background:var(--brand-soft,#e6f1e5)}
+.rg-dd{position:relative}
+.rg-menu{position:absolute;top:calc(100% + 8px);left:-8px;width:340px;background:var(--surface,#fff);border:1px solid var(--line,#ddd);border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.18);padding:8px;display:none;z-index:70}
+.rg-menu.open{display:block}
+.rg-menu a,.rg-menu .rg-soon{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;text-decoration:none;padding:10px;border-radius:12px;color:var(--ink,#142016)}
+.rg-menu a:hover,.rg-menu a[aria-current=page]{background:var(--brand-soft,#e6f1e5)}
+.rg-menu .rg-soon{opacity:.7;cursor:default}
+.rg-mi{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:var(--brand-soft,#e6f1e5);color:var(--brand,#388539)}
+.rg-mi svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.rg-menu b{display:block;font-size:15px}
+.rg-menu small{display:block;font-size:13px;color:var(--muted,#56685a);line-height:1.4}
+.rg-menu em{display:inline-block;font:700 10px/1 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;padding:3px 6px;border-radius:5px;margin-left:6px;vertical-align:2px;font-style:normal;background:var(--bg,#f4f7f3);color:var(--muted,#56685a)}
+.rg-sp{flex:1}
+.rg-lang{font:700 13px "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.04em;border:1px solid var(--line,#ddd);background:var(--surface,#fff);color:var(--ink,#142016);border-radius:999px;height:36px;min-width:44px;padding:0 10px;cursor:pointer}
+.rg-lang:hover{border-color:var(--brand,#388539);color:var(--brand,#388539)}
+.rg-cta{background:var(--brand,#388539);color:var(--brand-ink,#fff)!important;text-decoration:none;border-radius:999px;padding:9px 16px;font:700 14px "Plus Jakarta Sans",system-ui,sans-serif;white-space:nowrap}
+@media (max-width:760px){.rg-nav>a{display:none}.rg-nav{margin-left:auto}.rg-sp{display:none}.rg-menu{position:fixed;top:62px;left:16px;right:16px;width:auto;max-height:calc(100vh - 80px);overflow-y:auto}}
+@media (max-width:420px){.rg-cta{display:none}}
+</style>
+<header class="rg"><div class="rg-in">
+<a class="rg-logo" href="index.html#learn" aria-label="Ramani"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#388539"/><path d="M16 7.5c-3.9 0-7 3-7 6.8 0 4.9 7 10.2 7 10.2s7-5.3 7-10.2c0-3.8-3.1-6.8-7-6.8Z" fill="none" stroke="#fff" stroke-width="2.2"/><circle cx="16" cy="14.2" r="2.4" fill="#fde9a8"/></svg>ramani</a>
+<nav class="rg-nav" aria-label="Main">
+<a href="https://www.ramani.io" target="_blank" rel="noopener">Import finance</a>
+<div class="rg-dd"><button type="button" class="rg-res" aria-expanded="false" aria-controls="rgMenu">Resources <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>
+<div class="rg-menu" id="rgMenu">
+<a href="resources.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M4 4h4v16H4zM10 4h4v16h-4z"/><path d="m16 5 3.5-1 2.5 15-3.5 1z"/></svg></span><span><b>Resource library <em>New</em></b><small>Every tool, template, guide and course in one place</small></span></a>
+<a href="tools.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2M8 18h2M12 18h4"/></svg></span><span><b>Tools</b><small>Free calculators, planners and checklists for importers, wholesalers, agents and banks</small></span></a>
+<a href="index.html#learn"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5v-15Z"/><path d="M9 8h7M9 11h5"/></svg></span><span><b>Learn</b><small>Guides, numbers and stories to import with less risk</small></span></a>
+<a href="community.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></span><span><b>Community <em>New</em></b><small>Biashara Tanzania: the online community and monthly meetup for importers</small></span></a>
+<span class="rg-soon" aria-disabled="true"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V10l7-5 7 5v11"/><path d="M9 21v-6h6v6"/></svg></span><span><b>Case studies <em>Coming soon</em></b><small>Traders who grew with Ramani, in their own words</small></span></span>
+<a href="glossary.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4V4Z"/><path d="M8 9h8M8 13h5"/></svg></span><span><b>Glossary <em>New</em></b><small>The words importers use, in Kiswahili and English</small></span></a>
+<a href="downloadables.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></span><span><b>Downloadables <em>New</em></b><small>Checklists, worksheets, import data and webinar recordings</small></span></a>
+<a href="academy.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5-10-5Z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg></span><span><b>Academy <em>New</em></b><small>Free short courses with a certificate to share</small></span></a>
+<a href="state-of-tanzanian-importers-2026.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><span><b>Latest report <em>New</em></b><small>State of Tanzanian Importers 2026: take the survey</small></span></a>
+</div></div>
+<a href="https://www.ramani.io/contact" target="_blank" rel="noopener">Contact</a>
+</nav>
+<span class="rg-sp"></span>
+<button type="button" class="rg-lang" data-noi18n>SW</button>
+<a class="rg-cta" href="https://www.ramani.io/apply/start" target="_blank" rel="noopener">Get started</a>
+</div></header>
+<script>(function(){var b=document.querySelector(".rg-res"),m=document.getElementById("rgMenu");if(!b)return;function s(o){b.setAttribute("aria-expanded",String(o));m.classList.toggle("open",o);}
+b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contains("open"));});document.addEventListener("click",function(e){if(!e.target.closest(".rg-dd"))s(false);});document.addEventListener("keydown",function(e){if(e.key==="Escape")s(false);});})();</script>
+
+<style>
+.hb-wrap{max-width:1120px;margin:0 auto;padding:0 var(--gutr) 0 var(--gut)}
+.hb-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px}
+.hb-grid{display:grid;gap:14px}
+.hb-g2{grid-template-columns:repeat(2,minmax(0,1fr))}.hb-g3{grid-template-columns:repeat(3,minmax(0,1fr))}.hb-g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.hb-ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--brand-soft);color:var(--brand);flex:none}
+.hb-ic svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.hb-pill{display:inline-flex;align-items:center;gap:6px;font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:4px 10px;background:var(--sunk);color:var(--muted)}
+.hb-pill.new{background:var(--accent-soft);color:var(--accent)}
+.hb-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 15px var(--sans);text-decoration:none;border-radius:12px;padding:12px 18px;border:1px solid transparent;cursor:pointer;background:var(--brand);color:var(--brand-ink)}
+.hb-btn:hover{background:var(--brand-deep)}
+.hb-btn.g{background:transparent;color:var(--ink);border-color:var(--line2)}.hb-btn.g:hover{border-color:var(--ink)}
+.hb-btn.sm{padding:9px 14px;font-size:14px;border-radius:10px}
+.hb-btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.hb-acts{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hb-f{display:grid;gap:6px;min-width:0}
+.hb-f label,.hb-f .lb{font-weight:600;font-size:14px}
+.hb-f input,.hb-f select,.hb-f textarea{font:500 16px var(--sans);color:var(--ink);background:var(--bg);border:1px solid var(--line2);border-radius:10px;padding:11px 13px;width:100%;min-width:0}
+.hb-f textarea{min-height:80px;resize:vertical}
+.hb-note{font-size:13.5px;color:var(--muted)}
+.hb-kpi{background:var(--sunk);border-radius:14px;padding:14px 16px;min-width:0}
+.hb-kpi .k{font-size:13px;color:var(--muted);font-weight:600}
+.hb-kpi .v{font:600 clamp(20px,2.4vw,26px)/1.2 var(--mono);letter-spacing:-.02em;margin-top:4px;overflow-wrap:anywhere}
+.hb-kpi .d{font-size:12.5px;color:var(--muted);margin-top:2px}
+.hb-msg{font-size:14px;font-weight:600;color:var(--brand);min-height:1em}
+.hb-err{color:var(--warn);font-size:13.5px;font-weight:600;min-height:1em}
+.hb-sec{padding:40px 0}
+.hb-h2{font-size:clamp(24px,3vw,32px);line-height:1.15;letter-spacing:-.02em;font-weight:800;margin:8px 0 10px}
+.hb-lede{color:var(--muted);font-size:17px;max-width:44rem;margin:0}
+.hb-crumb{font-size:14px;color:var(--muted);margin-bottom:6px}.hb-crumb a{color:var(--brand);text-decoration:none;font-weight:600}
+.hb-back{position:fixed;inset:0;z-index:80;background:rgba(8,20,10,.55);display:grid;place-items:center;padding:16px}
+.hb-modal{background:var(--surface);color:var(--ink);border-radius:18px;padding:24px;width:100%;max-width:440px;max-height:92vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.3)}
+.hb-modal h2{margin:0 0 6px;font-size:22px;font-weight:800;letter-spacing:-.02em}
+.hb-modal p{margin:0 0 14px;color:var(--muted);font-size:14.5px}
+.hb-modal form{display:grid;gap:12px}
+.hb-cons{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--ink2)}
+.hb-cons input{margin-top:3px;accent-color:var(--brand);width:16px;height:16px;flex:none}
+@media (max-width:900px){.hb-g3,.hb-g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){.hb-g2,.hb-g3,.hb-g4{grid-template-columns:minmax(0,1fr)}.hb-card{padding:18px}}
+@media print{.rg,.rn,.hb-noprint,header,nav{display:none!important}body{background:#fff}.hb-card{border:0;padding:0}}
+</style>
+<script src="data/live.js"></script>
+<script>
+(function(){
+  var SW=function(){return document.documentElement.lang==="sw";};
+  function me(){ var P=window.RAMANI&&RAMANI.people; return P?P.me():null; }
+  var back=null, cb=null, ctx="";
+  function build(){
+    back=document.createElement("div"); back.className="hb-back"; back.hidden=true;
+    back.innerHTML='<div class="hb-modal" role="dialog" aria-modal="true" aria-labelledby="hg-t"><h2 id="hg-t"></h2><p id="hg-p"></p>'+
+      '<form novalidate id="hg-f"><div class="hb-f"><label for="hg-name" id="hg-ln"></label><input id="hg-name" autocomplete="name"></div>'+
+      '<div class="hb-f"><label for="hg-phone" id="hg-lp"></label><input id="hg-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+255 7xx xxx xxx"></div>'+
+      '<div class="hb-f"><label for="hg-email" id="hg-le"></label><input id="hg-email" type="email" autocomplete="email"></div>'+
+      '<label class="hb-cons"><input type="checkbox" id="hg-ok"><span id="hg-lc"></span></label>'+
+      '<span class="hb-err" id="hg-err" aria-live="polite"></span>'+
+      '<div class="hb-acts" style="justify-content:space-between"><button type="button" class="hb-btn g sm" id="hg-x"></button><button type="submit" class="hb-btn" id="hg-go"></button></div></form></div>';
+    document.body.appendChild(back);
+    var $=function(i){return document.getElementById(i);};
+    $("hg-x").addEventListener("click",close);
+    back.addEventListener("click",function(e){ if(e.target===back) close(); });
+    back.addEventListener("keydown",function(e){ if(e.key==="Escape") close(); });
+    $("hg-f").addEventListener("submit",function(e){
+      e.preventDefault();
+      var n=$("hg-name").value.trim(), ph=$("hg-phone").value.replace(/[\s()-]/g,""), em=$("hg-email").value.trim().toLowerCase(), err="";
+      if(!n) err=SW()?"Tafadhali andika jina lako.":"Please enter your name.";
+      else if(!/^(\+?255|0)[67]\d{8}$/.test(ph)) err=SW()?"Tafadhali andika namba ya simu ya Tanzania, kwa mfano +255 712 345 678.":"Please enter a Tanzanian phone number, for example +255 712 345 678.";
+      else if(em&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) err=SW()?"Barua pepe si sahihi.":"That email address does not look right.";
+      else if(!$("hg-ok").checked) err=SW()?"Tafadhali kubali tukutumie ulichoomba.":"Please agree so we can send you what you asked for.";
+      $("hg-err").textContent=err; if(err) return;
+      var d={name:n,phone:ph,marketing_consent:true,tools_page:ctx,language:SW()?"sw":"en"}; if(em) d.email=em;
+      if(window.RAMANI&&RAMANI.send) RAMANI.send("tool_lead",d,{quiet:true});
+      var f=cb; back.hidden=true; cb=null; if(f) f(me()||{name:n,phone:ph,email:em});
+    });
+  }
+  function close(){ if(back) back.hidden=true; cb=null; }
+  window.RGate={
+    me:me,
+    need:function(context,title,fn){
+      var m=me(); if(m&&m.phone){ fn(m); return; }
+      if(!back) build(); ctx=context||""; cb=fn;
+      var $=function(i){return document.getElementById(i);};
+      $("hg-t").textContent=title||(SW()?"Karibu":"One quick step");
+      $("hg-p").textContent=SW()?"Ni bure. Acha jina na namba yako ya simu mara moja tu, hatutakuuliza tena kwenye zana yoyote ya Ramani.":"It is free. Leave your name and phone number once and we will not ask again on any Ramani tool.";
+      $("hg-ln").textContent=SW()?"Jina kamili":"Full name"; $("hg-lp").textContent=SW()?"Namba ya simu":"Phone number"; $("hg-le").textContent=SW()?"Barua pepe (si lazima)":"Email (optional)";
+      $("hg-lc").textContent=SW()?"Ndiyo, Ramani inaweza kunitumia nilichoomba pamoja na vidokezo na zana mpya kwa SMS na barua pepe. Naweza kujiondoa wakati wowote.":"Yes, Ramani may send me what I asked for, plus tips and new tools, by SMS and email. I can unsubscribe at any time.";
+      $("hg-x").textContent=SW()?"Si sasa":"Not now"; $("hg-go").textContent=SW()?"Endelea":"Continue"; $("hg-err").textContent="";
+      if(m){ if(m.name) $("hg-name").value=m.name; if(m.email) $("hg-email").value=m.email; }
+      back.hidden=false; $("hg-name").focus();
+    }
+  };
+  // Save a file through the viewer's downloads permission, else a normal browser download.
+  window.RSave=function(name,data,type,done){
+    done=done||function(){};
+    var fallback=function(){ try{ var b=data instanceof Blob?data:new Blob([data],{type:type||"text/plain"}); var a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download=name; document.body.appendChild(a); a.click(); a.remove(); done(true); }catch(e){ done(false); } };
+    var p=window.claude&&window.claude.use?window.claude.use("downloads"):Promise.resolve(null);
+    p.then(function(dl){ if(!dl) return fallback(); dl.save({filename:name,data:data}).then(function(){ done(true); },function(e){ if(e&&e.code==="declined") done(false); else fallback(); }); },fallback);
+  };
+})();
+</script>
+<style>
+.py-hero{padding:48px 0 18px}
+.py-hero h1{font-size:clamp(30px,4.4vw,48px);line-height:1.06;letter-spacing:-.035em;font-weight:800;margin:10px 0 12px;text-wrap:balance}
+.py-hero p{color:var(--muted);font-size:18px;margin:0;max-width:44rem}
+.py-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.py-c h3{margin:0;font-size:18px;letter-spacing:-.01em;line-height:1.3}
+.py-c.ram{border-color:var(--brand);background:linear-gradient(var(--brand-soft),var(--surface) 140px)}
+.py-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:10px}
+.py-dots{display:flex;gap:4px;flex:none;margin-top:6px}.py-dots i{width:10px;height:10px;border-radius:50%;background:var(--line2)}.py-dots i.on{background:var(--brand)}
+.py-c dl{margin:0;display:grid;gap:4px}
+.py-c dt{font:600 11.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+.py-c dd{margin:0;font-size:14.5px}
+.py-key{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--muted);margin:14px 0 18px}
+.py-safe{margin:0;padding-left:20px;display:grid;gap:10px;font-size:15.5px}
+.py-two{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}
+@media (max-width:960px){.py-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.py-two{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:620px){.py-grid{grid-template-columns:minmax(0,1fr)}}
+</style>
+<main>
+<section class="py-hero"><div class="hb-wrap">
+  <div class="hb-crumb"><a href="resources.html">Resource library</a> / Pay</div>
+  <span class="cm-eb">Guide</span>
+  <h1>Ways to pay your supplier, compared</h1>
+  <p>Six ways Tanzanian importers pay suppliers abroad, side by side: how fast, what it costs, what protects you and what proof you keep for TRA and lenders.</p>
+</div></section>
+<section class="hb-sec" style="padding-top:6px"><div class="hb-wrap">
+  <div class="py-key"><span class="py-dots" aria-label="3 of 3"><i class="on"></i><i class="on"></i><i class="on"></i></span>Protection if something goes wrong: more green dots means more protection.</div>
+  <div class="py-grid"><article class="hb-card py-c" id="m-bank"><div class="py-top"><h3>Bank transfer (TT) from your business account</h3><span class="py-dots" aria-label="3 of 3"><i class="on"></i><i class="on"></i><i class="on"></i></span></div><dl><dt>How it works</dt><dd>Your bank sends dollars or yuan to the supplier&#x27;s bank through SWIFT.</dd><dt>Speed</dt><dd>1 to 3 working days</dd><dt>Cost</dt><dd>A bank fee plus the bank&#x27;s exchange rate margin. Ask for both before you pay.</dd><dt>If something goes wrong</dt><dd>Hard to reverse once sent, so check the supplier first. The SWIFT receipt lets your bank trace the payment.</dd><dt>Proof for TRA and lenders</dt><dd>Strong. SWIFT proof matches your customs value and helps when you apply for finance.</dd><dt>Best for</dt><dd>Most orders, once you trust the supplier.</dd></dl></article><article class="hb-card py-c" id="m-lc"><div class="py-top"><h3>Letter of credit (LC)</h3><span class="py-dots" aria-label="3 of 3"><i class="on"></i><i class="on"></i><i class="on"></i></span></div><dl><dt>How it works</dt><dd>Your bank promises to pay the supplier only when the agreed shipping documents arrive.</dd><dt>Speed</dt><dd>1 to 2 weeks to set up</dd><dt>Cost</dt><dd>The highest: opening and handling fees, and the bank may ask for security.</dd><dt>If something goes wrong</dt><dd>Strong. Money is released only against the documents you agreed.</dd><dt>Proof for TRA and lenders</dt><dd>Strong.</dd><dt>Best for</dt><dd>Large orders and new suppliers.</dd></dl></article><article class="hb-card py-c" id="m-platform"><div class="py-top"><h3>Online platform protection, such as Alibaba Trade Assurance</h3><span class="py-dots" aria-label="2 of 3"><i class="on"></i><i class="on"></i><i></i></span></div><dl><dt>How it works</dt><dd>You order and pay through the platform, which has a claim process if the order is late or not as agreed.</dd><dt>Speed</dt><dd>Same day to 2 days</dd><dt>Cost</dt><dd>Card or transfer fees and the platform&#x27;s exchange rate.</dd><dt>If something goes wrong</dt><dd>Good for orders placed and paid on the platform, within its claim rules and time limits.</dd><dt>Proof for TRA and lenders</dt><dd>Good. Keep the order and payment records.</dd><dt>Best for</dt><dd>First orders and smaller orders from online suppliers.</dd></dl></article><article class="hb-card py-c" id="m-app"><div class="py-top"><h3>Mobile money and international transfer apps</h3><span class="py-dots" aria-label="2 of 3"><i class="on"></i><i class="on"></i><i></i></span></div><dl><dt>How it works</dt><dd>Licensed apps and cards send money abroad from your phone or account.</dd><dt>Speed</dt><dd>Minutes to 2 days</dd><dt>Cost</dt><dd>A transfer fee plus an exchange rate margin, with limits per transfer.</dd><dt>If something goes wrong</dt><dd>Depends on the app. Check that it is licensed by the Bank of Tanzania.</dd><dt>Proof for TRA and lenders</dt><dd>Medium. Keep the app receipt with the supplier&#x27;s invoice.</dd><dt>Best for</dt><dd>Samples and small orders.</dd></dl></article><article class="hb-card py-c" id="m-agent"><div class="py-top"><h3>Payment agents (wakala wa malipo)</h3><span class="py-dots" aria-label="1 of 3"><i class="on"></i><i></i><i></i></span></div><dl><dt>How it works</dt><dd>You give cash or mobile money to an agent in Tanzania and their partner pays your supplier abroad.</dd><dt>Speed</dt><dd>Often the same day</dd><dt>Cost</dt><dd>The agent&#x27;s charge, often hidden in the exchange rate.</dd><dt>If something goes wrong</dt><dd>Weak. If money is lost there is little you can do to recover it.</dd><dt>Proof for TRA and lenders</dt><dd>Weak. There is no bank record of the payment for customs or lenders.</dd><dt>Best for</dt><dd>Use with care. Get a written receipt and ask the supplier to confirm they were paid.</dd></dl></article><article class="hb-card py-c ram" id="m-ramani"><div class="py-top"><h3>Import finance from Ramani</h3><span class="py-dots" aria-label="3 of 3"><i class="on"></i><i class="on"></i><i class="on"></i></span></div><dl><dt>How it works</dt><dd>Ramani pays your supplier for you by bank transfer and you repay as you sell, subject to assessment.</dd><dt>Speed</dt><dd>After your assessment and approval</dd><dt>Cost</dt><dd>A finance fee that you see before you agree.</dd><dt>If something goes wrong</dt><dd>The supplier is paid by bank transfer, with a full paper trail.</dd><dt>Proof for TRA and lenders</dt><dd>Strong, and it builds your track record.</dd><dt>Best for</dt><dd>Growing importers who need cash to order more.</dd></dl></article></div>
+  <p class="hb-note" style="margin-top:14px">Costs and limits change and differ by bank and provider. Ask for the full cost in writing before you pay. This guide is general information, not financial advice.</p>
+</div></section>
+<section class="hb-sec" style="padding-top:0"><div class="hb-wrap py-two">
+  <div class="hb-card"><h2 class="hb-h2" style="font-size:24px;margin-top:0">Six checks before you pay any supplier</h2><ol class="py-safe"><li>Confirm new bank details by phone or video call with someone you know at the supplier. Never trust an email alone.</li><li>Check that the account name matches the company on the invoice and contract.</li><li>Pay a deposit first and the balance after you see photos or an inspection report.</li><li>Ask your bank for the full cost: fee, exchange rate and any charges taken by other banks on the way.</li><li>Keep the SWIFT receipt (MT103), invoice and contract together. Your clearing agent and any lender will ask for them.</li><li>Watch for pressure. A supplier who rushes you to pay today, or changes the account at the last minute, is a warning sign.</li></ol></div>
+  <div class="hb-grid" style="align-content:start">
+    <a class="hb-card" href="usd-payment-calculator.html" style="text-decoration:none;color:inherit"><span class="hb-pill">Tool</span><h3 style="margin:10px 0 4px">Supplier payment calculator</h3><p class="hb-note" style="margin:0">See the TZS cost of a USD or CNY payment with today&#x27;s rate and bank charges.</p></a>
+    <a class="hb-card" href="import-finance-readiness-score.html" style="text-decoration:none;color:inherit"><span class="hb-pill new">New</span><h3 style="margin:10px 0 4px">Import Finance Readiness Score</h3><p class="hb-note" style="margin:0">10 questions to see if you are ready for Ramani to pay your next supplier, subject to assessment.</p></a>
+    <a class="hb-card" href="community.html" style="text-decoration:none;color:inherit"><span class="hb-pill">Community</span><h3 style="margin:10px 0 4px">Ask other importers in Biashara Tanzania</h3><p class="hb-note" style="margin:0">How do others pay suppliers in China, India and Dubai? Ask in Uliza Ramani.</p></a>
+  </div>
+</div></section>
+</main>
+
+<style id="rn-css">
+.rn{max-width:1120px;margin:8px auto 48px;padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink,#142016)}
+.rn-card{background:var(--surface,#fff);border:1px solid var(--line,#d7e1d6);border-radius:18px;padding:24px;display:grid;grid-template-columns:1fr 1.1fr;gap:22px;align-items:center}
+.rn-card h2{margin:6px 0 6px;font-size:24px;font-weight:800;letter-spacing:-.02em}
+.rn-card p{margin:0;color:var(--muted,#56685a)}
+.rn-eb{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand,#388539);font-weight:700}
+.rn form{display:grid;grid-template-columns:1fr 1fr auto;gap:8px}
+.rn input{font:500 16px "Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink,#142016);background:var(--bg,#f4f7f3);border:1px solid var(--line,#d7e1d6);border-radius:10px;padding:11px 13px;width:100%;min-width:0}
+.rn button{font:700 15px "Plus Jakarta Sans",system-ui,sans-serif;border:0;border-radius:10px;padding:11px 18px;cursor:pointer;background:var(--brand,#388539);color:var(--brand-ink,#fff)}
+.rn small{display:block;grid-column:1/-1;font-size:12.5px;color:var(--muted,#56685a)}
+.rn small a{color:var(--brand,#388539)}
+.rn .rn-msg{grid-column:1/-1;font-size:14px;font-weight:600;min-height:1em}
+@media (max-width:760px){.rn-card{grid-template-columns:1fr;padding:20px}.rn form{grid-template-columns:1fr}}
+</style>
+<section class="rn" aria-labelledby="rn-t"><div class="rn-card">
+<div><span class="rn-eb">Newsletter</span><h2 id="rn-t">Get our newsletter</h2><p>The dollar and yuan rate, what moved at the port and one import tip you can use this week. Every Monday, free.</p></div>
+<form id="rn-f" novalidate>
+<input id="rn-name" type="text" autocomplete="name" placeholder="Your name" aria-label="Your name" required>
+<input id="rn-email" type="email" autocomplete="email" placeholder="Your email" aria-label="Your email" required>
+<button type="submit">Subscribe</button>
+<span class="rn-msg" id="rn-msg" aria-live="polite"></span>
+<small>By subscribing you agree to receive our newsletter. Unsubscribe at any time. <a href="https://www.ramani.io/privacy-policy" target="_blank" rel="noopener">Privacy</a></small>
+</form></div></section>
+<script>(function(){var f=document.getElementById("rn-f");if(!f)return;f.addEventListener("submit",function(e){e.preventDefault();
+var n=document.getElementById("rn-name").value.trim(),m=document.getElementById("rn-email").value.trim().toLowerCase(),o=document.getElementById("rn-msg");
+if(!n){o.style.color="var(--warn,#a35208)";o.textContent="Please enter your name.";return;}
+if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)){o.style.color="var(--warn,#a35208)";o.textContent="Please enter a valid email address.";return;}
+var done=function(r){o.style.color="var(--brand,#388539)";o.textContent=(r&&r.duplicate)?"This email is already subscribed. You will keep getting the newsletter every Monday.":"Thank you, "+n+". Our next newsletter reaches your inbox on Monday. Test version: saved to the test inbox only.";f.reset();};
+if(window.RAMANI&&window.RAMANI.send)window.RAMANI.send("newsletter",{list:"Ramani newsletter",name:n,email:m,marketing_consent:true}).then(done,done);else done();});})();</script>
+</body></html>

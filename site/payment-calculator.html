@@ -1,0 +1,1025 @@
+<!doctype html>
+<html lang="en" data-audience="importers">
+<head><script src="/config.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Supplier Payment Calculator: USD to TZS | Ramani</title>
+<meta name="description" content="See the real shilling cost of paying a supplier abroad in USD, CNY, AED or any of 165 currencies, with the bank&#x27;s rate markup and SWIFT transfer charges.">
+<link rel="canonical" href="https://www.ramani.io/tools/usd-payment-calculator">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Supplier Payment Calculator: USD to TZS | Ramani">
+<meta property="og:description" content="See the real shilling cost of paying a supplier abroad in USD, CNY, AED or any of 165 currencies, with the bank&#x27;s rate markup and SWIFT transfer charges.">
+<meta property="og:url" content="https://www.ramani.io/tools/usd-payment-calculator">
+<meta property="og:site_name" content="Ramani">
+<meta name="twitter:card" content="summary">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: calculator on the left, a bank transfer slip on the right, then two conversion cards (get a quote, newsletter); stacks on phones. Brand green from ramani.io theme colour #388539. */
+:root{
+  --bg:#F4F7F3; --surface:#FFFFFF; --ink:#142016; --muted:#56685A; --line:#D7E1D6;
+  --brand:#388539; --brand-ink:#FFFFFF; --deep:#17361A; --deep-ink:#F2F8F1;
+  --bright:#7ACB7D; --bright-ink:#0B1A0C; --warn:#A35208; --warn-bg:#FDF1E4; --slip:#FAFCF9; --focus:#2F7BD8;
+  --sans:"Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D150E; --surface:#142017; --ink:#E5EFE4; --muted:#9DB29E; --line:#26382A;
+    --brand:#5DB760; --brand-ink:#0B1A0C; --deep:#1D4521; --deep-ink:#EEF7ED;
+    --bright:#86D989; --bright-ink:#0B1A0C; --warn:#F2A65A; --warn-bg:#2A1D10; --slip:#111C13; --focus:#6FA8F0;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D150E; --surface:#142017; --ink:#E5EFE4; --muted:#9DB29E; --line:#26382A;
+  --brand:#5DB760; --brand-ink:#0B1A0C; --deep:#1D4521; --deep-ink:#EEF7ED;
+  --bright:#86D989; --bright-ink:#0B1A0C; --warn:#F2A65A; --warn-bg:#2A1D10; --slip:#111C13; --focus:#6FA8F0;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:20px 48px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-weight:800;font-size:22px;letter-spacing:-.02em;color:var(--brand)}
+.top-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+.pill{font:700 14px var(--sans);background:var(--brand);color:var(--brand-ink);border-radius:999px;padding:8px 16px;border:0;cursor:pointer}
+header.hero{margin-block:28px 22px;max-width:46rem}
+.eyebrow{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);font-weight:700}
+h1{font-weight:800;font-size:clamp(28px,4.4vw,44px);line-height:1.08;letter-spacing:-.025em;margin:6px 0 10px;text-wrap:balance}
+.lede{color:var(--muted);font-size:18px;margin:0;max-width:40rem}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px}
+.panel h2{font-weight:700;font-size:18px;margin:0 0 14px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field.full{grid-column:1 / -1}
+label,.legend{font-weight:600;font-size:14px}
+.hint{font-size:13px;color:var(--muted)}
+input,select{font:500 16px var(--mono);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%;min-width:0}
+select{font-family:var(--sans)}
+input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.amount{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:8px}
+.charges{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.charges label{display:flex;gap:8px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:10px;font-weight:400;cursor:pointer;background:var(--bg)}
+.charges input{width:auto;margin-top:4px;accent-color:var(--brand)}
+.charges strong{display:block;font-weight:700}
+.charges label:has(input:checked){border-color:var(--brand);box-shadow:inset 0 0 0 1px var(--brand)}
+.slip{background:var(--slip);border:1px dashed var(--line);border-radius:14px;padding:22px;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.slip-head{display:flex;justify-content:space-between;gap:10px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px dashed var(--line);padding-bottom:10px;margin-bottom:6px;flex-wrap:wrap}
+.row{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;padding:8px 0;border-bottom:1px dotted var(--line);font-size:14px;align-items:baseline}
+.row .code{color:var(--muted)}
+.row .lbl{font-family:var(--sans)}
+.row .val{text-align:right;white-space:nowrap}
+.total{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-top:14px;flex-wrap:wrap}
+.total .lbl{font-family:var(--sans);font-weight:700;font-size:15px}
+.total .big{font-family:var(--sans);font-weight:800;font-size:clamp(26px,3.4vw,34px);letter-spacing:-.02em;color:var(--brand)}
+.receives{margin-top:12px;display:flex;justify-content:space-between;gap:12px;font-size:14px;flex-wrap:wrap}
+.receives .lbl{font-family:var(--sans)}
+.ok{color:var(--brand);font-weight:600}
+.short{color:var(--warn);font-weight:600}
+.alert{margin-top:12px;background:var(--warn-bg);color:var(--warn);border-radius:8px;padding:10px 12px;font-family:var(--sans);font-size:14px}
+.spread{margin:14px 0 0;font-family:var(--sans);font-size:14px;color:var(--muted)}
+.spread b{color:var(--ink);font-family:var(--mono);font-weight:600}
+.source{margin:10px 0 0;font-family:var(--sans);font-size:12px;color:var(--muted)}
+.source a{color:var(--muted)}
+.cta-row{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:20px;margin-top:20px;align-items:stretch}
+.apply{background:var(--deep);color:var(--deep-ink);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:12px}
+.apply .eyebrow{color:var(--bright)}
+.apply h2{font-weight:800;font-size:26px;margin:0;line-height:1.15;letter-spacing:-.02em;text-wrap:balance}
+.apply p{margin:0;opacity:.92}
+.btn{font:700 16px var(--sans);border:0;border-radius:10px;padding:13px 18px;cursor:pointer;text-align:center}
+.btn-bright{background:var(--bright);color:var(--bright-ink)}
+.btn-brand{background:var(--brand);color:var(--brand-ink)}
+.apply .fine{font-size:13px;opacity:.8}
+.note{font-size:13px;border-radius:8px;padding:10px 12px;background:rgba(255,255,255,.1)}
+.news{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:12px}
+.news h2{font-weight:800;font-size:22px;margin:0;line-height:1.15;letter-spacing:-.02em}
+.news p{margin:0;color:var(--muted)}
+.news form{display:grid;gap:10px}
+.news input[type="text"],.news input[type="email"]{font-family:var(--sans)}
+.consent{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--muted);font-weight:400}
+.consent input{width:auto;margin-top:3px;accent-color:var(--brand)}
+.err{color:var(--warn);font-size:13px}
+.done{background:var(--bg);border-radius:10px;padding:14px;font-size:15px}
+.done small{display:block;color:var(--muted);margin-top:4px}
+.disclaimer{margin-top:20px;font-size:13px;color:var(--muted);max-width:52rem}
+details.notes{margin-top:24px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 20px}
+details.notes summary{cursor:pointer;font-weight:700}
+details.notes ol{margin:12px 0 0;padding-left:20px;display:grid;gap:8px;max-width:48rem}
+.more-h{margin:34px 0 4px;font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.02em}
+.more-p{margin:0 0 16px;color:var(--muted);max-width:44rem}
+.panel .sub{margin:-8px 0 14px;color:var(--muted);font-size:14px}
+.routes{display:grid;gap:10px}
+.route{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--bg);min-width:0}
+.route .rname{font-weight:700;font-size:15px;margin-bottom:8px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:baseline}
+.route .rname small{font-weight:600;font-size:12px;color:var(--muted)}
+.route .fields{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.route input{padding:8px 9px;font-size:15px}
+.route label{font-size:12px}
+.route .field{justify-content:flex-end}
+.res-list{display:grid;gap:8px;margin-top:14px}
+.res-item{border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;gap:4px;min-width:0}
+.res-item.best{border-color:var(--brand);box-shadow:inset 0 0 0 1px var(--brand)}
+.res-item .top{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.res-item .name{font-weight:700}
+.res-item .amt{font:600 18px var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.res-item .det{font-size:13px;color:var(--muted)}
+.verdict{margin-top:10px;background:var(--bg);border-radius:10px;padding:12px 14px;font-size:15px}
+.verdict b{font-family:var(--mono);font-weight:600}
+.st{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;white-space:nowrap;font-family:var(--sans)}
+.st.good{background:var(--brand);color:var(--brand-ink)}
+.st.mid{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn)}
+.st.bad{background:var(--warn);color:var(--surface)}
+.st.none{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.qs{display:grid;gap:10px}
+.q{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0;display:grid;gap:8px;min-width:0}
+.q legend{font-weight:600;font-size:15px;padding:0;float:left;width:100%}
+.q legend + *{clear:both}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg label{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-weight:500;font-size:14px;cursor:pointer;background:var(--bg)}
+.seg input{width:auto;accent-color:var(--brand);margin:0}
+.seg label:has(input:checked){border-color:var(--brand);background:var(--surface);box-shadow:inset 0 0 0 1px var(--brand)}
+.sc-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px;align-items:start}
+.sc-out{border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:10px;background:var(--slip)}
+.sc-out .risk{font-weight:800;font-size:22px;letter-spacing:-.01em}
+.sc-out.r-high{border-color:var(--warn)}
+.sc-out.r-high .risk,.sc-out.r-mid .risk{color:var(--warn)}
+.sc-out.r-low .risk{color:var(--brand)}
+.sc-out ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14px}
+.sc-ramani{margin:0;font-size:14px;background:var(--bg);border-radius:10px;padding:10px 12px}
+@media (max-width:820px){ .grid,.cta-row,.sc-grid{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:480px){
+  .fields,.charges,.amount{grid-template-columns:minmax(0,1fr)}
+  .row{grid-template-columns:36px minmax(0,1fr) auto;font-size:13px}
+}
+</style>
+<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}.backnav a{color:var(--brand);text-decoration:none}.backnav a:hover{text-decoration:underline}</style>
+<script src="data/live.js"></script>
+<script>
+(function(){
+  // One record per person. A person is matched by email OR phone (normalised to +255...).
+  // ONCE types are kept only the first time a person submits them; other types are kept
+  // but linked to the existing person, so the same person never becomes two leads.
+  // In the live site the server (functions/api/lead.js) enforces the same rules for every device.
+  var R=window.RAMANI=window.RAMANI||{};
+  var PK="ramani_people", MK="ramani_me";
+  var ONCE={tool_lead:1,newsletter:1,community_join:1,registration:1,trip_alerts:1,rate_alert:1,freedays_alert:1,partner_review:1,dataroom_request:1,download:"item",download_notify:"item",academy_certificate:"item",importer_survey:1,report_notify:1,meetup_rsvp:"item",meetup_interest:"item"};
+  var THIRD={agent_referral:["client_phone"],bank_referral:["phone"]};
+  function get(k,d){ try{ var v=JSON.parse(localStorage.getItem(k)||"null"); return v==null?d:v; }catch(e){ return (R._m&&R._m[k])||d; } }
+  function put(k,v){ R._m=R._m||{}; R._m[k]=v; try{ if(v==null) localStorage.removeItem(k); else localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+  function phone(p){
+    p=String(p||"").replace(/[^\d+]/g,""); if(p.charAt(0)==="+") p=p.slice(1); if(p.slice(0,2)==="00") p=p.slice(2);
+    if(/^0[67]\d{8}$/.test(p)) p="255"+p.slice(1); else if(/^[67]\d{8}$/.test(p)) p="255"+p;
+    return /^\d{9,15}$/.test(p)?"+"+p:"";
+  }
+  function email(e){ e=String(e||"").trim().toLowerCase(); return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)?e:""; }
+  function keysOf(type,d){
+    var k=[];
+    if(THIRD[type]){ THIRD[type].forEach(function(f){ var p=phone(d[f]); if(p) k.push("p:"+p); }); return k; }
+    var e=email(d.email), p=phone(d.phone||d.whatsapp);
+    if(e) k.push("e:"+e); if(p) k.push("p:"+p);
+    return k;
+  }
+  function action(type,d){ if(THIRD[type]) return type; var o=ONCE[type]; if(!o) return ""; return o==="item"?type+":"+(d.item||""):type; }
+  function load(){ var db=get(PK,null); if(!db||!db.p) db={p:{},i:{},blocked:0}; return db; }
+
+  var toastEl=null, toastT=0;
+  function toast(text){
+    if(!document.body) return;
+    if(!toastEl){
+      toastEl=document.createElement("div"); toastEl.setAttribute("role","status"); toastEl.setAttribute("aria-live","polite");
+      toastEl.style.cssText="position:fixed;left:50%;top:16px;transform:translateX(-50%);z-index:90;max-width:min(92vw,460px);background:var(--deep,#16301b);color:var(--deep-ink,#fff);font:600 14px/1.4 var(--sans,system-ui,sans-serif);padding:12px 16px;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.25);text-align:center";
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent=text; toastEl.hidden=false; clearTimeout(toastT); toastT=setTimeout(function(){ toastEl.hidden=true; },5000);
+  }
+
+  R.people={
+    phone:phone, email:email, toast:toast,
+    me:function(){ return get(MK,null); },
+    forgetMe:function(){ put(MK,null); },
+    clear:function(){ put(PK,null); put(MK,null); },
+    stats:function(){ var db=load(); return {people:Object.keys(db.p).length,blocked:db.blocked||0}; },
+    has:function(type,item){ var me=get(MK,null); if(!me||!me.id) return false; var p=load().p[me.id]; var a=ONCE[type]==="item"?type+":"+(item||""):type; return !!(p&&p.a.indexOf(a)>=0); },
+    register:function(type,d){
+      d=d||{}; var keys=keysOf(type,d); if(!keys.length) return {id:"",isNew:false,duplicate:false};
+      var db=load(), id=null, now=new Date().toISOString();
+      keys.forEach(function(k){ if(!id&&db.i[k]) id=db.i[k]; });
+      keys.forEach(function(k){ var o=db.i[k]; if(o&&o!==id&&db.p[o]){ // email and phone were two records: merge into one
+        var a=db.p[id], b=db.p[o]; b.a.forEach(function(x){ if(a.a.indexOf(x)<0) a.a.push(x); }); if(!a.name) a.name=b.name; if(!a.email) a.email=b.email; if(!a.phone) a.phone=b.phone; if(b.first<a.first) a.first=b.first;
+        for(var j in db.i) if(db.i[j]===o) db.i[j]=id; delete db.p[o]; } });
+      var isNew=!id;
+      if(isNew){ id="c"+Date.now().toString(36)+Math.random().toString(36).slice(2,6); db.p[id]={id:id,first:now,a:[],referred:!!THIRD[type]}; }
+      var p=db.p[id]; keys.forEach(function(k){ if(!db.i[k]) db.i[k]=id; });
+      var nm=THIRD[type]?(d.client||d.customer):d.name;
+      if(nm&&!p.name) p.name=nm;
+      keys.forEach(function(k){ if(k.charAt(0)==="e"&&!p.email) p.email=k.slice(2); if(k.charAt(0)==="p"&&!p.phone) p.phone=k.slice(2); });
+      p.last=now;
+      var act=action(type,d), dup=!!(act&&p.a.indexOf(act)>=0);
+      if(dup) db.blocked=(db.blocked||0)+1; else if(act) p.a.push(act);
+      put(PK,db);
+      if(!THIRD[type]){ var me={id:id}; if(p.name) me.name=p.name; if(p.email) me.email=p.email; if(p.phone) me.phone=p.phone; put(MK,me); }
+      return {id:id,isNew:isNew,duplicate:dup};
+    }
+  };
+})();
+(function(){
+  // Test version: every form submission is also saved to a test inbox in this browser,
+  // so testers can see exactly what Ramani would receive. The Tools home page shows it.
+  var R=window.RAMANI=window.RAMANI||{};
+  if(typeof R.endpoint!=="string") R.endpoint="";
+  var KEY="ramani_test_inbox";
+  function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||"[]")||[]; }catch(e){ return R._mem||[]; } }
+  function save(list){ R._mem=list; try{ localStorage.setItem(KEY,JSON.stringify(list)); }catch(e){} }
+  R.inbox={load:load,save:save,key:KEY};
+  function count(){ var a=document.getElementById("inboxLink"); if(a) a.textContent="Test inbox ("+load().length+")"; }
+  function dupNote(type){ try{ window.dispatchEvent(new CustomEvent("ramani-duplicate",{detail:{type:type}})); }catch(e){} if(R.people) R.people.toast(/referral$/.test(type||"")?"This client has already been referred, so they were not added twice.":"We already have your details, so nothing was added twice."); }
+  R.send=function(type,data,opts){
+    var payload={id:"t"+Date.now().toString(36)+Math.random().toString(36).slice(2,7),type:type,page:(location.pathname.split("/").pop()||"index.html"),hash:location.hash||"",at:new Date().toISOString(),data:data||{}};
+    var reg=R.people?R.people.register(type,payload.data):{};
+    R.lastDuplicate=!!reg.duplicate;
+    if(reg.duplicate){ if(!(opts&&opts.quiet)) dupNote(type); return Promise.resolve({ok:true,test:true,duplicate:true,contact_id:reg.id}); }
+    if(reg.id){ payload.contact_id=reg.id; payload.contact_status=reg.isNew?"new":"existing"; }
+    var list=load(); list.unshift(payload); if(list.length>300) list.length=300; save(list); count();
+    try{ window.dispatchEvent(new CustomEvent("ramani-inbox")); }catch(e){}
+    if(!R.endpoint) return Promise.resolve({ok:true,test:true,contact_id:reg.id||"",contact_status:payload.contact_status||""});
+    try{
+      return fetch(R.endpoint,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload),keepalive:true})
+        .then(function(){return {ok:true};},function(){return {ok:false};});
+    }catch(e){ return Promise.resolve({ok:false}); }
+  };
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",count); else count();
+  window.addEventListener("storage",function(e){ if(e.key===KEY) count(); });
+})();
+</script>
+<script>
+(function(){
+  // Growth tracking. PostHog loads only when RAMANI.posthogKey is set AND the visitor accepts cookies.
+  // Events: tool_opened, tool_used, lead_form_shown, lead_submitted, form_submitted, export_opened, export_sent, cta_clicked.
+  // UTM tags (utm_source, utm_medium, utm_campaign, utm_content, utm_term, ref) ride on every event and every form submission.
+  var R=window.RAMANI=window.RAMANI||{};
+  var TEST=!!R.inbox, CKEY="ramani_cookie", EKEY="ramani_test_events";
+  var page=(location.pathname.split("/").pop()||"index.html").replace(/\.html$/,"")||"index";
+  var AUD={importers:"importers","payment-calculator":"importers","trip-planner":"importers",wholesalers:"wholesalers",agents:"agents",banks:"banks"};
+  var audience=document.documentElement.getAttribute("data-audience")||AUD[page]||"all";
+  function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k); if(v===null) localStorage.removeItem(k); else localStorage.setItem(k,v); }catch(e){ return null; } }
+
+  var utm={};
+  try{
+    var q=new URLSearchParams(location.search);
+    ["utm_source","utm_medium","utm_campaign","utm_content","utm_term","ref"].forEach(function(k){ if(q.get(k)) utm[k]=q.get(k).slice(0,100); });
+    if(Object.keys(utm).length){ sessionStorage.setItem("ramani_utm",JSON.stringify(utm)); if(!ls("ramani_first_touch")) ls("ramani_first_touch",JSON.stringify(utm)); }
+    else utm=JSON.parse(sessionStorage.getItem("ramani_utm")||"{}")||{};
+  }catch(e){}
+
+  var ph=null, queue=[];
+  function base(){ var o={page:page,audience:audience}; for(var k in utm) o[k]=utm[k]; return o; }
+  window.rtrack=function(ev,props){
+    var p=base(); props=props||{}; for(var k in props) p[k]=props[k];
+    if(TEST){ try{ var a=JSON.parse(ls(EKEY)||"[]"); a.unshift({ev:ev,at:new Date().toISOString(),p:p}); if(a.length>300) a.length=300; ls(EKEY,JSON.stringify(a)); window.dispatchEvent(new CustomEvent("ramani-events")); }catch(e){} }
+    if(ph) ph.capture(ev,p); else if(queue.length<100) queue.push([ev,p]);
+  };
+
+  // every form submission carries the UTM tags and fires form_submitted
+  if(R.send&&!R._tracked){ var orig=R.send; R._tracked=true;
+    R.send=function(type,data){ data=data||{}; if(Object.keys(utm).length&&!data.utm) data.utm=utm; window.rtrack("form_submitted",{type:type}); return orig.call(R,type,data); };
+  }
+
+  function loadPosthog(){
+    if(ph||!R.posthogKey) return;
+    var host=R.posthogHost||"https://eu.i.posthog.com";
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys onSessionId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    window.posthog.init(R.posthogKey,{api_host:host,person_profiles:"identified_only",capture_pageview:true,autocapture:true,
+      session_recording:{maskAllInputs:true,maskTextSelector:"[data-result], .kpi, .slip, table"},persistence:"localStorage+cookie"});
+    ph=window.posthog;
+    ph.register({audience:audience});
+    if(audience==="banks") ph.group("audience","banks");
+    var ft=ls("ramani_first_touch"); if(ft){ try{ ph.register_once(JSON.parse(ft)); }catch(e){} }
+    queue.forEach(function(x){ ph.capture(x[0],x[1]); }); queue=[];
+    identify();
+  }
+  function identify(){
+    if(!ph) return;
+    try{ var L=JSON.parse(ls("ramani_lead_v1")||"null"); if(L&&L.email&&L.marketing) ph.identify(L.email,{audience:audience,lead_page:L.page||page}); }catch(e){}
+  }
+  window.addEventListener("ramani-lead",identify);
+
+  // cookie banner
+  function banner(){
+    if(ls(CKEY)) return;
+    var css=document.createElement("style");
+    css.textContent=".ck{position:fixed;right:16px;bottom:16px;z-index:55;max-width:360px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:0 16px 40px rgba(0,0,0,.18);font:500 14px/1.45 var(--sans)}"+
+      "body.lead-locked .ck{bottom:96px}.ck p{margin:0 0 10px}.ck a{color:var(--brand)}.ck .r{display:flex;gap:8px;justify-content:flex-end}"+
+      ".ck button{font:700 14px var(--sans);border-radius:9px;padding:8px 14px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink)}.ck button.y{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}"+
+      "@media (max-width:560px){.ck{left:16px;right:16px;max-width:none}}";
+    document.head.appendChild(css);
+    var b=document.createElement("div"); b.className="ck"; b.setAttribute("role","region"); b.setAttribute("aria-label","Cookies");
+    b.innerHTML='<p>We use cookies to learn which tools help traders most. No ads, and we never sell your data. <a target="_blank" rel="noopener" id="ck-l">Privacy</a></p><div class="r"><button type="button" id="ck-n">No thanks</button><button type="button" class="y" id="ck-y">Accept</button></div>';
+    document.body.appendChild(b);
+    document.getElementById("ck-l").href=R.privacyUrl||"https://www.ramani.io/privacy-policy";
+    document.getElementById("ck-y").addEventListener("click",function(){ ls(CKEY,"yes"); b.remove(); loadPosthog(); });
+    document.getElementById("ck-n").addEventListener("click",function(){ ls(CKEY,"no"); b.remove(); queue=[]; });
+  }
+
+  function wire(){
+    banner();
+    if(ls(CKEY)==="yes") loadPosthog();
+    window.rtrack("tool_opened",{view:(location.hash||"").replace("#","")});
+    var used={};
+    document.addEventListener("click",function(e){
+      var t=e.target.closest&&e.target.closest(".wtab[data-v]");
+      if(t) window.rtrack("tool_opened",{view:t.dataset.v});
+      var c=e.target.closest&&e.target.closest("#applyBtn,#quoteBtn,#topApply,[data-quote],button#q,[data-sales],a[href*='/apply']");
+      if(c) window.rtrack("cta_clicked",{cta:(c.id||c.getAttribute("data-quote")||c.textContent||"").trim().slice(0,60)});
+    },true);
+    function onUse(e){
+      var v=e.target.closest&&e.target.closest("[id^='v-']"), key=v?v.id.slice(2):page;
+      if(e.target.closest&&e.target.closest(".lg-back,.sm-back,.ck")) return;
+      if(!used[key]){ used[key]=1; window.rtrack("tool_used",{view:key}); }
+    }
+    document.addEventListener("input",onUse,true); document.addEventListener("change",onUse,true);
+  }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",wire); else wire();
+})();
+</script>
+</head>
+<body>
+<script src="brain/kb.js"></script>
+<script src="brain/core.js"></script>
+<script src="brain/uliza.js" defer></script>
+
+<script src="i18n/sw.js"></script>
+<script src="i18n/engine.js"></script>
+<style id="rg-css">
+.rg{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--bg,#fff) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line,#ddd);font-family:"Plus Jakarta Sans",system-ui,sans-serif}
+.rg-in{max-width:1180px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));height:58px;display:flex;align-items:center;gap:14px}
+.rg a{color:inherit}
+.rg-logo{display:flex;align-items:center;gap:8px;text-decoration:none;font:800 19px/1 "Plus Jakarta Sans",system-ui,sans-serif;letter-spacing:-.03em;color:var(--ink,#142016)}
+.rg-logo svg{width:26px;height:26px}
+.rg-nav{display:flex;align-items:center;gap:2px;margin-left:8px}
+.rg-nav>a,.rg-res{background:none;border:0;text-decoration:none;font:600 14.5px "Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink,#142016);padding:8px 12px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.rg-nav>a:hover,.rg-res:hover,.rg-res[aria-expanded=true]{background:var(--brand-soft,#e6f1e5)}
+.rg-dd{position:relative}
+.rg-menu{position:absolute;top:calc(100% + 8px);left:-8px;width:340px;background:var(--surface,#fff);border:1px solid var(--line,#ddd);border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.18);padding:8px;display:none;z-index:70}
+.rg-menu.open{display:block}
+.rg-menu a,.rg-menu .rg-soon{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;text-decoration:none;padding:10px;border-radius:12px;color:var(--ink,#142016)}
+.rg-menu a:hover,.rg-menu a[aria-current=page]{background:var(--brand-soft,#e6f1e5)}
+.rg-menu .rg-soon{opacity:.7;cursor:default}
+.rg-mi{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:var(--brand-soft,#e6f1e5);color:var(--brand,#388539)}
+.rg-mi svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.rg-menu b{display:block;font-size:15px}
+.rg-menu small{display:block;font-size:13px;color:var(--muted,#56685a);line-height:1.4}
+.rg-menu em{display:inline-block;font:700 10px/1 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;padding:3px 6px;border-radius:5px;margin-left:6px;vertical-align:2px;font-style:normal;background:var(--bg,#f4f7f3);color:var(--muted,#56685a)}
+.rg-sp{flex:1}
+.rg-lang{font:700 13px "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.04em;border:1px solid var(--line,#ddd);background:var(--surface,#fff);color:var(--ink,#142016);border-radius:999px;height:36px;min-width:44px;padding:0 10px;cursor:pointer}
+.rg-lang:hover{border-color:var(--brand,#388539);color:var(--brand,#388539)}
+.rg-cta{background:var(--brand,#388539);color:var(--brand-ink,#fff)!important;text-decoration:none;border-radius:999px;padding:9px 16px;font:700 14px "Plus Jakarta Sans",system-ui,sans-serif;white-space:nowrap}
+@media (max-width:760px){.rg-nav>a{display:none}.rg-nav{margin-left:auto}.rg-sp{display:none}.rg-menu{position:fixed;top:62px;left:16px;right:16px;width:auto;max-height:calc(100vh - 80px);overflow-y:auto}}
+@media (max-width:420px){.rg-cta{display:none}}
+</style>
+<header class="rg"><div class="rg-in">
+<a class="rg-logo" href="index.html#learn" aria-label="Ramani"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#388539"/><path d="M16 7.5c-3.9 0-7 3-7 6.8 0 4.9 7 10.2 7 10.2s7-5.3 7-10.2c0-3.8-3.1-6.8-7-6.8Z" fill="none" stroke="#fff" stroke-width="2.2"/><circle cx="16" cy="14.2" r="2.4" fill="#fde9a8"/></svg>ramani</a>
+<nav class="rg-nav" aria-label="Main">
+<a href="https://www.ramani.io" target="_blank" rel="noopener">Import finance</a>
+<div class="rg-dd"><button type="button" class="rg-res" aria-expanded="false" aria-controls="rgMenu">Resources <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>
+<div class="rg-menu" id="rgMenu">
+<a href="resources.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M4 4h4v16H4zM10 4h4v16h-4z"/><path d="m16 5 3.5-1 2.5 15-3.5 1z"/></svg></span><span><b>Resource library <em>New</em></b><small>Every tool, template, guide and course in one place</small></span></a>
+<a href="tools.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2M8 18h2M12 18h4"/></svg></span><span><b>Tools</b><small>Free calculators, planners and checklists for importers, wholesalers, agents and banks</small></span></a>
+<a href="index.html#learn"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5v-15Z"/><path d="M9 8h7M9 11h5"/></svg></span><span><b>Learn</b><small>Guides, numbers and stories to import with less risk</small></span></a>
+<a href="community.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></span><span><b>Community <em>New</em></b><small>Biashara Tanzania: the online community and monthly meetup for importers</small></span></a>
+<span class="rg-soon" aria-disabled="true"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V10l7-5 7 5v11"/><path d="M9 21v-6h6v6"/></svg></span><span><b>Case studies <em>Coming soon</em></b><small>Traders who grew with Ramani, in their own words</small></span></span>
+<a href="glossary.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4V4Z"/><path d="M8 9h8M8 13h5"/></svg></span><span><b>Glossary <em>New</em></b><small>The words importers use, in Kiswahili and English</small></span></a>
+<a href="downloadables.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></span><span><b>Downloadables <em>New</em></b><small>Checklists, worksheets, import data and webinar recordings</small></span></a>
+<a href="academy.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5-10-5Z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg></span><span><b>Academy <em>New</em></b><small>Free short courses with a certificate to share</small></span></a>
+<a href="state-of-tanzanian-importers-2026.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><span><b>Latest report <em>New</em></b><small>State of Tanzanian Importers 2026: take the survey</small></span></a>
+</div></div>
+<a href="https://www.ramani.io/contact" target="_blank" rel="noopener">Contact</a>
+</nav>
+<span class="rg-sp"></span>
+<button type="button" class="rg-lang" data-noi18n>SW</button>
+<a class="rg-cta" href="https://www.ramani.io/apply/start" target="_blank" rel="noopener">Get started</a>
+</div></header>
+<script>(function(){var b=document.querySelector(".rg-res"),m=document.getElementById("rgMenu");if(!b)return;function s(o){b.setAttribute("aria-expanded",String(o));m.classList.toggle("open",o);}
+b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contains("open"));});document.addEventListener("click",function(e){if(!e.target.closest(".rg-dd"))s(false);});document.addEventListener("keydown",function(e){if(e.key==="Escape")s(false);});})();</script>
+
+
+
+<div class="wrap">
+  <nav class="backnav" aria-label="Breadcrumb" style="font:600 14px var(--sans);padding-top:4px;margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;color:var(--muted)"><a href="tools.html">All Ramani tools</a> <span aria-hidden="true">/</span> <a href="importers.html">Importer tools</a> <span style="margin-left:auto"></span><a href="tools.html#inbox" id="inboxLink">Test inbox</a></nav>
+  <div class="topbar">
+    <div class="brand" aria-label="Ramani">Ramani</div>
+    <div class="top-right">
+      <span class="tag">Test version</span>
+      <button type="button" class="pill" id="topApply">Apply now</button>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="eyebrow">Free tool for importers</div>
+    <h1>The real cost of paying your supplier abroad</h1>
+    <p class="lede">Enter the amount on your supplier's invoice in any currency. See the total you will pay in Tanzanian shillings, including the bank's markup on the rate and transfer charges.</p>
+  </header>
+
+  <div class="grid">
+    <section class="panel" aria-labelledby="t-in">
+      <h2 id="t-in">Your payment</h2>
+      <div class="fields">
+        <div class="field full">
+          <label for="amt">Amount on the supplier invoice</label>
+          <div class="amount">
+            <input id="amt" type="number" inputmode="decimal" min="0" step="any" value="12000">
+            <select id="cur" aria-label="Invoice currency"></select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="ref">Market rate (TZS per <span id="refCur">USD</span>)</label>
+          <input id="ref" type="number" inputmode="decimal" min="0" step="any">
+          <span class="hint">Filled in from the rate table below. Type over it if you have a newer rate.</span>
+        </div>
+        <div class="field">
+          <label for="spr">Bank's markup on the rate (%)</label>
+          <input id="spr" type="number" inputmode="decimal" min="0" step="0.1" value="1.5">
+          <span class="hint">Ask your bank for today's selling rate.</span>
+        </div>
+        <div class="field">
+          <label for="fee">Sending fee (TZS)</label>
+          <input id="fee" type="number" inputmode="decimal" min="0" step="1000" value="100000">
+        </div>
+        <div class="field">
+          <label for="mid">Intermediary bank charges (<span id="midCur">USD</span>)</label>
+          <input id="mid" type="number" inputmode="decimal" min="0" step="any" value="25">
+        </div>
+        <div class="field full" role="radiogroup" aria-labelledby="chg-l">
+          <span class="legend" id="chg-l">Who pays the bank charges?</span>
+          <div class="charges">
+            <label><input type="radio" name="chg" id="chg-our" value="OUR" checked><span><strong>OUR</strong>I pay them all. The supplier gets the full amount.</span></label>
+            <label><input type="radio" name="chg" id="chg-sha" value="SHA"><span><strong>SHA</strong>Shared. Charges come off the supplier's amount.</span></label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slip" aria-labelledby="t-slip" aria-live="polite" data-result="payment">
+      <div class="slip-head"><span id="t-slip">Transfer slip · estimate</span><span>SWIFT · MT103</span></div>
+      <div class="row"><span class="code">32A</span><span class="lbl">Amount and currency</span><span class="val" id="o-amt"></span></div>
+      <div class="row"><span class="code">36</span><span class="lbl">Rate applied (TZS)</span><span class="val" id="o-rate"></span></div>
+      <div class="row"><span class="code">TZS</span><span class="lbl">Value in shillings</span><span class="val" id="o-val"></span></div>
+      <div class="row"><span class="code">71F</span><span class="lbl">Sending fee</span><span class="val" id="o-fee"></span></div>
+      <div class="row"><span class="code">71A</span><span class="lbl">Intermediary charges</span><span class="val" id="o-mid"></span></div>
+      <div class="total"><span class="lbl">Total you will pay</span><span class="big" id="o-tot"></span></div>
+      <div class="receives"><span class="lbl">Supplier receives</span><span id="o-rec"></span></div>
+      <div class="alert" id="o-alert" hidden>The supplier will receive less than the invoice. Many suppliers hold the goods until the difference is paid.</div>
+      <p class="spread">The bank's markup on the rate costs you <b id="o-spr"></b>.</p>
+      <p class="source">Market rates: <span id="rateDate"></span>, indicative only. <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">Rates By Exchange Rate API</a>.</p>
+    </section>
+  </div>
+
+  <h2 class="more-h">Before you pay: three more checks</h2>
+  <p class="more-p">Compare routes for the same invoice, see if paying in yuan saves money, and check the payment is safe. Every figure below is an example you can change.</p>
+
+  <div class="grid">
+    <section class="panel" aria-labelledby="t-rg">
+      <h2 id="t-rg">Rate gap: bank, bureau or Ramani</h2>
+      <p class="sub">The same invoice paid three ways. Example figures: replace them with the quotes you get.</p>
+      <div class="routes">
+        <div class="route"><div class="rname">Your bank <small>pays from your account</small></div><div class="fields">
+          <div class="field"><label for="rg-b-m">Markup on rate (%)</label><input id="rg-b-m" type="number" inputmode="decimal" min="0" step="0.1" value="1.5"></div>
+          <div class="field"><label for="rg-b-f">All fees (TZS)</label><input id="rg-b-f" type="number" inputmode="decimal" min="0" step="1000" value="160000"></div>
+          <div class="field"><label for="rg-b-d">Working days to pay</label><input id="rg-b-d" type="number" inputmode="decimal" min="0" step="1" value="3"></div></div></div>
+        <div class="route"><div class="rname">Bureau de change <small>buy dollars, then send by bank</small></div><div class="fields">
+          <div class="field"><label for="rg-x-m">Markup on rate (%)</label><input id="rg-x-m" type="number" inputmode="decimal" min="0" step="0.1" value="1.2"></div>
+          <div class="field"><label for="rg-x-f">All fees (TZS)</label><input id="rg-x-f" type="number" inputmode="decimal" min="0" step="1000" value="190000"></div>
+          <div class="field"><label for="rg-x-d">Working days to pay</label><input id="rg-x-d" type="number" inputmode="decimal" min="0" step="1" value="4"></div></div></div>
+        <div class="route"><div class="rname">Ramani <small>subject to assessment</small></div><div class="fields">
+          <div class="field"><label for="rg-r-m">Markup on rate (%)</label><input id="rg-r-m" type="number" inputmode="decimal" min="0" step="0.1" value="1.2"></div>
+          <div class="field"><label for="rg-r-f">All fees (TZS)</label><input id="rg-r-f" type="number" inputmode="decimal" min="0" step="1000" value="120000"></div>
+          <div class="field"><label for="rg-r-d">Working days to pay</label><input id="rg-r-d" type="number" inputmode="decimal" min="0" step="1" value="3"></div></div>
+          <p class="hint" style="margin:8px 0 0">Example figures, not a Ramani rate. Ramani gives you a rate and one commission in your quote. Every facility is subject to assessment.</p></div>
+      </div>
+      <div id="rg-out" data-result="rategap" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="t-cny">
+      <h2 id="t-cny">Pay in CNY or USD?</h2>
+      <p class="sub">Your supplier quotes in Chinese yuan. If you pay in dollars, your money is converted twice: TZS to USD at your bank, then USD to CNY at the supplier's own rate.</p>
+      <div class="fields">
+        <div class="field full"><label for="cny-amt">Supplier price (CNY)</label><input id="cny-amt" type="number" inputmode="decimal" min="0" step="any" value="80000"></div>
+        <div class="field"><label for="cny-tzs">Market rate (TZS per USD)</label><input id="cny-tzs" type="number" inputmode="decimal" min="0" step="any"></div>
+        <div class="field"><label for="cny-per">Market rate (CNY per USD)</label><input id="cny-per" type="number" inputmode="decimal" min="0" step="any"></div>
+        <div class="field"><label for="cny-bu">Bank markup to buy USD (%)</label><input id="cny-bu" type="number" inputmode="decimal" min="0" step="0.1" value="1.5"></div>
+        <div class="field"><label for="cny-sup">Supplier's rate margin (%)</label><input id="cny-sup" type="number" inputmode="decimal" min="0" step="0.5" value="3"><span class="hint">Example. Suppliers often use a rate 2% to 4% worse than the market.</span></div>
+        <div class="field full"><label for="cny-bc">Markup to buy CNY directly (%)</label><input id="cny-bc" type="number" inputmode="decimal" min="0" step="0.1" value="2.5"><span class="hint">Example. Yuan can cost a little more to buy in Tanzania. Ask your bank or payment provider.</span></div>
+      </div>
+      <div id="cny-out" data-result="cny" aria-live="polite"></div>
+    </section>
+  </div>
+
+  <section class="panel" aria-labelledby="t-sc" style="margin-top:20px">
+    <h2 id="t-sc">Payment safety check</h2>
+    <p class="sub">Run this before every payment. Fraudsters copy real supplier emails and ask you to pay a new account. Once the money is sent, it is very hard to get back.</p>
+    <div class="sc-grid">
+      <div class="qs" id="scQs"></div>
+      <div>
+        <div class="sc-out" id="sc-out" data-result="safety" aria-live="polite"></div>
+        <!-- DRAFT WORDING FOR COMPLIANCE REVIEW: the sentence below about Ramani verifying suppliers needs sign off before the live launch. -->
+        <p class="sc-ramani" style="margin-top:12px">When you pay through Ramani, Ramani verifies the supplier before paying them.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="cta-row">
+    <section class="apply" aria-labelledby="t-apply">
+      <div class="eyebrow">Pay your supplier with Ramani</div>
+      <h2 id="t-apply">Stock up now. Pay as you sell.</h2>
+      <p>Ramani pays your supplier through a trade finance facility. You repay weekly from sales or per shipment, with one commission agreed upfront.</p>
+      <button type="button" class="btn btn-bright" id="applyBtn"></button>
+      <div class="note" id="applyNote" hidden></div>
+      <span class="fine">Every facility is subject to assessment.</span>
+    </section>
+
+    <section class="news" aria-labelledby="t-news">
+      <h2 id="t-news">Get our newsletter</h2>
+      <p>The dollar and yuan rate, shipping prices from China and Dubai, and supplier scam alerts. Every Monday, free.</p>
+      <form id="newsForm" novalidate>
+        <div class="field"><label for="n-name">Name</label><input id="n-name" type="text" autocomplete="name"></div>
+        <div class="field"><label for="n-em">Email</label><input id="n-em" type="email" autocomplete="email"></div>
+        <span class="consent">By subscribing you agree to receive our newsletter. Unsubscribe at any time.</span>
+        <span class="err" id="n-err" hidden></span>
+        <button type="submit" class="btn btn-brand">Subscribe</button>
+      </form>
+      <div class="done" id="newsDone" hidden></div>
+    </section>
+  </div>
+
+  <p class="disclaimer">This is an estimate only. Market rates are indicative and not your bank's rate. Your bank will confirm the real rate and charges before sending.</p>
+
+  <details class="notes">
+    <summary>Design notes for the team</summary>
+    <ol>
+      <li>The tool gives value first: the trader sees the real TZS cost of a supplier payment, in any of 165 currencies, before being asked for anything.</li>
+      <li>The "Get a quote" button carries the amount and currency from the calculator, so ramani.io/apply/start opens with the order value already filled in.</li>
+      <li>The newsletter offer is tied to the tool (weekly dollar rate) and asks for name and email only.</li>
+      <li>On the live site, each step sends an event to the CRM (calculation done, quote clicked, newsletter joined) so follow ups start automatically.</li>
+      <li>The live version needs a daily rate feed, compliance sign off on the quote copy, and Ramani's confirmed font, logo and full colour palette. Only the brand green (#388539) was confirmed from ramani.io.</li>
+    </ol>
+  </details>
+</div>
+
+<script>(function(){var L=window.RAMANI_LIVE;if(!L||!L.usd||!L.usd.TZS)return;var t=String(Math.round(L.usd.TZS*100)/100);document.querySelectorAll('input[value="2648.06"]').forEach(function(i){i.value=t;i.defaultValue=t;});})();</script>
+<script>
+(function(){
+  // Units of each currency per 1 USD. Snapshot from ExchangeRate API.
+  var USD_RATES={"AED":3.6725,"AFN":64.8333,"ALL":81.0818,"AMD":360.862,"ANG":1.79,"AOA":918.764,"ARS":1548.49,"AUD":1.42765,"AWG":1.79,"AZN":1.70116,"BAM":1.74053,"BBD":2.0,"BDT":124.454,"BGN":1.74053,"BHD":0.376,"BIF":3000.95,"BMD":1.0,"BND":1.27885,"BOB":12.1133,"BRL":5.46865,"BSD":1.0,"BTN":94.6218,"BWP":13.86,"BYN":2.98147,"BZD":2.0,"CAD":1.39672,"CDF":2286.54,"CHF":0.817009,"CLF":0.024817,"CLP":980.908,"CNH":6.67363,"CNY":6.68542,"COP":3245.02,"CRC":454.297,"CUP":24.0,"CVE":98.1267,"CZK":21.6094,"DJF":177.721,"DKK":6.64293,"DOP":60.4456,"DZD":136.029,"EGP":54.7694,"ERN":15.0,"ETB":162.049,"EUR":0.889912,"FJD":2.24848,"FKP":0.742324,"FOK":6.64292,"GBP":0.742316,"GEL":2.59851,"GGP":0.742324,"GHS":11.6907,"GIP":0.742324,"GMD":74.8109,"GNF":8854.64,"GTQ":7.64206,"GYD":210.024,"HKD":7.84534,"HNL":26.8761,"HRK":6.70508,"HTG":131.183,"HUF":322.854,"IDR":18132.2,"ILS":3.15721,"IMP":0.742324,"INR":94.6202,"IQD":1519.81,"IRR":1809620.0,"ISK":121.358,"JEP":0.742324,"JMD":158.469,"JOD":0.709,"JPY":158.378,"KES":129.872,"KGS":87.5905,"KHR":4088.09,"KID":1.42769,"KMF":437.81,"KRW":1340.31,"KWD":0.310148,"KYD":0.833333,"KZT":452.103,"LAK":22355.6,"LBP":89500.0,"LKR":332.161,"LRD":169.892,"LSL":16.4235,"LYD":6.42669,"MAD":9.77522,"MDL":17.9761,"MGA":4558.74,"MKD":54.9281,"MMK":2100.35,"MNT":3621.47,"MOP":8.08092,"MRU":40.4399,"MUR":47.2462,"MVR":15.4527,"MWK":1740.23,"MXN":18.6233,"MYR":4.06471,"MZN":63.8238,"NAD":16.4235,"NGN":1346.47,"NIO":36.791,"NOK":9.28533,"NPR":151.395,"NZD":1.77749,"OMR":0.384497,"PAB":1.0,"PEN":3.44935,"PGK":4.4802,"PHP":63.4789,"PKR":276.621,"PLN":3.90965,"PYG":6015.96,"QAR":3.64,"RON":4.75048,"RSD":104.624,"RUB":81.7465,"RWF":1481.22,"SAR":3.75,"SBD":7.95334,"SCR":14.2157,"SDG":545.267,"SEK":9.73732,"SGD":1.27882,"SHP":0.742324,"SLE":23.0357,"SLL":23035.7,"SOS":572.661,"SRD":37.6825,"SSP":5891.88,"STN":21.803,"SYP":121.977,"SZL":16.4235,"THB":33.6384,"TJS":9.21774,"TMT":3.50504,"TND":2.99962,"TOP":2.38839,"TRY":50.0322,"TTD":6.75252,"TVD":1.42769,"TWD":32.8241,"TZS":2648.06,"UAH":45.5468,"UGX":4068.44,"USD":1.0,"UYU":40.1814,"UZS":11920.7,"VES":894.888,"VND":25701.4,"VUV":120.19,"WST":2.74486,"XAF":583.747,"XCD":2.7,"XCG":1.79,"XDR":0.73523,"XOF":583.747,"XPF":106.196,"YER":236.345,"ZAR":16.4235,"ZMW":20.3704,"ZWG":26.5412,"ZWL":26.5412};
+  var RATE_TIME="5 Nov 2026, 00:02 UTC";
+  if(window.RAMANI_LIVE&&RAMANI_LIVE.usd&&RAMANI_LIVE.usd.TZS){ USD_RATES=RAMANI_LIVE.usd; RATE_TIME=RAMANI_LIVE.rates_time||RATE_TIME; }
+  var COMMON=["USD","CNY","AED","EUR","GBP","INR","HKD","TRY","JPY","SAR","KES","UGX","ZAR","ZMW"];
+  var $=function(id){return document.getElementById(id)};
+  var names=null;
+  try{ names=new Intl.DisplayNames(["en"],{type:"currency"}); }catch(e){}
+  function nameOf(c){ try{ var n=names&&names.of(c); return n&&n!==c?n:""; }catch(e){ return ""; } }
+  function tzsPer(c){ return USD_RATES.TZS/USD_RATES[c]; }
+
+  // Build the currency list: common ones first, then every other currency A to Z.
+  (function(){
+    var sel=$("cur");
+    var g1=document.createElement("optgroup"); g1.label="Common for Tanzanian importers";
+    var g2=document.createElement("optgroup"); g2.label="All currencies";
+    function opt(c){ var o=document.createElement("option"); o.value=c; var n=nameOf(c); o.textContent=n?c+" · "+n:c; return o; }
+    COMMON.forEach(function(c){ if(USD_RATES[c]) g1.appendChild(opt(c)); });
+    Object.keys(USD_RATES).sort().forEach(function(c){ if(c!=="TZS"&&COMMON.indexOf(c)<0) g2.appendChild(opt(c)); });
+    sel.appendChild(g1); sel.appendChild(g2); sel.value="USD";
+  })();
+
+  var nf0=new Intl.NumberFormat("en-US",{maximumFractionDigits:0});
+  var nf2=new Intl.NumberFormat("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+  function fmtRate(v){
+    if(v>=100) return nf2.format(v);
+    if(v>=1) return new Intl.NumberFormat("en-US",{maximumFractionDigits:3}).format(v);
+    return new Intl.NumberFormat("en-US",{maximumSignificantDigits:4}).format(v);
+  }
+  function roundNice(v){ if(v>=100) return Math.round(v); if(v>=1) return Math.round(v*100)/100; return Number(v.toPrecision(3)); }
+  function num(id){ var v=parseFloat($(id).value); return isFinite(v)&&v>0?v:0; }
+  var lastFx="USD 12,000";
+
+  function onCurrency(){
+    var c=$("cur").value;
+    var r=tzsPer(c);
+    $("ref").value=r>=1?Math.round(r*100)/100:Number(r.toPrecision(4));
+    $("mid").value=roundNice(25*USD_RATES[c]);
+    $("refCur").textContent=c; $("midCur").textContent=c;
+  }
+
+  function calc(){
+    var c=$("cur").value, A=num("amt"), ref=num("ref"), spr=num("spr"), fee=num("fee"), mid=num("mid");
+    var our=$("chg-our").checked;
+    var rate=ref*(1+spr/100);
+    var val=A*rate;
+    var midTzs=our?mid*rate:0;
+    var total=val+fee+midTzs;
+    var rec=our?A:Math.max(0,A-mid);
+    $("o-amt").textContent=c+" "+nf2.format(A);
+    $("o-rate").textContent=fmtRate(rate);
+    $("o-val").textContent="TZS "+nf0.format(val);
+    $("o-fee").textContent="TZS "+nf0.format(fee);
+    $("o-mid").textContent=our?"TZS "+nf0.format(midTzs):"− "+c+" "+nf2.format(mid);
+    $("o-tot").textContent="TZS "+nf0.format(total);
+    var short=rec<A;
+    var span=document.createElement("span");
+    span.className=short?"short":"ok";
+    span.textContent=c+" "+nf2.format(rec)+(short?"":" · full amount");
+    $("o-rec").replaceChildren(span);
+    $("o-alert").hidden=!short||A===0;
+    $("o-spr").textContent="TZS "+nf0.format(A*(rate-ref));
+    lastFx=c+" "+nf0.format(A);
+    $("applyBtn").textContent="Get a quote for "+lastFx;
+    if(!$("applyNote").hidden) showApplyNote();
+  }
+
+  function showApplyNote(){
+    $("applyNote").hidden=false;
+    $("applyNote").textContent="On the live site, this opens ramani.io/apply/start with "+lastFx+" already filled in. Test version: nothing was sent.";
+  }
+
+  $("newsForm").addEventListener("submit",function(e){
+    e.preventDefault();
+    var name=$("n-name").value.trim(), em=$("n-em").value.trim().toLowerCase(), err="";
+    if(!name) err="Please enter your name.";
+    else if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) err="Please enter a valid email address.";
+    $("n-err").hidden=!err; $("n-err").textContent=err;
+    if(err) return;
+    if(window.RAMANI) RAMANI.send("newsletter",{list:"Ramani newsletter",name:name,email:em,marketing_consent:true});
+    $("newsForm").hidden=true;
+    var p=document.createElement("div"); p.textContent="Thank you, "+name+". Our next newsletter reaches your inbox on Monday.";
+    var s=document.createElement("small"); s.textContent="Saved to the test inbox.";
+    $("newsDone").replaceChildren(p,s); $("newsDone").hidden=false;
+  });
+
+  $("applyBtn").addEventListener("click",showApplyNote);
+  $("topApply").addEventListener("click",function(){ showApplyNote(); $("applyBtn").scrollIntoView({behavior:"smooth",block:"center"}); });
+  ["amt","ref","spr","fee","mid"].forEach(function(id){ $(id).addEventListener("input",calc); });
+  $("cur").addEventListener("change",function(){ onCurrency(); calc(); });
+  $("chg-our").addEventListener("change",calc);
+  $("chg-sha").addEventListener("change",calc);
+
+  /* ---------- rate gap: bank, bureau, Ramani ---------- */
+  var ROUTES=[["b","Your bank"],["x","Bureau de change"],["r","Ramani","Subject to assessment"]];
+  function days(v){ return v===1?"About 1 working day":"About "+nf0.format(v)+" working days"; }
+  function rateGap(){
+    var c=$("cur").value, A=num("amt"), ref=num("ref"), base=A*ref, out=$("rg-out");
+    var R=ROUTES.map(function(r){ var m=num("rg-"+r[0]+"-m"), f=num("rg-"+r[0]+"-f"), d=num("rg-"+r[0]+"-d"), rate=ref*(1+m/100); return {r:r,rate:rate,total:A*rate+f,extra:A*rate+f-base,d:d}; });
+    var lo=Math.min.apply(null,R.map(function(x){return x.total})), hi=Math.max.apply(null,R.map(function(x){return x.total}));
+    var list=document.createElement("div"); list.className="res-list";
+    R.forEach(function(x){
+      var it=document.createElement("div"); it.className="res-item"+(A&&x.total===lo?" best":"");
+      var top=document.createElement("div"); top.className="top";
+      var n=document.createElement("span"); n.className="name"; n.textContent=x.r[1]; top.appendChild(n);
+      var a=document.createElement("span"); a.className="amt"; a.textContent="TZS "+nf0.format(x.total); top.appendChild(a); it.appendChild(top);
+      var det=document.createElement("div"); det.className="det";
+      det.textContent="Rate "+fmtRate(x.rate)+" per "+c+" · TZS "+nf0.format(x.extra)+" above the market rate · "+days(x.d)+(x.r[2]?" · "+x.r[2]:"");
+      it.appendChild(det);
+      if(A&&x.total===lo){ var b=document.createElement("span"); b.className="st good"; b.style.justifySelf="start"; b.textContent="Lowest cost with these figures"; it.appendChild(b); }
+      list.appendChild(it);
+    });
+    var v=document.createElement("div"); v.className="verdict";
+    v.appendChild(document.createTextNode("Rate gap on "+c+" "+nf0.format(A)+": "));
+    var g=document.createElement("b"); g.textContent="TZS "+nf0.format(hi-lo); v.appendChild(g);
+    v.appendChild(document.createTextNode(" between the dearest and the cheapest route."));
+    out.replaceChildren(list,v);
+  }
+  ROUTES.forEach(function(r){ ["m","f","d"].forEach(function(k){ $("rg-"+r[0]+"-"+k).addEventListener("input",rateGap); }); });
+  $("spr").addEventListener("input",function(){ $("rg-b-m").value=$("spr").value; });
+
+  /* ---------- pay in CNY or USD ---------- */
+  function cnyCalc(){
+    var X=num("cny-amt"), tu=num("cny-tzs"), cu=num("cny-per"), bu=num("cny-bu")/100, sm=Math.min(99,num("cny-sup"))/100, bc=num("cny-bc")/100, out=$("cny-out");
+    if(!tu||!cu){ var p=document.createElement("p"); p.className="hint"; p.textContent="Enter both market rates to compare."; out.replaceChildren(p); return; }
+    var supRate=cu*(1-sm), usd=X/supRate, viaUsd=usd*tu*(1+bu), tzsPerCny=tu/cu, direct=X*tzsPerCny*(1+bc), supCost=usd*tu*(1+bu)-X/cu*tu*(1+bu);
+    function item(name,amt,det,best){
+      var it=document.createElement("div"); it.className="res-item"+(best?" best":"");
+      var top=document.createElement("div"); top.className="top";
+      var n=document.createElement("span"); n.className="name"; n.textContent=name; top.appendChild(n);
+      var a=document.createElement("span"); a.className="amt"; a.textContent="TZS "+nf0.format(amt); top.appendChild(a); it.appendChild(top);
+      var d=document.createElement("div"); d.className="det"; d.textContent=det; it.appendChild(d); return it;
+    }
+    var list=document.createElement("div"); list.className="res-list";
+    list.appendChild(item("Pay in USD",viaUsd,"Send USD "+nf2.format(usd)+". The supplier turns it into CNY at about "+fmtRate(supRate)+" instead of "+fmtRate(cu)+".",viaUsd<direct&&X>0));
+    list.appendChild(item("Pay in CNY",direct,"Buy CNY "+nf0.format(X)+" at about TZS "+fmtRate(tzsPerCny*(1+bc))+" per yuan. The supplier gets the exact amount.",direct<=viaUsd&&X>0));
+    var v=document.createElement("div"); v.className="verdict"; var diff=Math.abs(viaUsd-direct);
+    v.appendChild(document.createTextNode(X?(direct<=viaUsd?"Paying in CNY saves ":"Paying in USD saves "):"Enter the supplier price. "));
+    if(X){ var b=document.createElement("b"); b.textContent="TZS "+nf0.format(diff); v.appendChild(b);
+      v.appendChild(document.createTextNode(" on this order. The supplier's rate margin alone costs you about TZS "+nf0.format(Math.max(0,supCost))+". Ask your supplier for both prices before you pay.")); }
+    out.replaceChildren(list,v);
+  }
+  ["cny-amt","cny-tzs","cny-per","cny-bu","cny-sup","cny-bc"].forEach(function(id){ $(id).addEventListener("input",cnyCalc); });
+  $("cny-tzs").value=Math.round(USD_RATES.TZS*100)/100; $("cny-per").value=Math.round(USD_RATES.CNY*10000)/10000;
+  function syncCny(){ if($("cur").value==="CNY"&&num("amt")){ $("cny-amt").value=$("amt").value; cnyCalc(); } }
+  $("amt").addEventListener("input",syncCny); $("cur").addEventListener("change",syncCny);
+
+  /* ---------- payment safety check ---------- */
+  // key, question, answers [value, label]
+  var QS=[
+    ["name","Does the account name on the bank details match the supplier company on your invoice?",[["yes","Yes"],["no","No"],["unsure","Not sure"]]],
+    ["country","Is the bank account in the same country as the supplier?",[["yes","Yes"],["no","No"],["unsure","Not sure"]]],
+    ["changed","Did the supplier send new or changed bank details by email or chat?",[["yes","Yes"],["no","No"],["unsure","Not sure"]]],
+    ["call","Did you confirm the bank details by phone, on a number you already knew?",[["yes","Yes"],["no","No"]]],
+    ["first","Is this your first payment to this supplier?",[["yes","Yes"],["no","No"]]]
+  ];
+  QS.forEach(function(q){
+    var fs=document.createElement("fieldset"); fs.className="q";
+    var lg=document.createElement("legend"); lg.textContent=q[1]; fs.appendChild(lg);
+    var seg=document.createElement("div"); seg.className="seg";
+    q[2].forEach(function(a){
+      var l=document.createElement("label"), i=document.createElement("input"); i.type="radio"; i.name="sc-"+q[0]; i.value=a[0]; i.id="sc-"+q[0]+"-"+a[0];
+      i.addEventListener("change",safety); l.appendChild(i); l.appendChild(document.createTextNode(a[1])); seg.appendChild(l);
+    });
+    fs.appendChild(seg); $("scQs").appendChild(fs);
+  });
+  function ans(k){ var x=document.querySelector('input[name="sc-'+k+'"]:checked'); return x?x.value:""; }
+  function safety(){
+    var a={}, n=0; QS.forEach(function(q){ a[q[0]]=ans(q[0]); if(a[q[0]]) n++; });
+    var hi=[], mid=[];
+    if(a.name==="no") hi.push("The account name does not match the supplier. This is the most common sign of fraud. Do not pay until the supplier explains it in writing and you confirm it by phone.");
+    if(a.name==="unsure") mid.push("Check the account name against the invoice and the supplier's company registration.");
+    if(a.country==="no") mid.push("The account is in a different country from the supplier. Some suppliers do this for good reasons, for example a Hong Kong account for a factory in mainland China. Ask why and confirm it by phone.");
+    if(a.country==="unsure") mid.push("Check which country the bank account is in. The SWIFT code shows it: letters five and six are the country.");
+    if(a.changed==="yes"&&a.call!=="yes") hi.push("New bank details sent by email or chat are the main trick in payment fraud. Call the supplier on a number you already had before you pay.");
+    else if(a.changed==="yes") mid.push("The bank details changed. You confirmed them by phone, which is right. Keep a note of the call.");
+    if(a.changed==="unsure") mid.push("Compare these bank details with your last payment to this supplier.");
+    if(a.call==="no"&&a.changed!=="yes") mid.push("Call the supplier on a number from an earlier order, their website or a trade fair card. Never use a number from the same email as the bank details.");
+    if(a.first==="yes") mid.push("This is your first payment to this supplier. Send a small first payment, or ask for a supplier check, before you send the full amount.");
+    var level=hi.length||mid.length>=3?"high":mid.length?"mid":"low", out=$("sc-out");
+    var head=document.createElement("div"); head.className="risk";
+    var sub=document.createElement("div"); sub.className="hint";
+    if(!n){ out.className="sc-out"; head.textContent="Answer the questions"; sub.textContent="Your risk result shows here as you answer."; out.replaceChildren(head,sub); return; }
+    out.className="sc-out r-"+level;
+    head.textContent=level==="high"?"High risk":level==="mid"?"Some risk":"Low risk";
+    sub.textContent=(level==="high"?"Stop and check before you send any money.":level==="mid"?"Check the points below before you pay.":"No warning signs in your answers. Keep copies of the invoice, the bank details and your call notes.")+(n<QS.length?" Based on "+n+" of "+QS.length+" answers.":"");
+    var parts=[head,sub];
+    var all=hi.concat(mid);
+    if(all.length){ var ul=document.createElement("ul"); all.forEach(function(t){ var li=document.createElement("li"); li.textContent=t; ul.appendChild(li); }); parts.push(ul); }
+    out.replaceChildren.apply(out,parts);
+  }
+
+  ["amt","ref"].forEach(function(id){ $(id).addEventListener("input",rateGap); });
+  $("cur").addEventListener("change",rateGap);
+
+  $("rateDate").textContent=RATE_TIME;
+  onCurrency();
+  calc();
+  rateGap(); cnyCalc(); safety();
+})();
+</script>
+
+<script>window.LEADGATE={"page": "payment-calculator", "results": ".slip, #rg-out .amt, #rg-out .verdict, #cny-out .amt, #cny-out .verdict", "actions": "#applyBtn", "title": "See your full payment cost", "bar": "Free tool. Leave your email and phone to see your full payment cost."};</script>
+<script>
+(function(){
+  var C=window.LEADGATE||{}; if(!C.results&&!C.actions) return;
+  // Results are free to see. Only saving, downloading, sharing and sending ask for details,
+  // except where a page sets gateResults (the partner bank data).
+  var GR=!!C.gateResults;
+  var KEY="ramani_lead_v1", MEM=null;
+  var FREE=["gmail.com","googlemail.com","yahoo.com","yahoo.co.uk","ymail.com","hotmail.com","outlook.com","live.com","msn.com","icloud.com","me.com","aol.com","proton.me","protonmail.com","gmx.com","mail.com","yandex.com","zoho.com"];
+  function getLead(){ try{ return JSON.parse(localStorage.getItem(KEY)||"null")||MEM; }catch(e){ return MEM; } }
+  function setLead(v){ MEM=v; try{ if(v) localStorage.setItem(KEY,JSON.stringify(v)); else localStorage.removeItem(KEY); }catch(e){} }
+
+  var css=document.createElement("style");
+  css.textContent=
+    (GR?"body.lead-locked :is("+C.results+"){filter:blur(6px);user-select:none;cursor:pointer}":"")+
+    ".lg-bar{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--deep);color:var(--deep-ink);display:flex;gap:10px 16px;align-items:center;justify-content:center;flex-wrap:wrap;padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));box-shadow:0 -10px 30px rgba(0,0,0,.18);font:600 15px var(--sans)}"+
+    ".lg-bar button,.lg-go{font:700 15px var(--sans);border:0;border-radius:10px;padding:10px 16px;cursor:pointer;background:var(--bright);color:var(--bright-ink)}"+
+    (GR?"body.lead-locked{padding-bottom:84px}":"")+
+    ".lg-back{position:fixed;inset:0;z-index:60;background:rgba(8,20,10,.55);display:grid;place-items:center;padding:16px}"+
+    ".lg-modal{background:var(--surface);color:var(--ink);border-radius:16px;padding:24px;width:100%;max-width:460px;max-height:90vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.3);font-family:var(--sans)}"+
+    ".lg-modal h2{margin:0 0 4px;font-size:22px;font-weight:800;letter-spacing:-.02em}"+
+    ".lg-modal p{margin:0 0 14px;color:var(--muted);font-size:14px}"+
+    ".lg-modal form{display:grid;gap:12px}"+
+    ".lg-modal label.l{display:grid;gap:5px;font-weight:600;font-size:14px}"+
+    ".lg-modal input[type=text],.lg-modal input[type=email],.lg-modal input[type=tel]{font:500 16px var(--sans);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%}"+
+    ".lg-modal .c{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--muted);font-weight:400}"+
+    ".lg-modal .c input{margin-top:3px;accent-color:var(--brand);flex:none;width:16px;height:16px;padding:0;min-width:0}"+
+    ".lg-modal .err{color:var(--warn);font-size:13px;min-height:1em}"+
+    ".lg-row{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap}"+
+    ".lg-skip{background:none;border:0;color:var(--muted);font:600 14px var(--sans);cursor:pointer;padding:6px 0}"+
+    ".lg-modal .go{background:var(--brand);color:var(--brand-ink);font:700 15px var(--sans);border:0;border-radius:10px;padding:12px 18px;cursor:pointer}"+
+    ".lg-pn{font-size:12px;color:var(--muted)}.lg-pn a{color:var(--brand)}"+
+    ".lg-reset{display:block;margin:28px auto 8px;background:none;border:0;color:var(--muted);font:500 12px var(--sans);text-decoration:underline;cursor:pointer}";
+  document.head.appendChild(css);
+
+  var bar=document.createElement("div"); bar.className="lg-bar"; bar.setAttribute("role","region"); bar.setAttribute("aria-label","See your results");
+  var bt=document.createElement("span"); bt.textContent=C.bar||"Free tool. Leave your email and phone to see your results.";
+  var bb=document.createElement("button"); bb.type="button"; bb.textContent="See my results";
+  bar.appendChild(bt); bar.appendChild(bb); bar.hidden=true; document.body.appendChild(bar);
+
+  var back=document.createElement("div"); back.className="lg-back"; back.hidden=true;
+  back.innerHTML='<div class="lg-modal" role="dialog" aria-modal="true" aria-labelledby="lg-t">'+
+    '<h2 id="lg-t"></h2><p id="lg-p"></p>'+
+    '<form novalidate id="lg-f">'+
+    '<label class="l">Full name<input type="text" id="lg-name" autocomplete="name"></label>'+
+    '<label class="l"><span id="lg-el">Email</span><input type="email" id="lg-email" autocomplete="email"></label>'+
+    '<label class="l">Phone number<input type="tel" id="lg-phone" inputmode="tel" autocomplete="tel" placeholder="+255 7xx xxx xxx"></label>'+
+    '<label class="c"><input type="checkbox" id="lg-ok"><span>Yes, Ramani may also send me tips, new tools and offers by email and SMS. Optional. I can unsubscribe at any time.</span></label>'+
+    '<span class="lg-pn">We use your details to give you your results and to answer your requests. <a id="lg-priv" target="_blank" rel="noopener">How Ramani uses your data</a></span>'+
+    '<span class="err" id="lg-err" aria-live="polite"></span>'+
+    '<div class="lg-row"><button type="button" class="lg-skip" id="lg-skip">Not now</button><button type="submit" class="go" id="lg-go">Continue</button></div>'+
+    '<span style="font-size:12px;color:var(--muted)">Test version: your details go to the test inbox on the Tools home page. Nothing reaches Ramani yet.</span>'+
+    '</form></div>';
+  document.body.appendChild(back);
+  var $=function(id){ return document.getElementById(id); };
+  $("lg-t").textContent=GR?(C.title||"See your results"):"Save, share or send your results";
+  $("lg-priv").href=(window.RAMANI&&window.RAMANI.privacyUrl)||"https://www.ramani.io/privacy-policy";
+  $("lg-p").textContent=GR?(C.text||"Free to use. Leave your contact details once and every free Ramani tool opens for you."):"Your results are free. Leave your details once to save, download, share or send them, and you will not be asked again on any Ramani tool.";
+  if(C.workEmail){ $("lg-el").textContent="Work email"; $("lg-email").placeholder="name@yourbank.co.tz"; }
+
+  var lastFocus=null, pendingEl=null;
+  function open(){ lastFocus=document.activeElement; back.hidden=false; $("lg-name").focus(); if(window.rtrack) window.rtrack("lead_form_shown",{}); }
+  function close(){ back.hidden=true; if(lastFocus&&lastFocus.focus) lastFocus.focus(); }
+  function lock(){ document.body.classList.add("lead-locked"); bar.hidden=!GR; }
+  function unlock(){ document.body.classList.remove("lead-locked"); bar.hidden=true; }
+
+  bb.addEventListener("click",open);
+  $("lg-skip").addEventListener("click",function(){ pendingEl=null; close(); });
+  back.addEventListener("click",function(e){ if(e.target===back) close(); });
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&!back.hidden) close(); });
+  document.addEventListener("click",function(e){
+    if(!document.body.classList.contains("lead-locked")) return;
+    var sel=GR?(C.results+(C.actions?","+C.actions:"")):(C.actions||"");
+    if(!sel) return;
+    var hit=e.target.closest&&e.target.closest(sel);
+    if(hit&&!e.target.closest(".lg-back")){ e.preventDefault(); e.stopPropagation(); pendingEl=GR?null:hit; open(); }
+  },true);
+
+  $("lg-f").addEventListener("submit",function(e){
+    e.preventDefault();
+    var name=$("lg-name").value.trim(), email=$("lg-email").value.trim().toLowerCase(), phone=$("lg-phone").value.replace(/[\s()-]/g,""), err="";
+    var dom=email.split("@")[1]||"";
+    if(!name) err="Enter your name.";
+    else if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) err="Enter a valid email address.";
+    else if(C.workEmail&&FREE.indexOf(dom)>=0) err="Please use your work email, not a personal "+dom+" address.";
+    else if(!/^\+?\d{9,15}$/.test(phone)) err="Enter your phone number, for example +255 712 345 678.";
+    $("lg-err").textContent=err;
+    if(err) return;
+    var mk=$("lg-ok").checked;
+    setLead({name:name,email:email,phone:phone,marketing:mk,page:C.page||"",at:new Date().toISOString()});
+    if(window.RAMANI) window.RAMANI.send("tool_lead",{name:name,email:email,phone:phone,marketing_consent:mk,tools_page:C.page||""});
+    if(window.rtrack) window.rtrack("lead_submitted",{marketing_consent:mk});
+    try{ window.dispatchEvent(new CustomEvent("ramani-lead")); }catch(x){}
+    close(); unlock();
+    if(pendingEl){ var x=pendingEl; pendingEl=null; setTimeout(function(){ x.click(); },60); } // finish what they asked for
+  });
+
+  var reset=document.createElement("button"); reset.type="button"; reset.className="lg-reset"; reset.textContent="Demo: forget my contact details";
+  reset.addEventListener("click",function(){ setLead(null); if(window.RAMANI&&window.RAMANI.people) window.RAMANI.people.forgetMe(); $("lg-f").reset(); lock(); window.scrollTo({top:0}); });
+  document.body.insertBefore(reset,bar);
+
+  var st=document.getElementById("status");
+  var sentReg=false;
+  if(st&&window.MutationObserver){ new MutationObserver(function(){
+    if(!/Registered|Verified/.test(st.textContent)){ sentReg=false; return; }
+    if(!sentReg){ sentReg=true; var g=document.getElementById("gate"), d={};
+      if(g) g.querySelectorAll("input[id],select[id]").forEach(function(f){ if(f.type==="checkbox"){ if(f.id==="g-ok") d.consent=f.checked; } else if(f.value) d[f.id.replace(/^g-/,"")]=f.value; });
+      if(g) d.interests=[].slice.call(g.querySelectorAll(".chips input:checked")).map(function(x){return x.value;});
+      if(d.name&&window.RAMANI) window.RAMANI.send("registration",d);
+    }
+    if(!getLead()){ setLead({via:"registration",page:C.page||"",at:new Date().toISOString()}); unlock(); }
+  }).observe(st,{childList:true,characterData:true,subtree:true}); }
+
+  // Ask once: a visitor who already left an email and phone on any Ramani page is not asked again.
+  var P=window.RAMANI&&window.RAMANI.people, me=P&&P.me();
+  if(!getLead()&&me&&me.email&&me.phone&&!(C.workEmail&&FREE.indexOf(me.email.split("@")[1]||"")>=0)) setLead({name:me.name||"",email:me.email,phone:me.phone,via:"known_contact",page:C.page||"",at:new Date().toISOString()});
+  if(me){ if(me.name) $("lg-name").value=me.name; if(me.email) $("lg-email").value=me.email; if(me.phone) $("lg-phone").value=me.phone; }
+
+  window.LEADGATE_API={open:open,getLead:getLead,setLead:setLead,locked:function(){return document.body.classList.contains("lead-locked");}};
+  if(getLead()) unlock(); else lock();
+})();
+</script>
+<script>
+(function(){
+  // "Send me this": a button after every [data-result] block. Users get their result by email or SMS.
+  // Email and phone are needed to deliver it. Marketing consent is a separate, optional tick.
+  var R=window.RAMANI=window.RAMANI||{};
+  var LKEY="ramani_lead_v1";
+  function getLead(){ if(window.LEADGATE_API) return window.LEADGATE_API.getLead()||{}; try{ return JSON.parse(localStorage.getItem(LKEY)||"null")||{}; }catch(e){ return {}; } }
+  function setLead(v){ if(window.LEADGATE_API) return window.LEADGATE_API.setLead(v); try{ localStorage.setItem(LKEY,JSON.stringify(v)); }catch(e){} }
+  function el(t,c,x){ var e=document.createElement(t); if(c) e.className=c; if(x!=null) e.textContent=x; return e; }
+  var $=function(id){ return document.getElementById(id); };
+
+  var css=document.createElement("style");
+  css.textContent=
+    ".sm-btn{display:inline-flex;align-items:center;gap:6px;margin:12px 0 4px;font:700 14px var(--sans);color:var(--brand);background:var(--surface);border:1px solid var(--brand);border-radius:10px;padding:8px 14px;cursor:pointer}"+
+    ".sm-btn:hover{background:var(--brand-soft)}.sm-after{grid-column:1/-1;justify-self:start;align-self:start;width:auto}"+
+    ".sm-back{position:fixed;inset:0;z-index:70;background:rgba(8,20,10,.55);display:grid;place-items:center;padding:16px}"+
+    ".sm-modal{background:var(--surface);color:var(--ink);border-radius:16px;padding:22px;width:100%;max-width:460px;max-height:90vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.3);font-family:var(--sans)}"+
+    ".sm-modal h2{margin:0 0 4px;font-size:21px;font-weight:800;letter-spacing:-.02em}"+
+    ".sm-modal p{margin:0 0 12px;color:var(--muted);font-size:14px}"+
+    ".sm-ch{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:12px}"+
+    ".sm-ch button{font:700 14px var(--sans);border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:10px 6px;cursor:pointer}"+
+    ".sm-ch button[aria-pressed=true]{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}"+
+    ".sm-modal form{display:grid;gap:10px}"+
+    ".sm-modal label.l{display:grid;gap:5px;font-weight:600;font-size:14px}"+
+    ".sm-modal input[type=email],.sm-modal input[type=tel]{font:500 16px var(--sans);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%}"+
+    ".sm-modal .c{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--muted);font-weight:400}"+
+    ".sm-modal .c input{margin-top:3px;accent-color:var(--brand);flex:none;width:16px;height:16px;padding:0;min-width:0}"+
+    ".sm-prev{background:var(--bg);border-radius:10px;padding:10px 12px;font:500 12px/1.45 var(--mono);white-space:pre-wrap;max-height:150px;overflow:auto;color:var(--muted)}"+
+    ".sm-row{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap}"+
+    ".sm-go{background:var(--brand);color:var(--brand-ink);font:700 15px var(--sans);border:0;border-radius:10px;padding:12px 18px;cursor:pointer}"+
+    ".sm-x{background:none;border:0;color:var(--muted);font:600 14px var(--sans);cursor:pointer;padding:6px 0}"+
+    ".sm-err{color:var(--warn);font-size:13px;min-height:1em}"+
+    ".sm-ok{background:var(--brand-soft);border-radius:10px;padding:12px;font-size:14px}"+
+    ".sm-wa{font:600 14px var(--sans);color:var(--brand)}"+
+    ".sm-pn{font-size:12px;color:var(--muted)}.sm-pn a{color:var(--brand)}";
+  document.head.appendChild(css);
+
+  var back=el("div","sm-back"); back.hidden=true;
+  back.innerHTML='<div class="sm-modal" role="dialog" aria-modal="true" aria-labelledby="sm-t">'+
+    '<h2 id="sm-t">Send me this</h2><p id="sm-p"></p>'+
+    '<div class="sm-ch" role="group" aria-label="Send by"><button type="button" data-ch="email">Email</button><button type="button" data-ch="sms">SMS</button></div>'+
+    '<form novalidate id="sm-f">'+
+    '<label class="l" id="sm-el">Email<input type="email" id="sm-email" autocomplete="email"></label>'+
+    '<label class="l" id="sm-pl">Phone<input type="tel" id="sm-phone" inputmode="tel" autocomplete="tel" placeholder="+255 7xx xxx xxx"></label>'+
+    '<div class="sm-prev" id="sm-prev" aria-label="What we will send"></div>'+
+    '<label class="c"><input type="checkbox" id="sm-mk"><span>Yes, Ramani may also send me tips, new tools and offers by email and SMS. Optional. I can unsubscribe at any time.</span></label>'+
+    '<span class="sm-pn">We use your details to send this result. <a id="sm-priv" target="_blank" rel="noopener">How Ramani uses your data</a></span>'+
+    '<span class="sm-err" id="sm-err" aria-live="polite"></span>'+
+    '<div class="sm-row"><a class="sm-wa" id="sm-wa" target="_blank" rel="noopener">Or share it yourself on WhatsApp ↗</a></div>'+
+    '<div class="sm-row"><button type="button" class="sm-x" id="sm-x">Close</button><button type="submit" class="sm-go" id="sm-go">Send</button></div>'+
+    '</form><div class="sm-ok" id="sm-ok" hidden></div></div>';
+  document.body.appendChild(back);
+  $("sm-priv").href=R.privacyUrl||"https://www.ramani.io/privacy-policy";
+
+  var cur=null, ch="email", lastFocus=null;
+  function toolName(node){
+    var v=node.closest("[id^='v-']"), name="";
+    if(v){ var t=document.querySelector('.wtab[data-v="'+v.id.slice(2)+'"]'); if(t) name=t.textContent.trim(); }
+    if(!name){ var h=document.querySelector("h1"); name=h?h.textContent.trim():document.title; }
+    return name.replace(/\s+/g," ");
+  }
+  function summary(node){
+    var t=(node.innerText||node.textContent||"").replace(/[ \t]+/g," ").replace(/\n\s*\n+/g,"\n").trim();
+    if(t.length>1500) t=t.slice(0,1500)+"…";
+    return t;
+  }
+  function message(){
+    return "Your Ramani results: "+cur.tool+"\n\n"+cur.text+"\n\nOpen the tool again: "+cur.url+"\nEstimates only. Every Ramani facility is subject to assessment.";
+  }
+  function setCh(c){
+    ch=c; back.querySelectorAll(".sm-ch button").forEach(function(b){ b.setAttribute("aria-pressed",String(b.dataset.ch===c)); });
+    $("sm-el").hidden=c!=="email"; $("sm-pl").hidden=c==="email";
+    $("sm-go").textContent=c==="email"?"Email it to me":"Text it to me";
+  }
+  back.querySelectorAll(".sm-ch button").forEach(function(b){ b.addEventListener("click",function(){ setCh(b.dataset.ch); }); });
+
+  function open(node){
+    if(window.LEADGATE_API&&window.LEADGATE_API.locked()){ window.LEADGATE_API.open(); return; }
+    var L=getLead();
+    cur={tool:toolName(node),text:summary(node),url:location.href.split("#")[0]+(location.hash||""),view:(node.getAttribute("data-result")||"")};
+    $("sm-p").textContent="Get your "+cur.tool+" result by email or SMS.";
+    $("sm-email").value=L.email||""; $("sm-phone").value=L.phone||""; $("sm-mk").checked=!!L.marketing;
+    $("sm-prev").textContent=message();
+    $("sm-wa").href="https://wa.me/?text="+encodeURIComponent(message());
+    $("sm-err").textContent=""; $("sm-ok").hidden=true; $("sm-f").hidden=false;
+    setCh(L.email?"email":"sms");
+    lastFocus=document.activeElement; back.hidden=false; back.querySelector('.sm-ch button[aria-pressed=true]').focus();
+    if(window.rtrack) window.rtrack("export_opened",{tool:cur.tool,view:cur.view});
+  }
+  function close(){ back.hidden=true; if(lastFocus&&lastFocus.focus) lastFocus.focus(); }
+  $("sm-x").addEventListener("click",close);
+  back.addEventListener("click",function(e){ if(e.target===back) close(); });
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&!back.hidden) close(); });
+  $("sm-wa").addEventListener("click",function(){ if(window.rtrack) window.rtrack("export_sent",{channel:"whatsapp_share",tool:cur.tool,view:cur.view}); });
+
+  $("sm-f").addEventListener("submit",function(e){
+    e.preventDefault();
+    var email=$("sm-email").value.trim().toLowerCase(), phone=$("sm-phone").value.replace(/[\s()-]/g,""), mk=$("sm-mk").checked, err="";
+    if(ch==="email"&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) err="Enter a valid email address.";
+    if(ch!=="email"&&!/^\+?\d{9,15}$/.test(phone)) err="Enter your phone number, for example +255 712 345 678.";
+    $("sm-err").textContent=err; if(err) return;
+    var L=getLead(); if(email) L.email=email; if(phone) L.phone=phone; L.marketing=mk; L.at=L.at||new Date().toISOString(); setLead(L);
+    var data={channel:ch,tool:cur.tool,view:cur.view,summary:cur.text,url:cur.url,name:L.name||"",marketing_consent:mk};
+    if(ch==="email") data.email=email; else data.phone=phone;
+    if(R.send) R.send("result_export",data);
+    if(window.rtrack) window.rtrack("export_sent",{channel:ch,tool:cur.tool,view:cur.view,marketing_consent:mk});
+    var to=ch==="email"?email:phone;
+    $("sm-f").hidden=true; $("sm-ok").hidden=false;
+    $("sm-ok").textContent="Done. Your "+cur.tool+" result is on its way to "+to+"."+(R.inbox?" Test version: saved to the test inbox.":"");
+  });
+
+  function add(){
+    document.querySelectorAll("[data-result]").forEach(function(node){
+      if(node.dataset.smDone) return; node.dataset.smDone="1";
+      var b=el("button","sm-btn","✉ Send me this"); b.type="button";
+      b.setAttribute("aria-label","Send me this result by email or SMS");
+      b.addEventListener("click",function(){ open(node); });
+      if(/^(TABLE|TBODY|THEAD|TR|UL|OL|PRE|SELECT|CANVAS|SVG|IMG|INPUT|TEXTAREA|P|SPAN)$/i.test(node.tagName)){ b.classList.add("sm-after"); node.insertAdjacentElement("afterend",b); }
+      else node.appendChild(b);
+    });
+  }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",add); else add();
+  window.SENDME_REFRESH=add;
+})();
+</script>
+</body>
+</html>
