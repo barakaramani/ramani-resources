@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Ramani newsletter</title>
+<style>
+:root{--brand:#388539;--ink:#16211a;--muted:#5f6d63;--line:#e4e1d6;--bg:#fbfaf6;--warn:#b5432c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Arial,sans-serif}
+main{max-width:1100px;margin:0 auto;padding:24px 16px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+h1{grid-column:1/-1;margin:0;font-size:24px}h1 span{color:var(--brand)}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;gap:12px;align-content:start}
+label{display:grid;gap:5px;font-weight:700;font-size:14px}
+input,select,textarea{font:15px Arial;padding:10px 12px;border:1px solid #d4d0c2;border-radius:10px;width:100%;background:var(--bg);color:var(--ink)}
+textarea{min-height:300px;resize:vertical}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button{font:700 14px Arial;border:0;border-radius:10px;padding:11px 16px;cursor:pointer;background:var(--brand);color:#fff}
+button.g{background:#fff;color:var(--ink);border:1px solid #d4d0c2}
+button:disabled{opacity:.6;cursor:default}
+.note{font-size:13px;color:var(--muted)}#msg{font-weight:700}
+iframe{width:100%;height:640px;border:1px solid var(--line);border-radius:12px;background:#f3f1ea}
+.bar{height:8px;border-radius:9px;background:#eee;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--brand)}
+@media (max-width:860px){main{grid-template-columns:minmax(0,1fr)}}
+</style></head><body>
+<main>
+<h1><span>ramani</span> newsletter</h1>
+<section class="card">
+  <label>Subject<input id="subject" maxlength="150" placeholder="Dollar at TZS 2,648 this Monday, and port news"></label>
+  <label>Preview line (shows after the subject in the inbox)<input id="pre" maxlength="150" placeholder="Rates, port and one tip for this week"></label>
+  <label>Language<select id="lang"><option value="en">English</option><option value="sw">Kiswahili</option></select></label>
+  <label>Email<textarea id="body">Hi {{first_name}},
+
+**This week in numbers**
+* USD to TZS: 2,648
+* CNY to TZS: 365
+
+**Port news**
+Write two or three short lines here.
+
+**Tip of the week**
+Book your TBS inspection before the goods are loaded.
+
+[Open the free Ramani tools](https://www.ramani.io/resources)
+
+The Ramani team</textarea></label>
+  <p class="note">Write plain text. A blank line starts a new paragraph. **Bold**, [link text](https://...) and lines starting with "* " for bullets. {{first_name}} becomes each person's first name. The unsubscribe link and Ramani's address are added for you.</p>
+  <label>Send to<select id="segment">
+    <option value="all">Everyone who agreed to emails</option><option value="mql">MQLs and active leads</option><option value="lead">Leads not yet MQL</option><option value="customers">Customers</option>
+    <option value="lang:sw">Prefers Kiswahili</option><option value="lang:en">Prefers English</option>
+    <option value="region:Dar es Salaam">Region: Dar es Salaam</option><option value="region:Arusha">Region: Arusha</option><option value="region:Mwanza">Region: Mwanza</option><option value="region:Mbeya">Region: Mbeya</option>
+  </select></label>
+  <p class="note" id="count">Counting…</p>
+  <div class="row"><input id="testTo" type="email" placeholder="your@ramani.io" style="flex:1;min-width:180px"><button class="g" id="test">Send me a test</button></div>
+  <div class="row"><button id="send">Send newsletter</button><span id="msg" aria-live="polite"></span></div>
+  <div class="bar" hidden id="bar"><i></i></div>
+</section>
+<section class="card"><b>Preview</b><iframe id="pv" title="Email preview"></iframe></section>
+</main>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i);};
+  function esc(t){ return t.replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+  function inline(t){ return esc(t).replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>").replace(/\[([^\]]+)\]\((https:\/\/[^)\s]+)\)/g,'<a href="$2" style="color:#388539;font-weight:700">$1</a>'); }
+  function fmt(src){ return src.replace(/\{\{\s*first_name\s*\}\}/g,"Juma").split(/\n{2,}/).map(function(b){ var L=b.split("\n"); if(L.every(function(l){return /^\* /.test(l);})) return "<ul>"+L.map(function(l){return "<li>"+inline(l.slice(2))+"</li>";}).join("")+"</ul>"; return "<p>"+L.map(inline).join("<br>")+"</p>"; }).join(""); }
+  function preview(){ var sw=$("lang").value==="sw";
+    $("pv").srcdoc='<body style="margin:0;background:#f3f1ea;font-family:Arial"><div style="max-width:560px;margin:20px auto;background:#fff;border-radius:14px;padding:22px 26px;font-size:15px;line-height:1.6"><div style="font:800 22px Arial;color:#388539;margin-bottom:8px">ramani</div>'+fmt($("body").value)+'</div><p style="max-width:560px;margin:0 auto;font-size:12px;color:#5f6d63">Ramani · Isale House, Mikocheni, Dar es Salaam, Tanzania<br>'+(sw?"Jiondoe":"Unsubscribe")+'</p></body>'; }
+  function count(){ $("count").textContent="Counting…"; fetch("/api/email/campaign?segment="+encodeURIComponent($("segment").value)).then(function(r){return r.json();}).then(function(j){ $("count").textContent=j.count!=null?("Reaches "+j.count+" people."):(j.error||"Could not count."); },function(){ $("count").textContent="Could not reach the server."; }); }
+  function data(){ return {subject:$("subject").value.trim(),preheader:$("pre").value.trim(),body:$("body").value,segment:$("segment").value,lang:$("lang").value}; }
+  function post(url,b){ return fetch(url,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(b)}).then(function(r){return r.json();}); }
+  $("test").addEventListener("click",function(){ var d=data(); if(!d.subject){ $("msg").textContent="Add a subject first."; return; } d.test_to=$("testTo").value.trim(); if(!d.test_to){ $("msg").textContent="Add your email for the test."; return; }
+    post("/api/email/campaign",d).then(function(j){ $("msg").textContent=j.sent?"Test sent. Check your inbox.":("Not sent: "+(j.error||j.skipped)); }); });
+  $("send").addEventListener("click",function(){ var d=data(); if(!d.subject){ $("msg").textContent="Add a subject first."; return; }
+    if(!confirm("Send \""+d.subject+"\" to "+$("count").textContent.replace("Reaches ","")+" This cannot be undone.")) return;
+    $("send").disabled=true; $("bar").hidden=false; var total=0, done=0;
+    post("/api/email/campaign",d).then(function(j){ if(!j.campaign_id){ $("msg").textContent=j.error||"Could not start."; $("send").disabled=false; return; } total=j.recipients;
+      (function loop(){ post("/api/email/send-batch",{campaign_id:j.campaign_id}).then(function(r){ done+=r.sent+r.failed+r.skipped; $("bar").firstChild.style.width=(total?done/total*100:100)+"%";
+        $("msg").textContent="Sent "+done+" of "+total+(r.failed?" ("+r.failed+" failed in the last batch)":"");
+        if(r.quota_reached){ $("msg").textContent="Paused: the email plan's daily or monthly limit is used up. "+(r.remaining)+" people are still waiting and nobody gets it twice. Campaign "+j.campaign_id+" can be resumed later."; $("send").disabled=false; return; } if(r.remaining>0) setTimeout(loop,1200); else { $("msg").textContent="Done. "+done+" of "+total+" processed."; $("send").disabled=false; } },function(){ $("msg").textContent="Paused because the connection dropped. Nobody gets the email twice. Campaign "+j.campaign_id+" can be resumed from the server."; }); })();
+    }); });
+  ["body","lang"].forEach(function(i){ $(i).addEventListener("input",preview); });
+  $("segment").addEventListener("change",count);
+  preview(); count();
+})();
+</script>
+</body></html>
