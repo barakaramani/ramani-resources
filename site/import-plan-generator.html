@@ -1,0 +1,486 @@
+<!doctype html><html lang="en"><head><script src="/config.js"></script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<title>Import Plan Generator for Tanzania | Ramani</title>
+<style>
+:root{--bg:#fbfaf6;--surface:#ffffff;--sunk:#f3f1ea;--ink:#16211a;--ink2:#2c3a31;--muted:#5f6d63;--line:#e4e1d6;--line2:#d4d0c2;
+--brand:#388539;--brand-deep:#24602a;--brand-ink:#ffffff;--brand-soft:#e7f1e3;--accent:#d98a1c;--accent-soft:#fbefd9;--warn:#b5432c;--warn-soft:#f8e3dd;
+--sans:"Plus Jakarta Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;--gut:max(16px,env(safe-area-inset-left,0px));--gutr:max(16px,env(safe-area-inset-right,0px))}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1511;--surface:#161e19;--sunk:#1c2620;--ink:#e9eee8;--ink2:#cdd6cf;--muted:#9aa89e;--line:#27322b;--line2:#33413a;--brand:#6cc06d;--brand-deep:#8fd38f;--brand-ink:#0b140d;--brand-soft:#1d3121;--accent:#efb054;--accent-soft:#33291a;--warn:#ef8a74;--warn-soft:#3a221d}}
+:root[data-theme="dark"]{--bg:#0f1511;--surface:#161e19;--sunk:#1c2620;--ink:#e9eee8;--ink2:#cdd6cf;--muted:#9aa89e;--line:#27322b;--line2:#33413a;--brand:#6cc06d;--brand-deep:#8fd38f;--brand-ink:#0b140d;--brand-soft:#1d3121;--accent:#efb054;--accent-soft:#33291a;--warn:#ef8a74;--warn-soft:#3a221d}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:4px}
+.cm-wrap{max-width:1120px;margin:0 auto;padding:0 var(--gutr) 0 var(--gut)}
+.cm-eb{font:600 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--brand)}
+.cm-btn{display:inline-flex;align-items:center;gap:8px;font:700 15px var(--sans);text-decoration:none;border-radius:999px;padding:13px 22px;border:1px solid transparent;cursor:pointer}
+.cm-btn.p{background:var(--brand);color:var(--brand-ink)}.cm-btn.p:hover{background:var(--brand-deep)}
+.cm-btn.g{background:transparent;color:var(--ink);border-color:var(--line2)}.cm-btn.g:hover{border-color:var(--ink)}
+.cm-btn.sm{padding:9px 16px;font-size:14px}
+.cm-link{color:var(--brand);font-weight:700;text-decoration:none;background:none;border:0;padding:0;font:inherit;font-weight:700;cursor:pointer}.cm-link:hover{text-decoration:underline}
+section{padding:64px 0}
+h2.cm-h{font-size:clamp(26px,3.4vw,38px);line-height:1.15;letter-spacing:-.025em;font-weight:800;margin:10px 0 12px}
+.cm-lede{color:var(--muted);font-size:17px;max-width:42rem;margin:0}
+.pg-hero{padding:52px 0 28px}
+.pg-hero h1{font-size:clamp(32px,4.6vw,52px);line-height:1.06;letter-spacing:-.035em;font-weight:800;margin:12px 0 14px;text-wrap:balance}
+.pg-hero p{color:var(--muted);font-size:18px;margin:0;max-width:42rem}
+.cm-f{display:grid;gap:5px;min-width:0}
+.cm-f label,.cm-f .lb{font-weight:600;font-size:14px}
+.cm-f input,.cm-f select{font:500 16px var(--sans);color:var(--ink);background:var(--bg);border:1px solid var(--line2);border-radius:10px;padding:11px 13px;width:100%;min-width:0}
+.cm-two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cm-consent{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink2)}
+.cm-consent input{margin-top:3px;accent-color:var(--brand);width:16px;height:16px;flex:none}
+.cm-err{color:var(--warn);font-size:13.5px;font-weight:600;min-height:1em}
+.small{font-size:13.5px;color:var(--muted)}
+@media (max-width:600px){section{padding:44px 0}.cm-two{grid-template-columns:minmax(0,1fr)}}
+</style>
+<script>
+(function(){
+  // One record per person. A person is matched by email OR phone (normalised to +255...).
+  // ONCE types are kept only the first time a person submits them; other types are kept
+  // but linked to the existing person, so the same person never becomes two leads.
+  // In the live site the server (functions/api/lead.js) enforces the same rules for every device.
+  var R=window.RAMANI=window.RAMANI||{};
+  var PK="ramani_people", MK="ramani_me";
+  var ONCE={tool_lead:1,newsletter:1,community_join:1,registration:1,trip_alerts:1,rate_alert:1,freedays_alert:1,partner_review:1,dataroom_request:1,download:"item",download_notify:"item",academy_certificate:"item",importer_survey:1,report_notify:1,meetup_rsvp:"item",meetup_interest:"item"};
+  var THIRD={agent_referral:["client_phone"],bank_referral:["phone"]};
+  function get(k,d){ try{ var v=JSON.parse(localStorage.getItem(k)||"null"); return v==null?d:v; }catch(e){ return (R._m&&R._m[k])||d; } }
+  function put(k,v){ R._m=R._m||{}; R._m[k]=v; try{ if(v==null) localStorage.removeItem(k); else localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+  function phone(p){
+    p=String(p||"").replace(/[^\d+]/g,""); if(p.charAt(0)==="+") p=p.slice(1); if(p.slice(0,2)==="00") p=p.slice(2);
+    if(/^0[67]\d{8}$/.test(p)) p="255"+p.slice(1); else if(/^[67]\d{8}$/.test(p)) p="255"+p;
+    return /^\d{9,15}$/.test(p)?"+"+p:"";
+  }
+  function email(e){ e=String(e||"").trim().toLowerCase(); return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)?e:""; }
+  function keysOf(type,d){
+    var k=[];
+    if(THIRD[type]){ THIRD[type].forEach(function(f){ var p=phone(d[f]); if(p) k.push("p:"+p); }); return k; }
+    var e=email(d.email), p=phone(d.phone||d.whatsapp);
+    if(e) k.push("e:"+e); if(p) k.push("p:"+p);
+    return k;
+  }
+  function action(type,d){ if(THIRD[type]) return type; var o=ONCE[type]; if(!o) return ""; return o==="item"?type+":"+(d.item||""):type; }
+  function load(){ var db=get(PK,null); if(!db||!db.p) db={p:{},i:{},blocked:0}; return db; }
+
+  var toastEl=null, toastT=0;
+  function toast(text){
+    if(!document.body) return;
+    if(!toastEl){
+      toastEl=document.createElement("div"); toastEl.setAttribute("role","status"); toastEl.setAttribute("aria-live","polite");
+      toastEl.style.cssText="position:fixed;left:50%;top:16px;transform:translateX(-50%);z-index:90;max-width:min(92vw,460px);background:var(--deep,#16301b);color:var(--deep-ink,#fff);font:600 14px/1.4 var(--sans,system-ui,sans-serif);padding:12px 16px;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.25);text-align:center";
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent=text; toastEl.hidden=false; clearTimeout(toastT); toastT=setTimeout(function(){ toastEl.hidden=true; },5000);
+  }
+
+  R.people={
+    phone:phone, email:email, toast:toast,
+    me:function(){ return get(MK,null); },
+    forgetMe:function(){ put(MK,null); },
+    clear:function(){ put(PK,null); put(MK,null); },
+    stats:function(){ var db=load(); return {people:Object.keys(db.p).length,blocked:db.blocked||0}; },
+    has:function(type,item){ var me=get(MK,null); if(!me||!me.id) return false; var p=load().p[me.id]; var a=ONCE[type]==="item"?type+":"+(item||""):type; return !!(p&&p.a.indexOf(a)>=0); },
+    register:function(type,d){
+      d=d||{}; var keys=keysOf(type,d); if(!keys.length) return {id:"",isNew:false,duplicate:false};
+      var db=load(), id=null, now=new Date().toISOString();
+      keys.forEach(function(k){ if(!id&&db.i[k]) id=db.i[k]; });
+      keys.forEach(function(k){ var o=db.i[k]; if(o&&o!==id&&db.p[o]){ // email and phone were two records: merge into one
+        var a=db.p[id], b=db.p[o]; b.a.forEach(function(x){ if(a.a.indexOf(x)<0) a.a.push(x); }); if(!a.name) a.name=b.name; if(!a.email) a.email=b.email; if(!a.phone) a.phone=b.phone; if(b.first<a.first) a.first=b.first;
+        for(var j in db.i) if(db.i[j]===o) db.i[j]=id; delete db.p[o]; } });
+      var isNew=!id;
+      if(isNew){ id="c"+Date.now().toString(36)+Math.random().toString(36).slice(2,6); db.p[id]={id:id,first:now,a:[],referred:!!THIRD[type]}; }
+      var p=db.p[id]; keys.forEach(function(k){ if(!db.i[k]) db.i[k]=id; });
+      var nm=THIRD[type]?(d.client||d.customer):d.name;
+      if(nm&&!p.name) p.name=nm;
+      keys.forEach(function(k){ if(k.charAt(0)==="e"&&!p.email) p.email=k.slice(2); if(k.charAt(0)==="p"&&!p.phone) p.phone=k.slice(2); });
+      p.last=now;
+      var act=action(type,d), dup=!!(act&&p.a.indexOf(act)>=0);
+      if(dup) db.blocked=(db.blocked||0)+1; else if(act) p.a.push(act);
+      put(PK,db);
+      if(!THIRD[type]){ var me={id:id}; if(p.name) me.name=p.name; if(p.email) me.email=p.email; if(p.phone) me.phone=p.phone; put(MK,me); }
+      return {id:id,isNew:isNew,duplicate:dup};
+    }
+  };
+})();
+(function(){
+  // Test version: every form submission is also saved to a test inbox in this browser,
+  // so testers can see exactly what Ramani would receive. The Tools home page shows it.
+  var R=window.RAMANI=window.RAMANI||{};
+  if(typeof R.endpoint!=="string") R.endpoint="";
+  var KEY="ramani_test_inbox";
+  function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||"[]")||[]; }catch(e){ return R._mem||[]; } }
+  function save(list){ R._mem=list; try{ localStorage.setItem(KEY,JSON.stringify(list)); }catch(e){} }
+  R.inbox={load:load,save:save,key:KEY};
+  function count(){ var a=document.getElementById("inboxLink"); if(a) a.textContent="Test inbox ("+load().length+")"; }
+  function dupNote(type){ try{ window.dispatchEvent(new CustomEvent("ramani-duplicate",{detail:{type:type}})); }catch(e){} if(R.people) R.people.toast(/referral$/.test(type||"")?"This client has already been referred, so they were not added twice.":"We already have your details, so nothing was added twice."); }
+  R.send=function(type,data,opts){
+    var payload={id:"t"+Date.now().toString(36)+Math.random().toString(36).slice(2,7),type:type,page:(location.pathname.split("/").pop()||"index.html"),hash:location.hash||"",at:new Date().toISOString(),data:data||{}};
+    var reg=R.people?R.people.register(type,payload.data):{};
+    R.lastDuplicate=!!reg.duplicate;
+    if(reg.duplicate){ if(!(opts&&opts.quiet)) dupNote(type); return Promise.resolve({ok:true,test:true,duplicate:true,contact_id:reg.id}); }
+    if(reg.id){ payload.contact_id=reg.id; payload.contact_status=reg.isNew?"new":"existing"; }
+    var list=load(); list.unshift(payload); if(list.length>300) list.length=300; save(list); count();
+    try{ window.dispatchEvent(new CustomEvent("ramani-inbox")); }catch(e){}
+    if(!R.endpoint) return Promise.resolve({ok:true,test:true,contact_id:reg.id||"",contact_status:payload.contact_status||""});
+    try{
+      return fetch(R.endpoint,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload),keepalive:true})
+        .then(function(){return {ok:true};},function(){return {ok:false};});
+    }catch(e){ return Promise.resolve({ok:false}); }
+  };
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",count); else count();
+  window.addEventListener("storage",function(e){ if(e.key===KEY) count(); });
+})();
+</script>
+</head><body>
+<script src="brain/kb.js"></script>
+<script src="brain/core.js"></script>
+<script src="brain/uliza.js" defer></script>
+
+<script src="i18n/sw.js"></script>
+<script src="i18n/engine.js"></script>
+<style id="rg-css">
+.rg{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--bg,#fff) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line,#ddd);font-family:"Plus Jakarta Sans",system-ui,sans-serif}
+.rg-in{max-width:1180px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));height:58px;display:flex;align-items:center;gap:14px}
+.rg a{color:inherit}
+.rg-logo{display:flex;align-items:center;gap:8px;text-decoration:none;font:800 19px/1 "Plus Jakarta Sans",system-ui,sans-serif;letter-spacing:-.03em;color:var(--ink,#142016)}
+.rg-logo svg{width:26px;height:26px}
+.rg-nav{display:flex;align-items:center;gap:2px;margin-left:8px}
+.rg-nav>a,.rg-res{background:none;border:0;text-decoration:none;font:600 14.5px "Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink,#142016);padding:8px 12px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.rg-nav>a:hover,.rg-res:hover,.rg-res[aria-expanded=true]{background:var(--brand-soft,#e6f1e5)}
+.rg-dd{position:relative}
+.rg-menu{position:absolute;top:calc(100% + 8px);left:-8px;width:340px;background:var(--surface,#fff);border:1px solid var(--line,#ddd);border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.18);padding:8px;display:none;z-index:70}
+.rg-menu.open{display:block}
+.rg-menu a,.rg-menu .rg-soon{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;text-decoration:none;padding:10px;border-radius:12px;color:var(--ink,#142016)}
+.rg-menu a:hover,.rg-menu a[aria-current=page]{background:var(--brand-soft,#e6f1e5)}
+.rg-menu .rg-soon{opacity:.7;cursor:default}
+.rg-mi{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:var(--brand-soft,#e6f1e5);color:var(--brand,#388539)}
+.rg-mi svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.rg-menu b{display:block;font-size:15px}
+.rg-menu small{display:block;font-size:13px;color:var(--muted,#56685a);line-height:1.4}
+.rg-menu em{display:inline-block;font:700 10px/1 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;padding:3px 6px;border-radius:5px;margin-left:6px;vertical-align:2px;font-style:normal;background:var(--bg,#f4f7f3);color:var(--muted,#56685a)}
+.rg-sp{flex:1}
+.rg-lang{font:700 13px "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.04em;border:1px solid var(--line,#ddd);background:var(--surface,#fff);color:var(--ink,#142016);border-radius:999px;height:36px;min-width:44px;padding:0 10px;cursor:pointer}
+.rg-lang:hover{border-color:var(--brand,#388539);color:var(--brand,#388539)}
+.rg-cta{background:var(--brand,#388539);color:var(--brand-ink,#fff)!important;text-decoration:none;border-radius:999px;padding:9px 16px;font:700 14px "Plus Jakarta Sans",system-ui,sans-serif;white-space:nowrap}
+@media (max-width:760px){.rg-nav>a{display:none}.rg-nav{margin-left:auto}.rg-sp{display:none}.rg-menu{position:fixed;top:62px;left:16px;right:16px;width:auto;max-height:calc(100vh - 80px);overflow-y:auto}}
+@media (max-width:420px){.rg-cta{display:none}}
+</style>
+<header class="rg"><div class="rg-in">
+<a class="rg-logo" href="index.html#learn" aria-label="Ramani"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#388539"/><path d="M16 7.5c-3.9 0-7 3-7 6.8 0 4.9 7 10.2 7 10.2s7-5.3 7-10.2c0-3.8-3.1-6.8-7-6.8Z" fill="none" stroke="#fff" stroke-width="2.2"/><circle cx="16" cy="14.2" r="2.4" fill="#fde9a8"/></svg>ramani</a>
+<nav class="rg-nav" aria-label="Main">
+<a href="https://www.ramani.io" target="_blank" rel="noopener">Import finance</a>
+<div class="rg-dd"><button type="button" class="rg-res" aria-expanded="false" aria-controls="rgMenu">Resources <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>
+<div class="rg-menu" id="rgMenu">
+<a href="resources.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M4 4h4v16H4zM10 4h4v16h-4z"/><path d="m16 5 3.5-1 2.5 15-3.5 1z"/></svg></span><span><b>Resource library <em>New</em></b><small>Every tool, template, guide and course in one place</small></span></a>
+<a href="tools.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2M8 18h2M12 18h4"/></svg></span><span><b>Tools</b><small>Free calculators, planners and checklists for importers, wholesalers, agents and banks</small></span></a>
+<a href="index.html#learn"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5v-15Z"/><path d="M9 8h7M9 11h5"/></svg></span><span><b>Learn</b><small>Guides, numbers and stories to import with less risk</small></span></a>
+<a href="community.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></span><span><b>Community <em>New</em></b><small>Biashara Tanzania: the online community and monthly meetup for importers</small></span></a>
+<span class="rg-soon" aria-disabled="true"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V10l7-5 7 5v11"/><path d="M9 21v-6h6v6"/></svg></span><span><b>Case studies <em>Coming soon</em></b><small>Traders who grew with Ramani, in their own words</small></span></span>
+<a href="glossary.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4V4Z"/><path d="M8 9h8M8 13h5"/></svg></span><span><b>Glossary <em>New</em></b><small>The words importers use, in Kiswahili and English</small></span></a>
+<a href="downloadables.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></span><span><b>Downloadables <em>New</em></b><small>Checklists, worksheets, import data and webinar recordings</small></span></a>
+<a href="academy.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5-10-5Z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg></span><span><b>Academy <em>New</em></b><small>Free short courses with a certificate to share</small></span></a>
+<a href="state-of-tanzanian-importers-2026.html"><span class="rg-mi"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><span><b>Latest report <em>New</em></b><small>State of Tanzanian Importers 2026: take the survey</small></span></a>
+</div></div>
+<a href="https://www.ramani.io/contact" target="_blank" rel="noopener">Contact</a>
+</nav>
+<span class="rg-sp"></span>
+<button type="button" class="rg-lang" data-noi18n>SW</button>
+<a class="rg-cta" href="https://www.ramani.io/apply/start" target="_blank" rel="noopener">Get started</a>
+</div></header>
+<script>(function(){var b=document.querySelector(".rg-res"),m=document.getElementById("rgMenu");if(!b)return;function s(o){b.setAttribute("aria-expanded",String(o));m.classList.toggle("open",o);}
+b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contains("open"));});document.addEventListener("click",function(e){if(!e.target.closest(".rg-dd"))s(false);});document.addEventListener("keydown",function(e){if(e.key==="Escape")s(false);});})();</script>
+
+<style>
+.hb-wrap{max-width:1120px;margin:0 auto;padding:0 var(--gutr) 0 var(--gut)}
+.hb-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px}
+.hb-grid{display:grid;gap:14px}
+.hb-g2{grid-template-columns:repeat(2,minmax(0,1fr))}.hb-g3{grid-template-columns:repeat(3,minmax(0,1fr))}.hb-g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.hb-ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--brand-soft);color:var(--brand);flex:none}
+.hb-ic svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.hb-pill{display:inline-flex;align-items:center;gap:6px;font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:4px 10px;background:var(--sunk);color:var(--muted)}
+.hb-pill.new{background:var(--accent-soft);color:var(--accent)}
+.hb-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 15px var(--sans);text-decoration:none;border-radius:12px;padding:12px 18px;border:1px solid transparent;cursor:pointer;background:var(--brand);color:var(--brand-ink)}
+.hb-btn:hover{background:var(--brand-deep)}
+.hb-btn.g{background:transparent;color:var(--ink);border-color:var(--line2)}.hb-btn.g:hover{border-color:var(--ink)}
+.hb-btn.sm{padding:9px 14px;font-size:14px;border-radius:10px}
+.hb-btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.hb-acts{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hb-f{display:grid;gap:6px;min-width:0}
+.hb-f label,.hb-f .lb{font-weight:600;font-size:14px}
+.hb-f input,.hb-f select,.hb-f textarea{font:500 16px var(--sans);color:var(--ink);background:var(--bg);border:1px solid var(--line2);border-radius:10px;padding:11px 13px;width:100%;min-width:0}
+.hb-f textarea{min-height:80px;resize:vertical}
+.hb-note{font-size:13.5px;color:var(--muted)}
+.hb-kpi{background:var(--sunk);border-radius:14px;padding:14px 16px;min-width:0}
+.hb-kpi .k{font-size:13px;color:var(--muted);font-weight:600}
+.hb-kpi .v{font:600 clamp(20px,2.4vw,26px)/1.2 var(--mono);letter-spacing:-.02em;margin-top:4px;overflow-wrap:anywhere}
+.hb-kpi .d{font-size:12.5px;color:var(--muted);margin-top:2px}
+.hb-msg{font-size:14px;font-weight:600;color:var(--brand);min-height:1em}
+.hb-err{color:var(--warn);font-size:13.5px;font-weight:600;min-height:1em}
+.hb-sec{padding:40px 0}
+.hb-h2{font-size:clamp(24px,3vw,32px);line-height:1.15;letter-spacing:-.02em;font-weight:800;margin:8px 0 10px}
+.hb-lede{color:var(--muted);font-size:17px;max-width:44rem;margin:0}
+.hb-crumb{font-size:14px;color:var(--muted);margin-bottom:6px}.hb-crumb a{color:var(--brand);text-decoration:none;font-weight:600}
+.hb-back{position:fixed;inset:0;z-index:80;background:rgba(8,20,10,.55);display:grid;place-items:center;padding:16px}
+.hb-modal{background:var(--surface);color:var(--ink);border-radius:18px;padding:24px;width:100%;max-width:440px;max-height:92vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.3)}
+.hb-modal h2{margin:0 0 6px;font-size:22px;font-weight:800;letter-spacing:-.02em}
+.hb-modal p{margin:0 0 14px;color:var(--muted);font-size:14.5px}
+.hb-modal form{display:grid;gap:12px}
+.hb-cons{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--ink2)}
+.hb-cons input{margin-top:3px;accent-color:var(--brand);width:16px;height:16px;flex:none}
+@media (max-width:900px){.hb-g3,.hb-g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){.hb-g2,.hb-g3,.hb-g4{grid-template-columns:minmax(0,1fr)}.hb-card{padding:18px}}
+@media print{.rg,.rn,.hb-noprint,header,nav{display:none!important}body{background:#fff}.hb-card{border:0;padding:0}}
+</style>
+<script src="data/live.js"></script>
+<script>
+(function(){
+  var SW=function(){return document.documentElement.lang==="sw";};
+  function me(){ var P=window.RAMANI&&RAMANI.people; return P?P.me():null; }
+  var back=null, cb=null, ctx="";
+  function build(){
+    back=document.createElement("div"); back.className="hb-back"; back.hidden=true;
+    back.innerHTML='<div class="hb-modal" role="dialog" aria-modal="true" aria-labelledby="hg-t"><h2 id="hg-t"></h2><p id="hg-p"></p>'+
+      '<form novalidate id="hg-f"><div class="hb-f"><label for="hg-name" id="hg-ln"></label><input id="hg-name" autocomplete="name"></div>'+
+      '<div class="hb-f"><label for="hg-phone" id="hg-lp"></label><input id="hg-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+255 7xx xxx xxx"></div>'+
+      '<div class="hb-f"><label for="hg-email" id="hg-le"></label><input id="hg-email" type="email" autocomplete="email"></div>'+
+      '<label class="hb-cons"><input type="checkbox" id="hg-ok"><span id="hg-lc"></span></label>'+
+      '<span class="hb-err" id="hg-err" aria-live="polite"></span>'+
+      '<div class="hb-acts" style="justify-content:space-between"><button type="button" class="hb-btn g sm" id="hg-x"></button><button type="submit" class="hb-btn" id="hg-go"></button></div></form></div>';
+    document.body.appendChild(back);
+    var $=function(i){return document.getElementById(i);};
+    $("hg-x").addEventListener("click",close);
+    back.addEventListener("click",function(e){ if(e.target===back) close(); });
+    back.addEventListener("keydown",function(e){ if(e.key==="Escape") close(); });
+    $("hg-f").addEventListener("submit",function(e){
+      e.preventDefault();
+      var n=$("hg-name").value.trim(), ph=$("hg-phone").value.replace(/[\s()-]/g,""), em=$("hg-email").value.trim().toLowerCase(), err="";
+      if(!n) err=SW()?"Tafadhali andika jina lako.":"Please enter your name.";
+      else if(!/^(\+?255|0)[67]\d{8}$/.test(ph)) err=SW()?"Tafadhali andika namba ya simu ya Tanzania, kwa mfano +255 712 345 678.":"Please enter a Tanzanian phone number, for example +255 712 345 678.";
+      else if(em&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) err=SW()?"Barua pepe si sahihi.":"That email address does not look right.";
+      else if(!$("hg-ok").checked) err=SW()?"Tafadhali kubali tukutumie ulichoomba.":"Please agree so we can send you what you asked for.";
+      $("hg-err").textContent=err; if(err) return;
+      var d={name:n,phone:ph,marketing_consent:true,tools_page:ctx,language:SW()?"sw":"en"}; if(em) d.email=em;
+      if(window.RAMANI&&RAMANI.send) RAMANI.send("tool_lead",d,{quiet:true});
+      var f=cb; back.hidden=true; cb=null; if(f) f(me()||{name:n,phone:ph,email:em});
+    });
+  }
+  function close(){ if(back) back.hidden=true; cb=null; }
+  window.RGate={
+    me:me,
+    need:function(context,title,fn){
+      var m=me(); if(m&&m.phone){ fn(m); return; }
+      if(!back) build(); ctx=context||""; cb=fn;
+      var $=function(i){return document.getElementById(i);};
+      $("hg-t").textContent=title||(SW()?"Karibu":"One quick step");
+      $("hg-p").textContent=SW()?"Ni bure. Acha jina na namba yako ya simu mara moja tu, hatutakuuliza tena kwenye zana yoyote ya Ramani.":"It is free. Leave your name and phone number once and we will not ask again on any Ramani tool.";
+      $("hg-ln").textContent=SW()?"Jina kamili":"Full name"; $("hg-lp").textContent=SW()?"Namba ya simu":"Phone number"; $("hg-le").textContent=SW()?"Barua pepe (si lazima)":"Email (optional)";
+      $("hg-lc").textContent=SW()?"Ndiyo, Ramani inaweza kunitumia nilichoomba pamoja na vidokezo na zana mpya kwa SMS na barua pepe. Naweza kujiondoa wakati wowote.":"Yes, Ramani may send me what I asked for, plus tips and new tools, by SMS and email. I can unsubscribe at any time.";
+      $("hg-x").textContent=SW()?"Si sasa":"Not now"; $("hg-go").textContent=SW()?"Endelea":"Continue"; $("hg-err").textContent="";
+      if(m){ if(m.name) $("hg-name").value=m.name; if(m.email) $("hg-email").value=m.email; }
+      back.hidden=false; $("hg-name").focus();
+    }
+  };
+  // Save a file through the viewer's downloads permission, else a normal browser download.
+  window.RSave=function(name,data,type,done){
+    done=done||function(){};
+    var fallback=function(){ try{ var b=data instanceof Blob?data:new Blob([data],{type:type||"text/plain"}); var a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download=name; document.body.appendChild(a); a.click(); a.remove(); done(true); }catch(e){ done(false); } };
+    var p=window.claude&&window.claude.use?window.claude.use("downloads"):Promise.resolve(null);
+    p.then(function(dl){ if(!dl) return fallback(); dl.save({filename:name,data:data}).then(function(){ done(true); },function(e){ if(e&&e.code==="declined") done(false); else fallback(); }); },fallback);
+  };
+})();
+</script>
+<style>
+.pl-hero{padding:48px 0 18px}
+.pl-hero h1{font-size:clamp(30px,4.4vw,48px);line-height:1.06;letter-spacing:-.035em;font-weight:800;margin:10px 0 12px;text-wrap:balance}
+.pl-hero p{color:var(--muted);font-size:18px;margin:0;max-width:44rem}
+.pl-lay{display:grid;grid-template-columns:360px minmax(0,1fr);gap:20px;align-items:start}
+.pl-in{display:grid;gap:14px;position:sticky;top:76px}
+.pl-out{display:grid;gap:16px;min-width:0}
+.pl-out h2{font-size:20px;margin:0 0 10px;letter-spacing:-.01em}
+.pl-tab{width:100%;border-collapse:collapse;font-size:14.5px}
+.pl-tab td{padding:9px 0;border-bottom:1px solid var(--line)}
+.pl-tab td:last-child{text-align:right;font-family:var(--mono);white-space:nowrap;padding-left:12px}
+.pl-tab tr.tot td{font-weight:800;border-bottom:0;font-size:16px}
+.pl-tab .sub{color:var(--muted);font-size:13px}
+.pl-steps{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.pl-steps li{display:grid;grid-template-columns:92px 18px minmax(0,1fr);gap:10px;align-items:start;padding-bottom:14px;position:relative}
+.pl-steps .dt{font:600 13px var(--mono);color:var(--muted);padding-top:1px}
+.pl-steps .dot{width:14px;height:14px;border-radius:50%;background:var(--brand);margin-top:3px;box-shadow:0 0 0 4px var(--brand-soft)}
+.pl-steps li:not(:last-child):after{content:"";position:absolute;left:108px;top:20px;bottom:0;width:2px;background:var(--line)}
+.pl-steps b{display:block;font-size:15px}.pl-steps span.s{font-size:14px;color:var(--muted)}
+.pl-steps .cash{display:inline-block;margin-top:4px;font:600 12.5px var(--mono);background:var(--accent-soft);color:var(--accent);border-radius:6px;padding:2px 7px}
+.pl-perm{display:grid;gap:10px}
+.pl-perm div{background:var(--sunk);border-radius:12px;padding:12px 14px;font-size:14.5px}
+.pl-perm b{display:block}
+.pl-cta{background:var(--brand-soft);border:0}
+@media (max-width:900px){.pl-lay{grid-template-columns:minmax(0,1fr)}.pl-in{position:static}}
+@media (max-width:480px){.pl-steps li{grid-template-columns:74px 14px minmax(0,1fr);gap:8px}.pl-steps li:not(:last-child):after{left:86px}}
+</style>
+<main>
+<section class="pl-hero"><div class="hb-wrap">
+  <div class="hb-crumb"><a href="resources.html">Resource library</a> / Source</div>
+  <span class="cm-eb">Free tool</span>
+  <h1>Import plan generator</h1>
+  <p>Tell us what you want to import, from where and your budget. Get a one page plan with the landed cost, the permits you need, the shipping option, a timeline and the cash you need on each date.</p>
+</div></section>
+<section class="hb-sec" style="padding-top:10px"><div class="hb-wrap pl-lay">
+  <form class="hb-card pl-in hb-noprint" id="plF" novalidate>
+    <div class="hb-f"><label for="pl-cat">What will you import?</label><select id="pl-cat">
+      <option value="household">Household goods</option>
+      <option value="elec">Electronics, phones and solar</option>
+      <option value="build" selected>Building materials (tiles, steel, paint)</option>
+      <option value="textile">Clothes, shoes and fabrics</option>
+      <option value="food">Food and drinks</option>
+      <option value="cosm">Cosmetics and beauty</option>
+      <option value="med">Medicines and medical supplies</option>
+      <option value="agri">Seeds, fertiliser and farm inputs</option>
+      <option value="mach">Machinery and equipment</option>
+      <option value="parts">Spare parts</option>
+      <option value="furn">Furniture</option>
+    </select></div>
+    <div class="hb-f"><label for="pl-from">Buying from</label><select id="pl-from">
+      <option value="cn">China</option><option value="in">India</option><option value="ae">Dubai (UAE)</option><option value="tr">Turkey</option><option value="eu">Europe or elsewhere</option>
+    </select></div>
+    <div class="hb-f"><label for="pl-usd">Value of the goods (USD)</label><input id="pl-usd" type="number" inputmode="numeric" min="500" step="500" value="15000"></div>
+    <div class="hb-f"><label for="pl-to">Your shop or store is in</label><select id="pl-to">
+      <option value="dar">Dar es Salaam</option><option value="aru">Arusha</option><option value="mwz">Mwanza</option><option value="mby">Mbeya</option><option value="dod">Dodoma</option><option value="oth">Another region</option>
+    </select></div>
+    <div class="hb-f"><label for="pl-need">Stock needed in the shop by (optional)</label><input id="pl-need" type="date"></div>
+    <label class="hb-cons"><input type="checkbox" id="pl-vat" checked><span>I am VAT registered and claim import VAT back</span></label>
+    <p class="hb-note" style="margin:0">Prices are estimates from recent freight and port charges. Get quotes from your forwarder and clearing agent before you pay.</p>
+  </form>
+  <div class="pl-out" id="plOut">
+    <div class="hb-grid hb-g4" id="plK" data-noi18n></div>
+    <div class="hb-card"><h2>Landed cost</h2><table class="pl-tab" id="plCost" data-noi18n></table>
+      <p class="hb-note" style="margin:10px 0 0">Duty uses the usual EAC tariff band for these goods. Your exact rate depends on the HS code, so check it with your clearing agent or the landed cost calculator. <a href="landed-cost-calculator.html" style="color:var(--brand);font-weight:700">Open the calculator</a></p></div>
+    <div class="hb-card"><h2>Permits and documents to check first</h2><div class="pl-perm" id="plPerm" data-noi18n></div></div>
+    <div class="hb-card"><h2>Your timeline and cash needs</h2><ol class="pl-steps" id="plSteps" data-noi18n></ol></div>
+    <div class="hb-card hb-noprint">
+      <div class="hb-acts">
+        <button type="button" class="hb-btn" id="plDl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Download my plan</button>
+        <button type="button" class="hb-btn g" id="plWa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12Z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-2-2l.8-1-1-2Z"/></svg>Get it by SMS</button>
+        <button type="button" class="hb-btn g" id="plPr">Print or save as PDF</button>
+      </div>
+      <p class="hb-msg" id="plMsg" aria-live="polite" data-noi18n></p>
+    </div>
+    <div class="hb-card pl-cta hb-noprint"><h2 style="margin:0 0 6px">Need cash to pay your supplier?</h2>
+      <p style="margin:0 0 14px;color:var(--ink2)">Ramani pays your supplier and you repay as you sell, subject to assessment. Check how ready you are first.</p>
+      <div class="hb-acts"><a class="hb-btn" href="import-finance-readiness-score.html">Get my readiness score</a><a class="hb-btn g" href="import-finance-quote.html">Request a finance quote</a></div></div>
+  </div>
+</div></section>
+</main>
+<script>
+(function(){
+  var SW=function(){return document.documentElement.lang==="sw";}, $=function(i){return document.getElementById(i);}, L=function(o){return SW()?o[1]:o[0];};
+  var LIVE=window.RAMANI_LIVE, RATE=(LIVE&&LIVE.usd&&LIVE.usd.TZS)||2648;
+  // duty band %, goods value per cubic metre (USD), permit group
+  var PD={"CAT": {"household": [25, 1500, "general"], "elec": [25, 6000, "elec"], "build": [25, 500, "build"], "textile": [35, 3000, "textile"], "food": [25, 1200, "food"], "cosm": [25, 4000, "cosm"], "med": [0, 8000, "med"], "agri": [0, 700, "agri"], "mach": [0, 3000, "general"], "parts": [25, 4000, "general"], "furn": [25, 800, "general"]}, "FROM": {"cn": [35, 25, 110, 2800, 4200], "in": [18, 20, 90, 1900, 3000], "ae": [14, 7, 70, 1500, 2400], "tr": [30, 21, 110, 2600, 3900], "eu": [35, 21, 130, 3200, 4800]}, "TO": {"dar": [1, 450000, 250000], "aru": [3, 2800000, 600000], "mwz": [4, 3500000, 700000], "mby": [3, 3200000, 650000], "dod": [2, 2200000, 500000], "oth": [4, 3500000, 700000]}, "PERM": {"general": [["TBS", "Many of these goods are on the TBS list and need a certificate of conformity from an inspection before loading.", "Bidhaa nyingi kati ya hizi ziko kwenye orodha ya TBS na zinahitaji cheti cha ulinganifu kutokana na ukaguzi kabla ya kupakia."]], "elec": [["TBS", "Cables, sockets, batteries and solar panels usually need a certificate of conformity before loading.", "Nyaya, soketi, betri na sola kwa kawaida zinahitaji cheti cha ulinganifu kabla ya kupakia."], ["TCRA", "Phones, routers, radios and other devices that send a signal usually need type approval.", "Simu, ruta, redio na vifaa vingine vinavyotuma mawimbi kwa kawaida vinahitaji idhini ya aina (type approval)."]], "build": [["TBS", "Cement, steel bars, roofing sheets, tiles and paint are usually on the TBS list and need a certificate of conformity before loading.", "Saruji, nondo, mabati, vigae na rangi kwa kawaida viko kwenye orodha ya TBS na vinahitaji cheti cha ulinganifu kabla ya kupakia."]], "textile": [["TBS", "Clothes, shoes and fabrics usually need a certificate of conformity. Used clothing usually needs a fumigation certificate too.", "Nguo, viatu na vitambaa kwa kawaida vinahitaji cheti cha ulinganifu. Mitumba kwa kawaida inahitaji pia cheti cha ufukizaji."]], "food": [["TBS", "Food and drinks usually need product registration and an import permit before shipping.", "Vyakula na vinywaji kwa kawaida vinahitaji usajili wa bidhaa na kibali cha kuagiza kabla ya kusafirishwa."], ["TAEC", "Some foods, such as milk powder and cereals, may need a radiation test certificate.", "Baadhi ya vyakula, kama maziwa ya unga na nafaka, vinaweza kuhitaji cheti cha kipimo cha mionzi."], ["TPHPA", "Raw grains, beans, fruit and other plant products usually need a plant import permit and a phytosanitary certificate.", "Nafaka ghafi, maharage, matunda na mazao mengine ya mimea kwa kawaida yanahitaji kibali cha kuagiza mimea na cheti cha afya ya mimea."]], "cosm": [["TBS", "Cosmetics usually need product registration and an import permit. Some ingredients, such as mercury and hydroquinone, are not allowed.", "Vipodozi kwa kawaida vinahitaji usajili wa bidhaa na kibali cha kuagiza. Baadhi ya viambato, kama zebaki na hydroquinone, haviruhusiwi."]], "med": [["TMDA", "Medicines, medical devices and lab reagents usually need registration and an import permit before shipping.", "Dawa, vifaa tiba na vitendanishi vya maabara kwa kawaida vinahitaji usajili na kibali cha kuagiza kabla ya kusafirishwa."]], "agri": [["TPHPA", "Seeds, plants and pesticides usually need an import permit and a phytosanitary certificate.", "Mbegu, mimea na viuatilifu kwa kawaida vinahitaji kibali cha kuagiza na cheti cha afya ya mimea."], ["TOSCI", "Seed varieties usually need to be registered before you can sell them.", "Aina za mbegu kwa kawaida zinahitaji kusajiliwa kabla ya kuziuza."], ["TFRA", "Fertiliser usually needs registration and an import permit.", "Mbolea kwa kawaida inahitaji usajili na kibali cha kuagiza."]]}}, CAT=PD.CAT, FROM=PD.FROM, TO=PD.TO, PERM=PD.PERM;
+  var DOCS=["Every shipment also needs: commercial invoice and packing list in your business name with your TIN, bill of lading, certificate of origin, marine insurance from a Tanzanian insurer, and proof of payment to your supplier.","Kila mzigo pia unahitaji: invoice ya biashara na packing list kwa jina la biashara yako na TIN yako, bill of lading, cheti cha asili, bima ya baharini kutoka kampuni ya bima ya Tanzania, na uthibitisho wa malipo kwa msambazaji."];
+  var P={};
+  function tzs(v){ return "TZS "+Math.round(v).toLocaleString("en-US"); }
+  function usd(v){ return "USD "+Math.round(v).toLocaleString("en-US"); }
+  function short(v){ return v>=1e9?"TZS "+(v/1e9).toFixed(2)+"bn":v>=1e6?"TZS "+(v/1e6).toFixed(1)+"m":tzs(v); }
+  function add(d,n){ var x=new Date(d); x.setDate(x.getDate()+n); return x; }
+  function fd(d){ return d.toLocaleDateString(SW()?"sw-TZ":"en-GB",{day:"numeric",month:"short",year:"numeric"}); }
+  function calc(){
+    var c=CAT[$("pl-cat").value], f=FROM[$("pl-from").value], t=TO[$("pl-to").value], g=Math.max(0,+$("pl-usd").value||0), vat=$("pl-vat").checked;
+    var cbm=g/c[1], mode, freight, port, n=1;
+    if(cbm<=15){ mode="lcl"; freight=Math.max(1,cbm)*f[2]; port=1200000+cbm*60000; }
+    else if(cbm<=28){ mode="20"; freight=f[3]; port=2750000; }
+    else { mode="40"; n=Math.ceil(cbm/58); freight=f[4]*n; port=3500000*n; }
+    var road=mode==="lcl"?Math.max(t[2],t[1]*cbm/28):t[1]*(mode==="20"?0.85:1)*n;
+    var ins=(g+freight)*0.005, cif=(g+freight+ins)*RATE, duty=cif*c[0]/100, vatv=(cif+duty)*0.18, goodsT=g*RATE;
+    var total=goodsT+freight*RATE+ins*RATE+duty+vatv+port+road, net=total-(vat?vatv:0);
+    var prod=f[1], sea=f[0], wait=mode==="lcl"?10:5, clear=7, days=7+prod+3+wait+sea+clear+t[0];
+    var need=$("pl-need").value?new Date($("pl-need").value+"T00:00:00"):null, start=new Date(); start.setHours(0,0,0,0);
+    var orderBy=need?add(need,-days):null; var base=(need&&orderBy>start)?orderBy:start;
+    P={c:c,f:f,t:t,g:g,cbm:cbm,mode:mode,n:n,freight:freight,ins:ins,cif:cif,duty:duty,vatv:vatv,port:port,road:road,total:total,net:net,vat:vat,goodsT:goodsT,days:days,need:need,orderBy:orderBy,base:base,start:start,prod:prod,sea:sea,wait:wait,clear:clear};
+    draw();
+  }
+  function ship(){ return P.mode==="lcl"?(SW()?"Mzigo wa pamoja (LCL), takriban "+P.cbm.toFixed(1)+" m³":"Shared load (LCL), about "+P.cbm.toFixed(1)+" m³"):P.mode==="20"?(SW()?"Kontena 1 la futi 20":"One 20ft container"):(P.n+(SW()?" kontena la futi 40":" × 40ft container")); }
+  function steps(){
+    var b=P.base, d1=add(b,7), load=add(d1,P.prod+3), sail=add(load,P.wait), arr=add(sail,P.sea), rel=add(arr,P.clear), shop=add(rel,P.t[0]);
+    var tb=["general","elec","build","textile"].indexOf(P.c[2])>=0;
+    return [
+      [b,["Check permits and get a proforma invoice","Angalia vibali na upate proforma invoice"],["Confirm the permits below and agree price, Incoterm and delivery date with your supplier.","Thibitisha vibali vilivyo hapa chini na ukubaliane bei, Incoterm na tarehe ya kupakia na msambazaji."],0],
+      [d1,["Pay the deposit","Lipa malipo ya awali"],["Most suppliers ask for about 30% before production starts.","Wasambazaji wengi huomba takriban 30% kabla ya kuanza uzalishaji."],P.goodsT*0.3],
+      [add(load,-3),tb?["TBS inspection before loading","Ukaguzi wa TBS kabla ya kupakia"]:["Check the goods before loading","Kagua bidhaa kabla ya kupakia"],tb?["Book the TBS appointed inspection so you get the certificate of conformity.","Panga ukaguzi wa TBS ili upate cheti cha ulinganifu."]:["Ask for photos or an inspection report before you pay the balance.","Omba picha au ripoti ya ukaguzi kabla ya kulipa salio."],0],
+      [load,["Pay the balance and load","Lipa salio na kupakia"],["Pay the remaining 70% and get the bill of lading.","Lipa 70% iliyobaki na upate bill of lading."],P.goodsT*0.7],
+      [sail,["Ship sails","Meli inaondoka"],[(SW()?"Takriban siku ":"About ")+P.sea+(SW()?" baharini hadi Dar es Salaam.":" days at sea to Dar es Salaam."),""],0],
+      [arr,["Arrives at Dar port: pay duty, VAT and charges","Inafika bandari ya Dar: lipa ushuru, VAT na gharama"],["Pay freight to your forwarder. Your clearing agent lodges the declaration in TANCIS. Pay quickly to stay inside the free days.","Lipa usafirishaji kwa wakala wako wa mizigo. Wakala wa forodha anawasilisha tamko kwenye TANCIS. Lipa mapema ili ubaki ndani ya siku za bure."],P.duty+P.vatv+P.port+P.freight*RATE+P.ins*RATE],
+      [rel,["Released from the port","Mzigo unatoka bandarini"],["Truck to your store and pay transport.","Gari linapeleka mzigo stoo yako, lipa usafiri."],P.road],
+      [shop,["Stock in your shop","Stoku iko dukani"],[P.need?((shop<=P.need)?(SW()?"Kwa wakati kwa tarehe uliyohitaji.":"In time for the date you need it."):(SW()?"Imechelewa kwa tarehe uliyohitaji. Agiza mapema au tumia mzigo wa ndege kwa sehemu ya oda.":"Later than the date you need. Order earlier or fly part of the order.")):"",""],0]
+    ];
+  }
+  function draw(){
+    var K=$("plK"); K.replaceChildren();
+    var mult=P.g?(P.net/P.goodsT):0;
+    [[SW()?"Usafirishaji":"Shipping",ship(),SW()?"Kulingana na thamani na aina ya bidhaa":"From the value and type of goods"],
+     [SW()?"Gharama kufika":"Landed cost",short(P.net),SW()?(mult.toFixed(2)+" × thamani ya bidhaa"):(mult.toFixed(2)+" × the goods value")],
+     [SW()?"Pesa ya kwanza":"Cash needed first",short(P.goodsT*0.3),SW()?"Malipo ya awali ya 30%":"30% deposit"],
+     [P.orderBy?(SW()?"Agiza kufikia":"Order by"):(SW()?"Stoku dukani":"Stock in shop"),P.orderBy?fd(P.orderBy):fd(add(P.base,P.days)),(SW()?"Takriban siku ":"About ")+P.days+(SW()?" kuanzia kuagiza":" days from order")]
+    ].forEach(function(k){ var d=document.createElement("div"); d.className="hb-kpi"; d.innerHTML='<div class="k"></div><div class="v" style="font-size:19px"></div><div class="d"></div>'; d.children[0].textContent=k[0]; d.children[1].textContent=k[1]; d.children[2].textContent=k[2]; K.appendChild(d); });
+    var rows=[[SW()?"Bidhaa":"Goods",usd(P.g)+" × "+RATE.toFixed(0),P.goodsT],[SW()?"Usafirishaji wa baharini":"Sea freight",usd(P.freight),P.freight*RATE],[SW()?"Bima (0.5%)":"Insurance (0.5%)","",P.ins*RATE],
+      [SW()?"Ushuru wa forodha":"Import duty",(SW()?"Kiwango cha ":"Band ")+P.c[0]+"%",P.duty],[SW()?"VAT ya uagizaji (18%)":"Import VAT (18%)",P.vat?(SW()?"Unaidai tena":"You claim this back"):"",P.vatv],
+      [SW()?"Bandari, laini ya meli na wakala":"Port, shipping line and agent","",P.port],[SW()?"Usafiri hadi stoo yako":"Transport to your store","",P.road]];
+    var tb=$("plCost"); tb.replaceChildren();
+    rows.forEach(function(r){ var tr=document.createElement("tr"), a=document.createElement("td"), b=document.createElement("td"); a.textContent=r[0]; if(r[1]){ var s=document.createElement("div"); s.className="sub"; s.textContent=r[1]; a.appendChild(s); } b.textContent=tzs(r[2]); tr.appendChild(a); tr.appendChild(b); tb.appendChild(tr); });
+    var tr=document.createElement("tr"); tr.className="tot"; tr.innerHTML="<td></td><td></td>"; tr.children[0].textContent=P.vat?(SW()?"Jumla, bila VAT unayodai":"Total, after VAT you claim back"):(SW()?"Jumla":"Total"); tr.children[1].textContent=tzs(P.net); tb.appendChild(tr);
+    var pm=$("plPerm"); pm.replaceChildren();
+    (PERM[P.c[2]]||PERM.general).forEach(function(p){ var d=document.createElement("div"), b=document.createElement("b"); b.textContent=p[0]; d.appendChild(b); d.appendChild(document.createTextNode(SW()?p[2]:p[1])); pm.appendChild(d); });
+    var dd=document.createElement("div"); dd.textContent=L(DOCS); pm.appendChild(dd);
+    var st=$("plSteps"); st.replaceChildren();
+    steps().forEach(function(s){ var li=document.createElement("li"); li.innerHTML='<span class="dt"></span><span class="dot"></span><div><b></b><span class="s"></span></div>';
+      li.children[0].textContent=fd(s[0]); li.querySelector("b").textContent=L(s[1]); li.querySelector(".s").textContent=SW()?(s[2][1]||s[2][0]):s[2][0];
+      if(s[3]>0){ var c=document.createElement("span"); c.className="cash"; c.textContent=(SW()?"Pesa: ":"Cash: ")+short(s[3]); li.children[2].appendChild(document.createElement("br")); li.children[2].appendChild(c); }
+      st.appendChild(li); });
+  }
+  function text(){
+    var s=(SW()?"MPANGO WA UAGIZAJI, RAMANI":"RAMANI IMPORT PLAN")+"\n"+$("pl-cat").selectedOptions[0].textContent+" · "+$("pl-from").selectedOptions[0].textContent+" · "+usd(P.g)+"\n\n"+(SW()?"Usafirishaji: ":"Shipping: ")+ship()+"\n"+(SW()?"Gharama kufika: ":"Landed cost: ")+tzs(P.net)+"\n\n";
+    s+=(SW()?"Ratiba":"Timeline")+"\n"; steps().forEach(function(x){ s+=fd(x[0])+": "+L(x[1])+(x[3]>0?" ("+tzs(x[3])+")":"")+"\n"; });
+    s+="\n"+(SW()?"Vibali":"Permits")+"\n"; (PERM[P.c[2]]||PERM.general).forEach(function(p){ s+=p[0]+": "+(SW()?p[2]:p[1])+"\n"; }); s+=L(DOCS)+"\n\n";
+    return s+(SW()?"Makadirio tu. Thibitisha bei na wakala wako. Ufadhili wa Ramani unategemea tathmini.":"Estimates only. Confirm prices with your agents. Ramani finance is subject to assessment.")+"\nramani.io";
+  }
+  function sum(m,how){ return {deliver:how,name:m.name,phone:m.phone,goods:$("pl-cat").value,origin:$("pl-from").value,value_usd:P.g,destination:$("pl-to").value,shipping:P.mode,landed_cost_tzs:Math.round(P.net)}; }
+  try{ var q=new URLSearchParams(location.search), set=function(id,v){ if(v!=null&&v!==""){ var e=$(id); if(e.tagName==="SELECT"&&![].some.call(e.options,function(o){return o.value===v;})) return; e.value=v; } };
+    set("pl-cat",q.get("cat")); set("pl-from",q.get("from")); set("pl-usd",q.get("usd")); set("pl-to",q.get("to")); if(q.get("need")) set("pl-need",q.get("need")); }catch(e){}
+  $("plF").addEventListener("input",calc); $("plF").addEventListener("change",calc);
+  $("plDl").addEventListener("click",function(){ RGate.need("import_plan",SW()?"Pakua mpango wako":"Download your plan",function(m){ if(window.RAMANI) RAMANI.send("import_plan",sum(m,"download"),{quiet:true}); RSave("ramani-import-plan.txt",text(),"text/plain",function(ok){ $("plMsg").textContent=ok?(SW()?"Mpango umehifadhiwa.":"Plan saved."):(SW()?"Upakuaji umesitishwa.":"Download cancelled."); }); }); });
+  $("plWa").addEventListener("click",function(){ RGate.need("import_plan",SW()?"Pata mpango kwa SMS":"Get your plan by SMS",function(m){ if(window.RAMANI) RAMANI.send("import_plan",sum(m,"sms")); $("plMsg").textContent=SW()?"Tutakutumia kiungo cha mpango huu kwa SMS ndani ya siku moja ya kazi.":"We will text you a link to this plan within one working day."; }); });
+  $("plPr").addEventListener("click",function(){ RGate.need("import_plan",SW()?"Chapisha mpango wako":"Print your plan",function(m){ if(window.RAMANI) RAMANI.send("import_plan",sum(m,"print"),{quiet:true}); window.print(); }); });
+  window.addEventListener("rg-lang",draw);
+  calc();
+})();
+</script>
+
+<style id="rn-css">
+.rn{max-width:1120px;margin:8px auto 48px;padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink,#142016)}
+.rn-card{background:var(--surface,#fff);border:1px solid var(--line,#d7e1d6);border-radius:18px;padding:24px;display:grid;grid-template-columns:1fr 1.1fr;gap:22px;align-items:center}
+.rn-card h2{margin:6px 0 6px;font-size:24px;font-weight:800;letter-spacing:-.02em}
+.rn-card p{margin:0;color:var(--muted,#56685a)}
+.rn-eb{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand,#388539);font-weight:700}
+.rn form{display:grid;grid-template-columns:1fr 1fr auto;gap:8px}
+.rn input{font:500 16px "Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink,#142016);background:var(--bg,#f4f7f3);border:1px solid var(--line,#d7e1d6);border-radius:10px;padding:11px 13px;width:100%;min-width:0}
+.rn button{font:700 15px "Plus Jakarta Sans",system-ui,sans-serif;border:0;border-radius:10px;padding:11px 18px;cursor:pointer;background:var(--brand,#388539);color:var(--brand-ink,#fff)}
+.rn small{display:block;grid-column:1/-1;font-size:12.5px;color:var(--muted,#56685a)}
+.rn small a{color:var(--brand,#388539)}
+.rn .rn-msg{grid-column:1/-1;font-size:14px;font-weight:600;min-height:1em}
+@media (max-width:760px){.rn-card{grid-template-columns:1fr;padding:20px}.rn form{grid-template-columns:1fr}}
+</style>
+<section class="rn" aria-labelledby="rn-t"><div class="rn-card">
+<div><span class="rn-eb">Newsletter</span><h2 id="rn-t">Get our newsletter</h2><p>The dollar and yuan rate, what moved at the port and one import tip you can use this week. Every Monday, free.</p></div>
+<form id="rn-f" novalidate>
+<input id="rn-name" type="text" autocomplete="name" placeholder="Your name" aria-label="Your name" required>
+<input id="rn-email" type="email" autocomplete="email" placeholder="Your email" aria-label="Your email" required>
+<button type="submit">Subscribe</button>
+<span class="rn-msg" id="rn-msg" aria-live="polite"></span>
+<small>By subscribing you agree to receive our newsletter. Unsubscribe at any time. <a href="https://www.ramani.io/privacy-policy" target="_blank" rel="noopener">Privacy</a></small>
+</form></div></section>
+<script>(function(){var f=document.getElementById("rn-f");if(!f)return;f.addEventListener("submit",function(e){e.preventDefault();
+var n=document.getElementById("rn-name").value.trim(),m=document.getElementById("rn-email").value.trim().toLowerCase(),o=document.getElementById("rn-msg");
+if(!n){o.style.color="var(--warn,#a35208)";o.textContent="Please enter your name.";return;}
+if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)){o.style.color="var(--warn,#a35208)";o.textContent="Please enter a valid email address.";return;}
+var done=function(r){o.style.color="var(--brand,#388539)";o.textContent=(r&&r.duplicate)?"This email is already subscribed. You will keep getting the newsletter every Monday.":"Thank you, "+n+". Our next newsletter reaches your inbox on Monday. Test version: saved to the test inbox only.";f.reset();};
+if(window.RAMANI&&window.RAMANI.send)window.RAMANI.send("newsletter",{list:"Ramani newsletter",name:n,email:m,marketing_consent:true}).then(done,done);else done();});})();</script>
+</body></html>
