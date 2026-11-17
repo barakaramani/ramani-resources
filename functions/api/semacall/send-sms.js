@@ -4,7 +4,7 @@ import { sendSms } from "../../../lib/sms.js";
 import { json, staff } from "../../../lib/contact.js";
 
 export async function onRequestPost({ request, env }) {
-  const who = staff(request); if (!who) return json({ error: "staff_only" }, 401);
+  const who = (await staff(request, env)); if (!who) return json({ error: "staff_only" }, 401);
   const body = await request.json().catch(() => ({}));
   const c = await env.DB.prepare("SELECT c.id, c.sms_draft, c.sms_status, p.phone, p.opt_out FROM calls c JOIN people p ON p.id = c.person_id WHERE c.id = ?1").bind(String(body.call_id || "")).first();
   if (!c) return json({ error: "not_found" }, 404);

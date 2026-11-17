@@ -4,7 +4,7 @@ import { pushLead } from "../../../lib/semacall.js";
 import { json, staff } from "../../../lib/contact.js";
 
 export async function onRequestPost({ request, env }) {
-  const who = staff(request); if (!who) return json({ error: "staff_only" }, 401);
+  const who = (await staff(request, env)); if (!who) return json({ error: "staff_only" }, 401);
   const body = await request.json().catch(() => ({}));
   const b = await makeBrief(env, String(body.person_id || ""));
   if (!b) return json({ error: "not_found" }, 404);
