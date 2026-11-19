@@ -28,6 +28,36 @@ export function fixLinks(text, sw) {
   return out;
 }
 
+// The plan's numbers are written here from Ramani's calculator, so the model can never change them.
+const GN = { household: ["household goods", "bidhaa za nyumbani"], elec: ["electronics", "vifaa vya umeme"], build: ["building materials", "vifaa vya ujenzi"], textile: ["clothes and textiles", "nguo"], food: ["food", "chakula"], cosm: ["cosmetics", "vipodozi"], med: ["medicines", "dawa"], agri: ["farm inputs", "pembejeo za kilimo"], mach: ["machinery", "mashine"], parts: ["spare parts", "vipuri"], furn: ["furniture", "samani"] };
+const ON = { cn: "China", in: "India", ae: "Dubai", tr: "Turkey", eu: "Europe" };
+const RN = { dar: "Dar es Salaam", aru: "Arusha", mwz: "Mwanza", mby: "Mbeya", dod: "Dodoma", oth: "upcountry" };
+const tz = (n) => "TZS " + Math.round(n).toLocaleString("en-US");
+export function planBlock(r, sw) {
+  const g = (GN[r.goods] || GN.household)[sw ? 1 : 0], o = ON[r.origin] || r.origin, to = RN[r.region] || r.region, usd = "USD " + Number(r.value_usd).toLocaleString("en-US");
+  return sw ? [
+    `Makadirio: ${g}, thamani ${usd}, kutoka ${o} hadi ${to}:`,
+    `- Usafirishaji: ${r.shipping}, takriban m³ ${r.cubic_metres}`,
+    `- Ushuru (${r.duty_band_percent}%): ${tz(r.duty_tzs)}`,
+    `- VAT ya uagizaji (18%): ${tz(r.import_vat_tzs)}`,
+    `- Gharama hadi dukani: **${tz(r.landed_cost_tzs_excluding_vat_claimed_back)}** (ukidai VAT)`,
+    `- Malipo ya awali 30%: ${tz(r.deposit_30_percent_tzs)}`,
+    `- Takriban siku ${r.days_from_order_to_shop} hadi dukani`,
+    `- Vibali vya kuangalia: ${(r.permits || []).join(", ")}`,
+    `Kiwango cha leo: 1 USD = ${r.usd_tzs_rate} TZS. Benki, maduka ya fedha na TRA vinaweza kutofautiana.`,
+  ].join("\n") : [
+    `Estimate for ${usd} of ${g} from ${o} to ${to}:`,
+    `- Shipping: ${r.shipping}, about ${r.cubic_metres} m³`,
+    `- Duty (${r.duty_band_percent}%): ${tz(r.duty_tzs)}`,
+    `- Import VAT (18%): ${tz(r.import_vat_tzs)}`,
+    `- Landed cost: **${tz(r.landed_cost_tzs_excluding_vat_claimed_back)}** (if you claim back import VAT)`,
+    `- 30% deposit: ${tz(r.deposit_30_percent_tzs)}`,
+    `- About ${r.days_from_order_to_shop} days to your shop`,
+    `- Permits to check: ${(r.permits || []).join(", ")}`,
+    `Today's rate: 1 USD = ${r.usd_tzs_rate} TZS. Bank, bureau and TRA rates may differ.`,
+  ].join("\n");
+}
+
 // What the chat already established: a plan from an earlier message, carried into a follow up question.
 function pickFrom(map, text) {
   const w = " " + String(text || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/[^a-z0-9]+/).filter(Boolean).join(" ") + " ";
@@ -122,7 +152,10 @@ export async function onRequestPost({ request, env }) {
   if (workersAIReady(env) && (await underDailyCap(env))) { // 2. Cloudflare Workers AI, free tier
     try {
       const t0 = Date.now();
-      const text = await workersAIAnswer(env, { rules: RULES, facts: factsFor(core, question, sw, chatContext(turns)), turns, sw, model: debug && body.model ? String(body.model) : null, raw: debug });
+      const facts = factsFor(core, question, sw, chatContext(turns));
+      const block = facts.plan ? planBlock(facts.plan, sw) : "";
+      let text = await workersAIAnswer(env, { rules: RULES, facts, turns, sw, model: debug && body.model ? String(body.model) : null, raw: debug, numbersShown: !!block });
+      if (block && typeof text === "string") text = block + "\n\n" + text;
       if (debug && text && typeof text === "object") return json({ debug: text, ms: Date.now() - t0 });
       if (text) {
         if (env.DB) { try { await env.DB.prepare("UPDATE questions SET answered_by = 'workers_ai' WHERE id = ?1").bind(qid).run(); } catch {} }
