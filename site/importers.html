@@ -387,14 +387,13 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center;justify-conten
   };
 })();
 (function(){
-  // Test version: every form submission is also saved to a test inbox in this browser,
-  // so testers can see exactly what Ramani would receive. The Tools home page shows it.
+  // Every form submission posts to RAMANI.endpoint (the lead database).
   var R=window.RAMANI=window.RAMANI||{};
   if(typeof R.endpoint!=="string") R.endpoint="";
   var KEY="ramani_test_inbox";
   function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||"[]")||[]; }catch(e){ return R._mem||[]; } }
   function save(list){ R._mem=list; try{ localStorage.setItem(KEY,JSON.stringify(list)); }catch(e){} }
-  R.inbox={load:load,save:save,key:KEY};
+  
   function count(){ var a=document.getElementById("inboxLink"); if(a) a.textContent="Test inbox ("+load().length+")"; }
   function dupNote(type){ try{ window.dispatchEvent(new CustomEvent("ramani-duplicate",{detail:{type:type}})); }catch(e){} if(R.people) R.people.toast(/referral$/.test(type||"")?"This client has already been referred, so they were not added twice.":"We already have your details, so nothing was added twice."); }
   R.send=function(type,data,opts){
@@ -403,7 +402,7 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center;justify-conten
     R.lastDuplicate=!!reg.duplicate;
     if(reg.duplicate){ if(!(opts&&opts.quiet)) dupNote(type); return Promise.resolve({ok:true,test:true,duplicate:true,contact_id:reg.id}); }
     if(reg.id){ payload.contact_id=reg.id; payload.contact_status=reg.isNew?"new":"existing"; }
-    var list=load(); list.unshift(payload); if(list.length>300) list.length=300; save(list); count();
+    
     try{ window.dispatchEvent(new CustomEvent("ramani-inbox")); }catch(e){}
     if(!R.endpoint) return Promise.resolve({ok:true,test:true,contact_id:reg.id||"",contact_status:payload.contact_status||""});
     try{
@@ -645,7 +644,7 @@ a.btn{text-decoration:none;display:inline-block}
 @media (max-width:640px){ .f3,.cols3{grid-template-columns:minmax(0,1fr)} .chg li{grid-template-columns:minmax(0,1fr) 7.5rem} .crow{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto} .crow .nmc{grid-column:1 / -1} .crow.head .nmc{display:none} }
 </style>
 <div class="wrap">
-  <nav class="backnav" aria-label="Breadcrumb" style="font:600 14px var(--sans);padding-top:4px;margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;color:var(--muted)"><a href="tools.html">All Ramani tools</a> <span style="margin-left:auto"></span><a href="tools.html#inbox" id="inboxLink">Test inbox</a></nav>
+  <nav class="backnav" aria-label="Breadcrumb" style="font:600 14px var(--sans);padding-top:4px;margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;color:var(--muted)"><a href="tools.html">All Ramani tools</a> <span style="margin-left:auto"></span></nav>
   <div class="topbar">
     <div class="brand">Ramani<small>for importers</small></div>
     <span class="tag">Free tools</span>
@@ -1103,7 +1102,7 @@ a.btn{text-decoration:none;display:inline-block}
 
         <!-- MARGIN -->
         <div class="view" id="v-margin" role="tabpanel" hidden>
-          <div class="vhead"><div><h2>Product margin calculator</h2><p>Find which products make you the most money each month, after landed cost.</p></div><span class="sample">Sample products</span></div>
+          <div class="vhead"><div><h2>Product margin calculator</h2><p>Find which products make you the most money each month, after landed cost.</p></div><span class="sample">Example products</span></div>
           <div class="card" style="margin-bottom:14px;padding:18px">
             <div class="fields">
               <div class="f"><label for="mg-fin">Financing cost for the cycle (%)</label><input id="mg-fin" type="number" min="0" step="0.5" value="5" inputmode="decimal"><span class="hint">Example only. Use the figure from your Ramani quote.</span></div>
@@ -1547,7 +1546,7 @@ a.btn{text-decoration:none;display:inline-block}
     var a3=addDays(DM_END,-3), a1=addDays(DM_END,-1), past=a1<TODAY;
     if(window.RAMANI) RAMANI.send("demurrage_alert",{phone:wa,free_days_end:iso(DM_END),alert_dates:[iso(a3),iso(a1)],arrived:$("dm-arr").value,free_days:num("dm-free"),daily_charge_tzs:num("dm-rate"),container:$("dm-type").selectedOptions[0].textContent.split(" ")[0],marketing_consent:true});
     $("dm-af").hidden=true; var d=$("dm-done"); d.hidden=false;
-    d.textContent=(past?"Done. Your free days end on "+fmt(DM_END)+", so the alert dates have passed. We will message "+wa+" with tips to clear fast.":"Done. We will message "+wa+" on "+fmt(a3)+" and "+fmt(a1)+", 3 days and 1 day before your free days end on "+fmt(DM_END)+".")+" Saved to the test inbox.";
+    d.textContent=(past?"Done. Your free days end on "+fmt(DM_END)+", so the alert dates have passed. We will message "+wa+" with tips to clear fast.":"Done. We will message "+wa+" on "+fmt(a3)+" and "+fmt(a1)+", 3 days and 1 day before your free days end on "+fmt(DM_END)+".")+"";
   });
 
   /* ---------- documents ---------- */
@@ -1639,7 +1638,7 @@ a.btn{text-decoration:none;display:inline-block}
     $("rp-err").textContent=err; if(err) return;
     if(window.RAMANI) RAMANI.send("repay_reminder",{phone:wa,day:$("rp-day").value,weekly_set_aside_tzs:Math.round(RP.save),weekly_repayment_tzs:Math.round(RP.week),buffer_tzs:Math.round(RP.buffer||0),weeks:RP.wk,marketing_consent:true});
     $("rp-rf").hidden=true; var d=$("rp-done"); d.hidden=false;
-    d.textContent="Done. Every "+$("rp-day").value+" for "+RP.wk+" weeks, we will remind "+wa+" to set aside "+tzs(RP.save)+"."+" Saved to the test inbox.";
+    d.textContent="Done. Every "+$("rp-day").value+" for "+RP.wk+" weeks, we will remind "+wa+" to set aside "+tzs(RP.save)+"."+"";
   });
 
   /* ---------- reorder ---------- */
@@ -1859,7 +1858,7 @@ a.btn{text-decoration:none;display:inline-block}
     '<span class="lg-pn">We use your details to give you your results and to answer your requests. <a id="lg-priv" target="_blank" rel="noopener">How Ramani uses your data</a></span>'+
     '<span class="err" id="lg-err" aria-live="polite"></span>'+
     '<div class="lg-row"><button type="button" class="lg-skip" id="lg-skip">Not now</button><button type="submit" class="go" id="lg-go">Continue</button></div>'+
-    '<span style="font-size:12px;color:var(--muted)">Test version: your details go to the test inbox on the Tools home page. Nothing reaches Ramani yet.</span>'+
+    ''+
     '</form></div>';
   document.body.appendChild(back);
   var $=function(id){ return document.getElementById(id); };
@@ -1905,7 +1904,7 @@ a.btn{text-decoration:none;display:inline-block}
     if(pendingEl){ var x=pendingEl; pendingEl=null; setTimeout(function(){ x.click(); },60); } // finish what they asked for
   });
 
-  var reset=document.createElement("button"); reset.type="button"; reset.className="lg-reset"; reset.textContent="Demo: forget my contact details";
+  var reset=document.createElement("button"); reset.type="button"; reset.className="lg-reset"; reset.textContent="Use different contact details";
   reset.addEventListener("click",function(){ setLead(null); if(window.RAMANI&&window.RAMANI.people) window.RAMANI.people.forgetMe(); $("lg-f").reset(); lock(); window.scrollTo({top:0}); });
   document.body.insertBefore(reset,bar);
 
@@ -2038,7 +2037,7 @@ a.btn{text-decoration:none;display:inline-block}
     if(window.rtrack) window.rtrack("export_sent",{channel:ch,tool:cur.tool,view:cur.view,marketing_consent:mk});
     var to=ch==="email"?email:phone;
     $("sm-f").hidden=true; $("sm-ok").hidden=false;
-    $("sm-ok").textContent="Done. Your "+cur.tool+" result is on its way to "+to+"."+(R.inbox?" Test version: saved to the test inbox.":"");
+    $("sm-ok").textContent="Done. Your "+cur.tool+" result is on its way to "+to+".";
   });
 
   function add(){
@@ -2082,7 +2081,7 @@ a.btn{text-decoration:none;display:inline-block}
 var n=document.getElementById("rn-name").value.trim(),m=document.getElementById("rn-email").value.trim().toLowerCase(),o=document.getElementById("rn-msg");
 if(!n){o.style.color="var(--warn,#a35208)";o.textContent="Please enter your name.";return;}
 if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)){o.style.color="var(--warn,#a35208)";o.textContent="Please enter a valid email address.";return;}
-var done=function(r){o.style.color="var(--brand,#04C401)";o.textContent=(r&&r.duplicate)?"This email is already subscribed. You will keep getting the newsletter every Monday.":"Thank you, "+n+". Our next newsletter reaches your inbox on Monday. Test version: saved to the test inbox only.";f.reset();};
+var done=function(r){o.style.color="var(--brand,#04C401)";o.textContent=(r&&r.duplicate)?"This email is already subscribed. You will keep getting the newsletter every Monday.":"Thank you, "+n+". Our next newsletter reaches your inbox on Monday.";f.reset();};
 if(window.RAMANI&&window.RAMANI.send)window.RAMANI.send("newsletter",{list:"Ramani newsletter",name:n,email:m,marketing_consent:true}).then(done,done);else done();});})();</script>
 </body>
 </html>

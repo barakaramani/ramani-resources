@@ -131,7 +131,7 @@ h2.sec{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--
 </style>
 
 <div class="wrap">
-  <div class="topbar"><div class="brand">Ramani</div><span class="tag">Test version · sample data</span></div>
+  <div class="topbar"><div class="brand">Ramani</div></div>
 
   <header class="hero">
     <div class="eyebrow">Free tools</div>
@@ -212,10 +212,10 @@ h2.sec{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--
 <h2>Business trip guides</h2>
 <div class="rel"><a href="business-trip-to-bangladesh.html">Business trip to Bangladesh from Tanzania</a><a href="business-trip-to-belgium.html">Business trip to Belgium from Tanzania</a><a href="business-trip-to-brazil.html">Business trip to Brazil from Tanzania</a><a href="business-trip-to-burundi.html">Business trip to Burundi from Tanzania</a><a href="business-trip-to-china.html">Business trip to China from Tanzania</a><a href="business-trip-to-dr-congo.html">Business trip to DR Congo from Tanzania</a><a href="business-trip-to-egypt.html">Business trip to Egypt from Tanzania</a><a href="business-trip-to-france.html">Business trip to France from Tanzania</a><a href="business-trip-to-germany.html">Business trip to Germany from Tanzania</a><a href="business-trip-to-hong-kong.html">Business trip to Hong Kong from Tanzania</a><a href="business-trip-to-india.html">Business trip to India from Tanzania</a><a href="business-trip-to-indonesia.html">Business trip to Indonesia from Tanzania</a><a href="business-trip-to-italy.html">Business trip to Italy from Tanzania</a><a href="business-trip-to-japan.html">Business trip to Japan from Tanzania</a><a href="business-trip-to-kenya.html">Business trip to Kenya from Tanzania</a><a href="business-trip-to-malawi.html">Business trip to Malawi from Tanzania</a><a href="business-trip-to-malaysia.html">Business trip to Malaysia from Tanzania</a><a href="business-trip-to-mozambique.html">Business trip to Mozambique from Tanzania</a><a href="business-trip-to-netherlands.html">Business trip to the Netherlands from Tanzania</a><a href="business-trip-to-oman.html">Business trip to Oman from Tanzania</a><a href="business-trip-to-pakistan.html">Business trip to Pakistan from Tanzania</a><a href="business-trip-to-rwanda.html">Business trip to Rwanda from Tanzania</a><a href="business-trip-to-saudi-arabia.html">Business trip to Saudi Arabia from Tanzania</a><a href="business-trip-to-singapore.html">Business trip to Singapore from Tanzania</a><a href="business-trip-to-south-africa.html">Business trip to South Africa from Tanzania</a><a href="business-trip-to-south-korea.html">Business trip to South Korea from Tanzania</a><a href="business-trip-to-spain.html">Business trip to Spain from Tanzania</a><a href="business-trip-to-thailand.html">Business trip to Thailand from Tanzania</a><a href="business-trip-to-turkey.html">Business trip to Turkey from Tanzania</a><a href="business-trip-to-uae.html">Business trip to the UAE from Tanzania</a><a href="business-trip-to-uganda.html">Business trip to Uganda from Tanzania</a><a href="business-trip-to-uk.html">Business trip to the UK from Tanzania</a><a href="business-trip-to-usa.html">Business trip to the US from Tanzania</a><a href="business-trip-to-vietnam.html">Business trip to Vietnam from Tanzania</a><a href="business-trip-to-zambia.html">Business trip to Zambia from Tanzania</a></div>
 </section>
-<p class="foot" id="foot">This is the test version. <a href="#inbox" style="color:var(--brand-text,var(--brand))">Open the test inbox</a> to see what each form sends, and <a href="#events" style="color:var(--brand-text,var(--brand))">tracking events</a> to see what PostHog would get. Figures are samples, buttons show where links go on the live site, and nothing is sent or saved.</p>
+<p class="foot" id="foot">All Ramani tools are free. Financing is subject to assessment.</p>
 </div>
 <script>
-document.getElementById("q").addEventListener("click",function(){ document.getElementById("foot").textContent="On the live site this opens ramani.io/apply/start. Test version: nothing was sent."; });
+document.getElementById("q").addEventListener("click",function(){ document.getElementById("foot").textContent="Opening the Ramani application page…"; window.open((window.RAMANI&&RAMANI.applyUrl)||"https://www.ramani.io/apply/start","_blank","noopener"); });
 </script>
 
 <script>
@@ -287,14 +287,13 @@ document.getElementById("q").addEventListener("click",function(){ document.getEl
   };
 })();
 (function(){
-  // Test version: every form submission is also saved to a test inbox in this browser,
-  // so testers can see exactly what Ramani would receive. The Tools home page shows it.
+  // Every form submission posts to RAMANI.endpoint (the lead database).
   var R=window.RAMANI=window.RAMANI||{};
   if(typeof R.endpoint!=="string") R.endpoint="";
   var KEY="ramani_test_inbox";
   function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||"[]")||[]; }catch(e){ return R._mem||[]; } }
   function save(list){ R._mem=list; try{ localStorage.setItem(KEY,JSON.stringify(list)); }catch(e){} }
-  R.inbox={load:load,save:save,key:KEY};
+  
   function count(){ var a=document.getElementById("inboxLink"); if(a) a.textContent="Test inbox ("+load().length+")"; }
   function dupNote(type){ try{ window.dispatchEvent(new CustomEvent("ramani-duplicate",{detail:{type:type}})); }catch(e){} if(R.people) R.people.toast(/referral$/.test(type||"")?"This client has already been referred, so they were not added twice.":"We already have your details, so nothing was added twice."); }
   R.send=function(type,data,opts){
@@ -303,7 +302,7 @@ document.getElementById("q").addEventListener("click",function(){ document.getEl
     R.lastDuplicate=!!reg.duplicate;
     if(reg.duplicate){ if(!(opts&&opts.quiet)) dupNote(type); return Promise.resolve({ok:true,test:true,duplicate:true,contact_id:reg.id}); }
     if(reg.id){ payload.contact_id=reg.id; payload.contact_status=reg.isNew?"new":"existing"; }
-    var list=load(); list.unshift(payload); if(list.length>300) list.length=300; save(list); count();
+    
     try{ window.dispatchEvent(new CustomEvent("ramani-inbox")); }catch(e){}
     if(!R.endpoint) return Promise.resolve({ok:true,test:true,contact_id:reg.id||"",contact_status:payload.contact_status||""});
     try{
@@ -437,7 +436,7 @@ document.getElementById("q").addEventListener("click",function(){ document.getEl
 @media (max-width:520px){ .ib-steps{grid-template-columns:minmax(0,1fr)} }
 </style>
 
-<section class="inbox" id="inbox" aria-labelledby="ib-t">
+<section class="inbox" id="inbox" aria-labelledby="ib-t" hidden>
   <div class="ib-card">
     <div class="ib-head">
       <div><h2 id="ib-t">Test inbox</h2><p>Everything a visitor submits on these tools lands here, exactly as Ramani would receive it on the live site. Each person is kept once: a repeat of the same email or phone is not added again.</p></div>
@@ -556,7 +555,7 @@ document.getElementById("q").addEventListener("click",function(){ document.getEl
 })();
 </script>
 
-<section class="inbox" id="events" aria-labelledby="ev-t" style="margin-top:20px">
+<section class="inbox" id="events" aria-labelledby="ev-t" style="margin-top:20px" hidden>
   <div class="wrap" style="padding-block:0 40px">
     <div class="ib-card" style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px">
       <h2 id="ev-t" style="margin:0 0 4px;font-size:22px;font-weight:800;letter-spacing:-.02em">Tracking events</h2>
@@ -615,6 +614,6 @@ document.getElementById("q").addEventListener("click",function(){ document.getEl
 var n=document.getElementById("rn-name").value.trim(),m=document.getElementById("rn-email").value.trim().toLowerCase(),o=document.getElementById("rn-msg");
 if(!n){o.style.color="var(--warn,#a35208)";o.textContent="Please enter your name.";return;}
 if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)){o.style.color="var(--warn,#a35208)";o.textContent="Please enter a valid email address.";return;}
-var done=function(r){o.style.color="var(--brand,#04C401)";o.textContent=(r&&r.duplicate)?"This email is already subscribed. You will keep getting the newsletter every Monday.":"Thank you, "+n+". Our next newsletter reaches your inbox on Monday. Test version: saved to the test inbox only.";f.reset();};
+var done=function(r){o.style.color="var(--brand,#04C401)";o.textContent=(r&&r.duplicate)?"This email is already subscribed. You will keep getting the newsletter every Monday.":"Thank you, "+n+". Our next newsletter reaches your inbox on Monday.";f.reset();};
 if(window.RAMANI&&window.RAMANI.send)window.RAMANI.send("newsletter",{list:"Ramani newsletter",name:n,email:m,marketing_consent:true}).then(done,done);else done();});})();</script>
 </body></html>

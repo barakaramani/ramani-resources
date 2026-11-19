@@ -345,14 +345,13 @@ th.num{text-align:right}
   };
 })();
 (function(){
-  // Test version: every form submission is also saved to a test inbox in this browser,
-  // so testers can see exactly what Ramani would receive. The Tools home page shows it.
+  // Every form submission posts to RAMANI.endpoint (the lead database).
   var R=window.RAMANI=window.RAMANI||{};
   if(typeof R.endpoint!=="string") R.endpoint="";
   var KEY="ramani_test_inbox";
   function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||"[]")||[]; }catch(e){ return R._mem||[]; } }
   function save(list){ R._mem=list; try{ localStorage.setItem(KEY,JSON.stringify(list)); }catch(e){} }
-  R.inbox={load:load,save:save,key:KEY};
+  
   function count(){ var a=document.getElementById("inboxLink"); if(a) a.textContent="Test inbox ("+load().length+")"; }
   function dupNote(type){ try{ window.dispatchEvent(new CustomEvent("ramani-duplicate",{detail:{type:type}})); }catch(e){} if(R.people) R.people.toast(/referral$/.test(type||"")?"This client has already been referred, so they were not added twice.":"We already have your details, so nothing was added twice."); }
   R.send=function(type,data,opts){
@@ -361,7 +360,7 @@ th.num{text-align:right}
     R.lastDuplicate=!!reg.duplicate;
     if(reg.duplicate){ if(!(opts&&opts.quiet)) dupNote(type); return Promise.resolve({ok:true,test:true,duplicate:true,contact_id:reg.id}); }
     if(reg.id){ payload.contact_id=reg.id; payload.contact_status=reg.isNew?"new":"existing"; }
-    var list=load(); list.unshift(payload); if(list.length>300) list.length=300; save(list); count();
+    
     try{ window.dispatchEvent(new CustomEvent("ramani-inbox")); }catch(e){}
     if(!R.endpoint) return Promise.resolve({ok:true,test:true,contact_id:reg.id||"",contact_status:payload.contact_status||""});
     try{
@@ -527,10 +526,10 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 
 
 <div class="wrap">
-  <nav class="backnav" aria-label="Breadcrumb" style="font:600 14px var(--sans);padding-top:4px;margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;color:var(--muted)"><a href="tools.html">All Ramani tools</a> <span style="margin-left:auto"></span><a href="tools.html#inbox" id="inboxLink">Test inbox</a></nav>
+  <nav class="backnav" aria-label="Breadcrumb" style="font:600 14px var(--sans);padding-top:4px;margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;color:var(--muted)"><a href="tools.html">All Ramani tools</a> <span style="margin-left:auto"></span></nav>
   <div class="topbar">
     <div class="brand">Ramani<small>for banks and lenders</small></div>
-    <span class="tag">Test version</span>
+    
   </div>
 
   <header class="intro">
@@ -542,7 +541,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
   <section id="workView">
     <div class="welcome">
       <div><div class="small" id="who">Calculator, market context and trade market are open. Verify to see Ramani portfolio data.</div><h2 class="wh">Your partner tools</h2></div>
-      <div class="badges"><span class="status guest" id="status">Guest</span><button type="button" class="btn btn-line" id="reset" hidden>Lock again (demo)</button></div>
+      <div class="badges"><span class="status guest" id="status">Guest</span><button type="button" class="btn btn-line" id="reset" hidden>Use different details</button></div>
     </div>
 
     <div class="wtabs" role="tablist" aria-label="Partner tools">
@@ -592,8 +591,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
               <label class="consent"><input type="checkbox" id="g-ok"><span>I agree that Ramani may contact me about partnership and store these details under its privacy policy.</span></label>
               <span class="ferr" id="e-ok" hidden></span>
               <button class="btn btn-brand" type="submit">Verify and unlock</button>
-              <span class="small">Personal email addresses (Gmail, Yahoo and others) are not accepted. Test version: the list of approved bank domains will be kept by Ramani's team.</span>
-              <button type="button" class="preview-btn" id="previewBtn">Unlock without the form (demo only)</button>
+              <span class="small">Personal email addresses (Gmail, Yahoo and others) are not accepted.</span>
             </form>
           </div>
           <div id="gatePending" hidden>
@@ -649,7 +647,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
         </div>
         <div class="side">
           <div class="tool"><div class="row"><b>How to read this</b></div><p>Short import cycles mean the same capital funds several shipments a year. A 90 day cycle at 85% utilisation turns capital about 3.4 times.</p><p>Wholesalers turn stock faster: they buy, sell to shops on short credit and repay from weekly sales, so a 45 day cycle turns capital about 6.9 times. Much of their stock is bought locally in TSh, so less of it goes through an FX desk.</p></div>
-          <div class="tool"><div class="row"><b>Talk to partnerships</b></div><p>Discuss a funding line, joint lending or referrals.</p><button type="button" class="act" data-msg="On the live site this opens ramani.io/contact (test version: nothing was sent).">Book a call →</button></div>
+          <div class="tool"><div class="row"><b>Talk to partnerships</b></div><p>Discuss a funding line, joint lending or referrals.</p><button type="button" class="act" data-msg="Opening the Ramani contact page…" data-href="https://www.ramani.io/contact">Book a call →</button></div>
           <div class="flash" aria-live="polite"></div>
         </div>
       </div>
@@ -717,7 +715,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 
     <!-- PORTFOLIO -->
     <div class="view" id="v-portfolio" role="tabpanel" hidden>
-      <div class="vhead"><div><h2>Portfolio snapshot · Q3 2026</h2><p>Ranges and indexes only. No customer names, no exact amounts. Exact figures are shared under NDA.</p></div><div class="badges"><span class="lvl">Partners</span><span class="sample">Sample data</span></div></div>
+      <div class="vhead"><div><h2>Portfolio snapshot · Q3 2026</h2><p>Ranges and indexes only. No customer names, no exact amounts. Exact figures are shared under NDA.</p></div><div class="badges"><span class="lvl">Partners</span><span class="sample">Example</span></div></div>
       <div data-result="portfolio">
       <div class="kpis">
         <div class="kpi"><div class="k">Facilities funded this quarter</div><div class="v">150 to 200</div><div class="d">Growing every quarter</div></div>
@@ -731,7 +729,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
       </div>
       <div class="panels">
         <div class="panel"><h3>Supplier country (share of value, rounded)</h3><div class="hbars" id="ch-origin"></div></div>
-        <div class="panel"><h3>Get the full report</h3><p class="small" style="margin:0 0 12px">After a signed NDA: exact volumes, repayment by cohort, sector risk and regional spread. Still no customer names.</p><button type="button" class="btn btn-brand" data-msg="Report request sent to the partnerships team (test version: nothing was sent).">Request full report</button><div class="flash" aria-live="polite" style="margin-top:8px"></div></div>
+        <div class="panel"><h3>Get the full report</h3><p class="small" style="margin:0 0 12px">After a signed NDA: exact volumes, repayment by cohort, sector risk and regional spread. Still no customer names.</p><button type="button" class="btn btn-brand" data-msg="Opening the Ramani contact page to request the full report…" data-href="https://www.ramani.io/contact">Request full report</button><div class="flash" aria-live="polite" style="margin-top:8px"></div></div>
       </div>
       </div>
       <div class="card" style="margin-top:16px" id="drBox">
@@ -755,13 +753,13 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 
     <!-- REFERRALS -->
     <div class="view" id="v-referrals" role="tabpanel" hidden>
-      <div class="vhead"><div><h2>My referrals</h2><p>Customers you personally referred to Ramani. Only you and Ramani's partnerships team see this list.</p></div><div class="badges"><span class="lvl">Partner bank only</span><span class="sample">Sample data</span></div></div>
+      <div class="vhead"><div><h2>My referrals</h2><p>Customers you personally referred to Ramani. Only you and Ramani's partnerships team see this list.</p></div><div class="badges"><span class="lvl">Partner bank only</span><span class="sample">Example</span></div></div>
 
       <div id="refOther" hidden>
         <div class="card" style="max-width:640px">
           <h3 style="margin:0 0 6px">Referrals are open to Ramani's partner bank</h3>
           <p class="small" style="margin:0 0 12px">Ramani works with one banking partner today. If your institution would like to refer customers to Ramani, talk to our partnerships team.</p>
-          <button type="button" class="btn btn-brand" data-msg="On the live site this opens ramani.io/contact (test version: nothing was sent).">Talk to partnerships</button>
+          <button type="button" class="btn btn-brand" data-msg="Opening the Ramani contact page…" data-href="https://www.ramani.io/contact">Talk to partnerships</button>
           <div class="flash" aria-live="polite" style="margin-top:8px"></div>
         </div>
       </div>
@@ -809,7 +807,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 
     <!-- PIPELINE -->
     <div class="view" id="v-pipeline" role="tabpanel" hidden>
-      <div class="vhead"><div><h2>Bank ready pipeline</h2><p>Ramani traders who may be ready for a bank account or loan. Traders appear as random codes with ranges only. A name is shared only after the trader agrees.</p></div><div class="badges"><span class="lvl">Partners</span><span class="sample">Sample data</span></div></div>
+      <div class="vhead"><div><h2>Bank ready pipeline</h2><p>Ramani traders who may be ready for a bank account or loan. Traders appear as random codes with ranges only. A name is shared only after the trader agrees.</p></div><div class="badges"><span class="lvl">Partners</span><span class="sample">Example</span></div></div>
       <div class="tablewrap" data-result="pipeline"><table>
         <thead><tr><th>Trader code</th><th>Sector</th><th>Readiness</th><th>Facilities repaid</th><th>On time</th><th>Monthly sales</th><th>Consent</th><th></th></tr></thead>
         <tbody id="pipeRows"></tbody>
@@ -818,7 +816,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 
       <div id="gradBox" style="margin-top:28px">
         <div class="vhead" style="margin-bottom:8px"><div><h2 style="font-size:19px">Graduated traders</h2><p>Traders who completed several Ramani facilities and may be ready for a bank product. No names and no codes. Only bands are shown.</p></div></div>
-        <p class="samplenote">Sample data. Real profiles shared only with trader consent.</p>
+        <p class="samplenote">Illustrative profiles. Real profiles are shared only with trader consent.</p>
         <div class="gfilters">
           <div class="f"><label for="gr-sector">Sector</label><select id="gr-sector"><option value="">All sectors</option></select></div>
           <div class="f"><label for="gr-min">Facilities completed</label><select id="gr-min"><option value="0">Any number</option><option value="5">5 or more</option><option value="10">10 or more</option></select></div>
@@ -832,7 +830,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 
     <!-- MARKET -->
     <div class="view" id="v-market" role="tabpanel" hidden>
-      <div class="vhead"><div><h2>Tanzania SME trade market</h2><p>What SME importers and wholesalers buy, where from, and when demand peaks. Market level only, rounded, safe to share publicly.</p></div><div class="badges"><span class="lvl pub">Public</span><span class="sample">Sample data</span></div></div>
+      <div class="vhead"><div><h2>Tanzania SME trade market</h2><p>What SME importers and wholesalers buy, where from, and when demand peaks. Market level only, rounded, safe to share publicly.</p></div><div class="badges"><span class="lvl pub">Public</span><span class="sample">Example</span></div></div>
       <div data-result="market">
       <div class="kpis">
         <div class="kpi"><div class="k">Typical shipment</div><div class="v">USD 15k to 20k</div><div class="d">SME importers, 2026</div></div>
@@ -855,7 +853,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
         </table></div>
         <p class="src">Index: average month for each product group = 100. Outlined cells are the two busiest months. Supplier payment is assumed about two months before goods arrive (order to shop 60 to 75 days).</p>
       </div>
-      <div class="vhead" style="margin-top:28px"><div><h2 style="font-size:20px">Wholesalers and distributors</h2><p>Wholesalers buy stock in bulk from importers, local factories or abroad, and sell to shops on short credit. Their funding need is stock days plus credit days.</p></div><div class="badges"><span class="sample">Sample data</span></div></div>
+      <div class="vhead" style="margin-top:28px"><div><h2 style="font-size:20px">Wholesalers and distributors</h2><p>Wholesalers buy stock in bulk from importers, local factories or abroad, and sell to shops on short credit. Their funding need is stock days plus credit days.</p></div><div class="badges"><span class="sample">Example</span></div></div>
       <div class="kpis" id="wsKpis">
         <div class="kpi"><div class="k">Typical stock order</div><div class="v">TZS 10m to 50m</div><div class="d">Per bulk purchase</div></div>
         <div class="kpi"><div class="k">Stock on hand</div><div class="v">2 to 6 weeks</div><div class="d">Before it sells</div></div>
@@ -1000,15 +998,14 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     if(pending){
       if(window.RAMANI) RAMANI.send("partner_review",{name:name,phone:phone,email:email,institution:other,role:role,country:$("g-country").value});
       $("gateFormBox").hidden=true; $("gatePending").hidden=false;
-      $("pendingText").textContent=other+" is not on our verified list yet, so our partnerships team will check it by hand. We will email "+email+" or call "+$("g-phone").value.trim()+" within one working day. The data stays locked until then. Saved to the test inbox.";
+      $("pendingText").textContent=other+" is not on our verified list yet, so our partnerships team will check it by hand. We will email "+email+" or call "+$("g-phone").value.trim()+" within one working day. The data stays locked until then.";
       return;
     }
     unlock(name+" · "+role+" · "+inst+" · verified by email domain"+(inst===PARTNER?" · partner bank":""),inst,name);
   });
   $("backBtn").addEventListener("click",function(){ $("gatePending").hidden=true; $("gateFormBox").hidden=false; });
-  $("previewBtn").addEventListener("click",function(){ unlock("Demo unlock · Neema Mushi · Relationship manager · "+PARTNER+" · partner bank",PARTNER,"Neema Mushi"); });
   $("reset").addEventListener("click",lock);
-  document.querySelectorAll("[data-msg]").forEach(function(b){ b.addEventListener("click",function(){ var f=b.parentNode.querySelector(".flash")||b.closest(".side").querySelector(".flash"); if(f) f.textContent=b.getAttribute("data-msg"); }); });
+  document.querySelectorAll("[data-msg]").forEach(function(b){ b.addEventListener("click",function(){ var f=b.parentNode.querySelector(".flash")||b.closest(".side").querySelector(".flash"); if(f) f.textContent=b.getAttribute("data-msg"); var h=b.getAttribute("data-href"); if(h) window.open(h,"_blank","noopener"); }); });
 
   /* ---------- tabs ---------- */
   var VIEWS=["calc","context","portfolio","referrals","pipeline","market"];
@@ -1182,12 +1179,12 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     M.forEach(function(r){ L.push(r.join(" | ")); });
     L.push("Source: World Bank Open Data, updated 8 Oct 2026.");
     L.push("");
-    L.push("RAMANI COMPARED WITH THE MARKET (SAMPLE DATA)");
+    L.push("RAMANI COMPARED WITH THE MARKET (ILLUSTRATIVE FIGURES)");
     L.push("Share of value from China: Tanzania 30.5% (2024, UN Comtrade). Ramani 60% (Q3 2026, sample figure for illustration, not actual portfolio data).");
     L.push("Ramani finances SME consumer and building goods, not fuel or vehicles, so its mix leans more to China.");
     L.push("");
     L.push("NOTES");
-    L.push("Market figures are public data and rounded. Ramani figures in this brief are sample data. Every Ramani facility is subject to assessment. Exact portfolio figures are shared only under NDA.");
+    L.push("Market figures are public data and rounded. Ramani figures in this brief are illustrative. Every Ramani facility is subject to assessment. Exact portfolio figures are shared only under NDA.");
     L.push("");
     L.push("SOURCES");
     L.push("1. UN Comtrade database. Tanzania reported goods imports 2019 to 2024. Pulled 5 Nov 2026.");
@@ -1327,7 +1324,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     if(window.RAMANI&&RAMANI.lastDuplicate){ $("refMsg").textContent="This customer has already been referred to Ramani, so they were not added twice."; return; }
     REFS.unshift([name,contact,$("rf-need").value,"Today",amt,"received","Ramani will call within 1 working day"]);
     drawRefs(); $("referForm").reset();
-    $("refMsg").textContent=name+" referred by "+(USER||"you")+". Ramani calls them within one working day. Saved to the test inbox.";
+    $("refMsg").textContent=name+" referred by "+(USER||"you")+". Ramani calls them within one working day.";
   });
 
   /* ---------- pipeline ---------- */
@@ -1347,9 +1344,9 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     var cs=el("td"); cs.appendChild(el("span","st "+(p[6]?"yes":"ask"),p[6]?"Agreed":"Not yet asked")); tr.appendChild(cs);
     var at=el("td"), b=el("button","linkbtn",p[6]?"Request introduction":"Ask Ramani to check"); b.type="button";
     b.addEventListener("click",function(){
-      $("pipeMsg").textContent=p[6]
-        ? "Introduction to "+p[0]+" requested. Ramani shares the trader's name and contact once your team confirms. Test version: nothing was sent."
-        : "Ramani will ask "+p[0]+" whether they agree to an introduction. Test version: nothing was sent.";
+      $("pipeMsg").textContent=window.__rgAsk(p[6]?"bank_introduction":"bank_consent_check",p[0])
+        ? (p[6] ? "Introduction to "+p[0]+" requested. Ramani shares the trader's name and contact once your team confirms." : "Ramani will ask "+p[0]+" whether they agree to an introduction.")
+        : "Please unlock the page with your work email first, so Ramani knows who is asking.";
     });
     at.appendChild(b); tr.appendChild(at); return tr;
   }));
@@ -1385,7 +1382,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
       [["Years trading",g[1]+" years"],["Facilities completed",String(g[2])],["Repayment record",g[3]],["Typical size",g[4]]].forEach(function(f){ var d=el("div"); d.appendChild(el("dt",null,f[0])); d.appendChild(el("dd",null,f[1])); dl.appendChild(d); });
       c.appendChild(dl);
       var b=el("button","linkbtn","Ask about this profile"); b.type="button"; b.style.justifySelf="start";
-      b.addEventListener("click",function(){ $("gradMsg").textContent="Ramani will ask the trader behind profile "+String(x.n).padStart(2,"0")+" whether they agree to an introduction. Nothing is shared without their consent. Test version: nothing was sent."; });
+      b.addEventListener("click",function(){ $("gradMsg").textContent=window.__rgAsk("graduate_profile","profile "+String(x.n).padStart(2,"0")) ? "Ramani will ask the trader behind profile "+String(x.n).padStart(2,"0")+" whether they agree to an introduction. Nothing is shared without their consent." : "Please unlock the page with your work email first, so Ramani knows who is asking."; });
       c.appendChild(b); return c;
     }));
   }
@@ -1413,7 +1410,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     else if(!$("dr-nda").checked){ m.textContent="Tick the box to confirm you understand the NDA terms."; return; }
     if(bad){ $(bad).focus(); return; }
     if(window.RAMANI) RAMANI.send("dataroom_request",{name:name,email:email,institution:inst,role:role,nda_acknowledged:true,verified_as:USER||""});
-    m.textContent="Thanks, "+name+". Ramani's partnerships team will review your request and send the NDA to "+email+". Access opens only after it is signed. Saved to the test inbox.";
+    m.textContent="Thanks, "+name+". Ramani's partnerships team will review your request and send the NDA to "+email+". Access opens only after it is signed.";
     $("drForm").reset(); prefillDR();
   });
 
@@ -1571,7 +1568,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     '<span class="lg-pn">We use your details to give you your results and to answer your requests. <a id="lg-priv" target="_blank" rel="noopener">How Ramani uses your data</a></span>'+
     '<span class="err" id="lg-err" aria-live="polite"></span>'+
     '<div class="lg-row"><button type="button" class="lg-skip" id="lg-skip">Not now</button><button type="submit" class="go" id="lg-go">Continue</button></div>'+
-    '<span style="font-size:12px;color:var(--muted)">Test version: your details go to the test inbox on the Tools home page. Nothing reaches Ramani yet.</span>'+
+    ''+
     '</form></div>';
   document.body.appendChild(back);
   var $=function(id){ return document.getElementById(id); };
@@ -1617,7 +1614,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     if(pendingEl){ var x=pendingEl; pendingEl=null; setTimeout(function(){ x.click(); },60); } // finish what they asked for
   });
 
-  var reset=document.createElement("button"); reset.type="button"; reset.className="lg-reset"; reset.textContent="Demo: forget my contact details";
+  var reset=document.createElement("button"); reset.type="button"; reset.className="lg-reset"; reset.textContent="Use different contact details";
   reset.addEventListener("click",function(){ setLead(null); if(window.RAMANI&&window.RAMANI.people) window.RAMANI.people.forgetMe(); $("lg-f").reset(); lock(); window.scrollTo({top:0}); });
   document.body.insertBefore(reset,bar);
 
@@ -1750,7 +1747,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     if(window.rtrack) window.rtrack("export_sent",{channel:ch,tool:cur.tool,view:cur.view,marketing_consent:mk});
     var to=ch==="email"?email:phone;
     $("sm-f").hidden=true; $("sm-ok").hidden=false;
-    $("sm-ok").textContent="Done. Your "+cur.tool+" result is on its way to "+to+"."+(R.inbox?" Test version: saved to the test inbox.":"");
+    $("sm-ok").textContent="Done. Your "+cur.tool+" result is on its way to "+to+".";
   });
 
   function add(){
@@ -1794,7 +1791,8 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 var n=document.getElementById("rn-name").value.trim(),m=document.getElementById("rn-email").value.trim().toLowerCase(),o=document.getElementById("rn-msg");
 if(!n){o.style.color="var(--warn,#a35208)";o.textContent="Please enter your name.";return;}
 if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)){o.style.color="var(--warn,#a35208)";o.textContent="Please enter a valid email address.";return;}
-var done=function(r){o.style.color="var(--brand,#04C401)";o.textContent=(r&&r.duplicate)?"This email is already subscribed. You will keep getting the newsletter every Monday.":"Thank you, "+n+". Our next newsletter reaches your inbox on Monday. Test version: saved to the test inbox only.";f.reset();};
+var done=function(r){o.style.color="var(--brand,#04C401)";o.textContent=(r&&r.duplicate)?"This email is already subscribed. You will keep getting the newsletter every Monday.":"Thank you, "+n+". Our next newsletter reaches your inbox on Monday.";f.reset();};
 if(window.RAMANI&&window.RAMANI.send)window.RAMANI.send("newsletter",{list:"Ramani newsletter",name:n,email:m,marketing_consent:true}).then(done,done);else done();});})();</script>
+<script>window.__rgAsk=function(kind,ref){ try{ var R=window.RAMANI||{}, me=R.people&&R.people.me&&R.people.me(); if(!R.send||!me||!(me.email||me.phone)) return false; R.send("request",{name:me.name||"",email:me.email||"",phone:me.phone||"",organisation:me.org||me.company||"",request:kind,reference:ref,source:location.pathname.split("/").pop()}); return true; }catch(e){ return false; } };</script>
 </body>
 </html>

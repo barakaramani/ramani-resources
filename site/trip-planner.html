@@ -303,14 +303,13 @@ details.ex .frm{margin-top:10px}
   };
 })();
 (function(){
-  // Test version: every form submission is also saved to a test inbox in this browser,
-  // so testers can see exactly what Ramani would receive. The Tools home page shows it.
+  // Every form submission posts to RAMANI.endpoint (the lead database).
   var R=window.RAMANI=window.RAMANI||{};
   if(typeof R.endpoint!=="string") R.endpoint="";
   var KEY="ramani_test_inbox";
   function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||"[]")||[]; }catch(e){ return R._mem||[]; } }
   function save(list){ R._mem=list; try{ localStorage.setItem(KEY,JSON.stringify(list)); }catch(e){} }
-  R.inbox={load:load,save:save,key:KEY};
+  
   function count(){ var a=document.getElementById("inboxLink"); if(a) a.textContent="Test inbox ("+load().length+")"; }
   function dupNote(type){ try{ window.dispatchEvent(new CustomEvent("ramani-duplicate",{detail:{type:type}})); }catch(e){} if(R.people) R.people.toast(/referral$/.test(type||"")?"This client has already been referred, so they were not added twice.":"We already have your details, so nothing was added twice."); }
   R.send=function(type,data,opts){
@@ -319,7 +318,7 @@ details.ex .frm{margin-top:10px}
     R.lastDuplicate=!!reg.duplicate;
     if(reg.duplicate){ if(!(opts&&opts.quiet)) dupNote(type); return Promise.resolve({ok:true,test:true,duplicate:true,contact_id:reg.id}); }
     if(reg.id){ payload.contact_id=reg.id; payload.contact_status=reg.isNew?"new":"existing"; }
-    var list=load(); list.unshift(payload); if(list.length>300) list.length=300; save(list); count();
+    
     try{ window.dispatchEvent(new CustomEvent("ramani-inbox")); }catch(e){}
     if(!R.endpoint) return Promise.resolve({ok:true,test:true,contact_id:reg.id||"",contact_status:payload.contact_status||""});
     try{
@@ -485,8 +484,8 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 
 
 <div class="wrap">
-  <nav class="backnav" aria-label="Breadcrumb" style="font:600 14px var(--sans);padding-top:4px;margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;color:var(--muted)"><a href="tools.html">All Ramani tools</a> <span aria-hidden="true">/</span> <a href="importers.html">Importer tools</a> <span style="margin-left:auto"></span><a href="tools.html#inbox" id="inboxLink">Test inbox</a></nav>
-  <div class="topbar"><div class="brand">Ramani</div><span class="tag">Test version</span></div>
+  <nav class="backnav" aria-label="Breadcrumb" style="font:600 14px var(--sans);padding-top:4px;margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;color:var(--muted)"><a href="tools.html">All Ramani tools</a> <span aria-hidden="true">/</span> <a href="importers.html">Importer tools</a> <span style="margin-left:auto"></span></nav>
+  <div class="topbar"><div class="brand">Ramani</div></div>
 
   <header class="hero">
     <div class="eyebrow">Free tool · Plan</div>
@@ -1025,11 +1024,11 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
   $("quoteBtn").addEventListener("click",function(){
     var s=parseFloat($("stock").value)||0;
     $("quoteNote").hidden=false;
-    $("quoteNote").textContent="On the live site this opens ramani.io/apply/start with USD "+fmt(s)+" of stock from "+cur.n+" filled in. Test version: nothing was sent.";
+    $("quoteNote").textContent="Opening the Ramani application page…"; window.open((window.RAMANI&&RAMANI.applyUrl)||"https://www.ramani.io/apply/start","_blank","noopener");
   });
   $("nf").addEventListener("submit",function(e){
     e.preventDefault(); var wa=$("wa").value.replace(/[\s()-]/g,""); if(/^\+?\d{9,13}$/.test(wa)&&window.RAMANI) RAMANI.send("trip_alerts",{phone:wa,country:cur.n,country_code:cur.c,city:cur.city,marketing_consent:true});
-    $("nmsg").textContent=/^\+?\d{9,13}$/.test(wa)?"Done. You will get alerts for "+cur.n+" and other markets. Saved to the test inbox.":"Please enter a valid phone number, for example +255 712 345 678.";
+    $("nmsg").textContent=/^\+?\d{9,13}$/.test(wa)?"Done. You will get alerts for "+cur.n+" and other markets.":"Please enter a valid phone number, for example +255 712 345 678.";
   });
 
   // ================= Trip tools for importers
@@ -1378,7 +1377,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     '<span class="lg-pn">We use your details to give you your results and to answer your requests. <a id="lg-priv" target="_blank" rel="noopener">How Ramani uses your data</a></span>'+
     '<span class="err" id="lg-err" aria-live="polite"></span>'+
     '<div class="lg-row"><button type="button" class="lg-skip" id="lg-skip">Not now</button><button type="submit" class="go" id="lg-go">Continue</button></div>'+
-    '<span style="font-size:12px;color:var(--muted)">Test version: your details go to the test inbox on the Tools home page. Nothing reaches Ramani yet.</span>'+
+    ''+
     '</form></div>';
   document.body.appendChild(back);
   var $=function(id){ return document.getElementById(id); };
@@ -1424,7 +1423,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     if(pendingEl){ var x=pendingEl; pendingEl=null; setTimeout(function(){ x.click(); },60); } // finish what they asked for
   });
 
-  var reset=document.createElement("button"); reset.type="button"; reset.className="lg-reset"; reset.textContent="Demo: forget my contact details";
+  var reset=document.createElement("button"); reset.type="button"; reset.className="lg-reset"; reset.textContent="Use different contact details";
   reset.addEventListener("click",function(){ setLead(null); if(window.RAMANI&&window.RAMANI.people) window.RAMANI.people.forgetMe(); $("lg-f").reset(); lock(); window.scrollTo({top:0}); });
   document.body.insertBefore(reset,bar);
 
@@ -1557,7 +1556,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     if(window.rtrack) window.rtrack("export_sent",{channel:ch,tool:cur.tool,view:cur.view,marketing_consent:mk});
     var to=ch==="email"?email:phone;
     $("sm-f").hidden=true; $("sm-ok").hidden=false;
-    $("sm-ok").textContent="Done. Your "+cur.tool+" result is on its way to "+to+"."+(R.inbox?" Test version: saved to the test inbox.":"");
+    $("sm-ok").textContent="Done. Your "+cur.tool+" result is on its way to "+to+".";
   });
 
   function add(){
@@ -1601,7 +1600,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 var n=document.getElementById("rn-name").value.trim(),m=document.getElementById("rn-email").value.trim().toLowerCase(),o=document.getElementById("rn-msg");
 if(!n){o.style.color="var(--warn,#a35208)";o.textContent="Please enter your name.";return;}
 if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)){o.style.color="var(--warn,#a35208)";o.textContent="Please enter a valid email address.";return;}
-var done=function(r){o.style.color="var(--brand,#04C401)";o.textContent=(r&&r.duplicate)?"This email is already subscribed. You will keep getting the newsletter every Monday.":"Thank you, "+n+". Our next newsletter reaches your inbox on Monday. Test version: saved to the test inbox only.";f.reset();};
+var done=function(r){o.style.color="var(--brand,#04C401)";o.textContent=(r&&r.duplicate)?"This email is already subscribed. You will keep getting the newsletter every Monday.":"Thank you, "+n+". Our next newsletter reaches your inbox on Monday.";f.reset();};
 if(window.RAMANI&&window.RAMANI.send)window.RAMANI.send("newsletter",{list:"Ramani newsletter",name:n,email:m,marketing_consent:true}).then(done,done);else done();});})();</script>
 </body>
 </html>

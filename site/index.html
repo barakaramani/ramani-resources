@@ -541,14 +541,13 @@ footer.f .wrap>div{display:flex;flex-wrap:wrap;gap:6px 16px;min-width:0}footer.f
   };
 })();
 (function(){
-  // Test version: every form submission is also saved to a test inbox in this browser,
-  // so testers can see exactly what Ramani would receive. The Tools home page shows it.
+  // Every form submission posts to RAMANI.endpoint (the lead database).
   var R=window.RAMANI=window.RAMANI||{};
   if(typeof R.endpoint!=="string") R.endpoint="";
   var KEY="ramani_test_inbox";
   function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||"[]")||[]; }catch(e){ return R._mem||[]; } }
   function save(list){ R._mem=list; try{ localStorage.setItem(KEY,JSON.stringify(list)); }catch(e){} }
-  R.inbox={load:load,save:save,key:KEY};
+  
   function count(){ var a=document.getElementById("inboxLink"); if(a) a.textContent="Test inbox ("+load().length+")"; }
   function dupNote(type){ try{ window.dispatchEvent(new CustomEvent("ramani-duplicate",{detail:{type:type}})); }catch(e){} if(R.people) R.people.toast(/referral$/.test(type||"")?"This client has already been referred, so they were not added twice.":"We already have your details, so nothing was added twice."); }
   R.send=function(type,data,opts){
@@ -557,7 +556,7 @@ footer.f .wrap>div{display:flex;flex-wrap:wrap;gap:6px 16px;min-width:0}footer.f
     R.lastDuplicate=!!reg.duplicate;
     if(reg.duplicate){ if(!(opts&&opts.quiet)) dupNote(type); return Promise.resolve({ok:true,test:true,duplicate:true,contact_id:reg.id}); }
     if(reg.id){ payload.contact_id=reg.id; payload.contact_status=reg.isNew?"new":"existing"; }
-    var list=load(); list.unshift(payload); if(list.length>300) list.length=300; save(list); count();
+    
     try{ window.dispatchEvent(new CustomEvent("ramani-inbox")); }catch(e){}
     if(!R.endpoint) return Promise.resolve({ok:true,test:true,contact_id:reg.id||"",contact_status:payload.contact_status||""});
     try{
@@ -751,7 +750,7 @@ document.addEventListener("submit",function(e){
   try{var K="ramani_test_inbox",list=JSON.parse(localStorage.getItem(K)||"[]")||[];
     list.unshift({id:"t"+Date.now().toString(36)+Math.random().toString(36).slice(2,7),type:"newsletter",page:"learn",hash:location.hash||"",at:new Date().toISOString(),data:nd,contact_id:reg.id||"",contact_status:reg.isNew?"new":"existing"});
     if(list.length>300)list.length=300;localStorage.setItem(K,JSON.stringify(list));}catch(x){}
-  msg.textContent="Thank you, "+name+". Our next newsletter reaches your inbox on Monday. Test version: saved to the test inbox only.";
+  msg.textContent="Thank you, "+name+". Our next newsletter reaches your inbox on Monday.";
   f.reset();
 });
 
@@ -807,7 +806,7 @@ function metaLine(p){
   if(p.byline)bits.push(esc(p.byline));
   bits.push(fmtDate(p.publishedAt));
   bits.push((p.readMins||1)+" min read");
-  return '<span class="meta">'+bits.join('<span class="dot"></span>')+(p.sample?' <span class="sample">Sample</span>':'')+'</span>';
+  return '<span class="meta">'+bits.join('<span class="dot"></span>')+(p.sample?' <span class="sample">Example</span>':'')+'</span>';
 }
 function tagLink(p){var c=CAT[p.category];return c?'<span class="tag">'+esc(c.name)+'</span>':'';}
 function card(p){
@@ -933,7 +932,7 @@ function articleHtml(p,opts){
   var related=livePosts().filter(function(x){return x.id!==p.id&&x.category===p.category;});
   if(related.length<3)related=related.concat(livePosts().filter(function(x){return x.id!==p.id&&x.category!==p.category;})).slice(0,3);else related=related.slice(0,3);
   var h='<div class="wrap"><header class="ahead"><div class="crumbs"><a href="#learn">Learn</a><span>/</span><a href="#t-'+esc(p.category)+'">'+esc(c.name)+'</a></div>'+
-    '<a class="tag" href="#t-'+esc(p.category)+'">'+esc(c.name)+'</a>'+(p.sample?' <span class="sample">Sample post</span>':'')+
+    '<a class="tag" href="#t-'+esc(p.category)+'">'+esc(c.name)+'</a>'+(p.sample?' <span class="sample">Example post</span>':'')+
     '<h1>'+esc(p.title||"Untitled")+'</h1>'+(p.subtitle?'<p class="deck">'+esc(p.subtitle)+'</p>':'')+
     '<div class="byline"><span class="av">'+esc(initials(p.byline||"Ramani"))+'</span><div><b>'+(opts.preview?esc(p.byline||"Ramani team"):'<a class="alink" href="#a-'+esc(authorSlug(p))+'">'+esc(p.byline||"Ramani team")+'</a>')+'</b><span class="meta">'+(p.role?esc(p.role)+'<span class="dot"></span>':'')+(p.publishedAt?fmtDate(p.publishedAt):"Draft")+'<span class="dot"></span>'+(p.readMins||1)+' min read</span>'+authorLinks(p)+'</div></div>'+
     (opts.preview?'':shareRow(p))+

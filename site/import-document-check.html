@@ -379,14 +379,13 @@ a.linkbtn{text-decoration:none}
   };
 })();
 (function(){
-  // Test version: every form submission is also saved to a test inbox in this browser,
-  // so testers can see exactly what Ramani would receive. The Tools home page shows it.
+  // Every form submission posts to RAMANI.endpoint (the lead database).
   var R=window.RAMANI=window.RAMANI||{};
   if(typeof R.endpoint!=="string") R.endpoint="";
   var KEY="ramani_test_inbox";
   function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||"[]")||[]; }catch(e){ return R._mem||[]; } }
   function save(list){ R._mem=list; try{ localStorage.setItem(KEY,JSON.stringify(list)); }catch(e){} }
-  R.inbox={load:load,save:save,key:KEY};
+  
   function count(){ var a=document.getElementById("inboxLink"); if(a) a.textContent="Test inbox ("+load().length+")"; }
   function dupNote(type){ try{ window.dispatchEvent(new CustomEvent("ramani-duplicate",{detail:{type:type}})); }catch(e){} if(R.people) R.people.toast(/referral$/.test(type||"")?"This client has already been referred, so they were not added twice.":"We already have your details, so nothing was added twice."); }
   R.send=function(type,data,opts){
@@ -395,7 +394,7 @@ a.linkbtn{text-decoration:none}
     R.lastDuplicate=!!reg.duplicate;
     if(reg.duplicate){ if(!(opts&&opts.quiet)) dupNote(type); return Promise.resolve({ok:true,test:true,duplicate:true,contact_id:reg.id}); }
     if(reg.id){ payload.contact_id=reg.id; payload.contact_status=reg.isNew?"new":"existing"; }
-    var list=load(); list.unshift(payload); if(list.length>300) list.length=300; save(list); count();
+    
     try{ window.dispatchEvent(new CustomEvent("ramani-inbox")); }catch(e){}
     if(!R.endpoint) return Promise.resolve({ok:true,test:true,contact_id:reg.id||"",contact_status:payload.contact_status||""});
     try{
@@ -561,10 +560,10 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 
 
 <div class="wrap">
-  <nav class="backnav" aria-label="Breadcrumb" style="font:600 14px var(--sans);padding-top:4px;margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;color:var(--muted)"><a href="tools.html">All Ramani tools</a> <span style="margin-left:auto"></span><a href="tools.html#inbox" id="inboxLink">Test inbox</a></nav>
+  <nav class="backnav" aria-label="Breadcrumb" style="font:600 14px var(--sans);padding-top:4px;margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;color:var(--muted)"><a href="tools.html">All Ramani tools</a> <span style="margin-left:auto"></span></nav>
   <div class="topbar">
     <div class="brand">Ramani<small>for clearing agents and forwarders</small></div>
-    <span class="tag">Test version</span>
+    
   </div>
 
   <header class="intro">
@@ -576,7 +575,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
   <section id="workView">
     <div class="welcome">
       <div><div class="small" id="who">Quote builder, exchange rates, permit finder and document check are free. Register to unlock the rest.</div><h2 class="wh">Your agent tools</h2></div>
-      <div class="badges"><span class="status guest" id="status">Guest</span><button type="button" class="btn btn-line" id="reset" hidden>Lock again (demo)</button></div>
+      <div class="badges"><span class="status guest" id="status">Guest</span><button type="button" class="btn btn-line" id="reset" hidden>Use different details</button></div>
     </div>
 
     <div class="wtabs" role="tablist" aria-label="Agent tools">
@@ -615,7 +614,6 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
             <label class="consent"><input type="checkbox" id="g-ok"><span>I agree that Ramani may contact me and store these details under its privacy policy. I will only refer clients who agree to be referred.</span></label>
             <span class="ferr" id="e-ok" hidden></span>
             <button class="btn btn-brand" type="submit">Register and unlock</button>
-            <button type="button" class="preview-btn" id="previewBtn">Unlock without the form (demo only)</button>
           </form>
         </div>
       </div>
@@ -665,7 +663,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 
         <!-- RATES -->
         <div class="view" id="v-rates" role="tabpanel" hidden>
-          <div class="vhead"><div><h2>Exchange rates for duty</h2><p>Duty is calculated with the customs exchange rate. On the live site this board shows TRA's weekly customs rates.</p></div><span class="sample">Market rates in place of TRA rates</span></div>
+          <div class="vhead"><div><h2>Exchange rates for duty</h2><p>Duty is calculated with the customs exchange rate. This board uses today's market rates; TRA's weekly customs rate may differ.</p></div><span class="sample">Market rates</span></div>
           <div class="tablewrap" data-result="rates"><table>
             <thead><tr><th>Currency</th><th class="num">TZS per unit</th><th class="num">1,000 units in TZS</th></tr></thead>
             <tbody id="rateRows"></tbody>
@@ -726,7 +724,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 
         <!-- DOCUMENT CHECK -->
         <div class="view" id="v-docs" role="tabpanel" hidden>
-          <div class="vhead"><div><h2>Document check</h2><p>Enter the key details from the commercial invoice, packing list and bill of lading. The check shows every field that does not match, before you lodge the declaration.</p></div><span class="sample">Sample shipment</span></div>
+          <div class="vhead"><div><h2>Document check</h2><p>Enter the key details from the commercial invoice, packing list and bill of lading. The check shows every field that does not match, before you lodge the declaration.</p></div><span class="sample">Example shipment</span></div>
           <div class="panel" style="margin-top:18px">
             <div class="dc-grid" id="dcGrid"></div>
             <div class="acts" style="margin-top:14px"><button type="button" class="btn btn-brand sm" id="dcRun">Check documents</button><button type="button" class="btn btn-line sm" id="dcSample">Load sample</button><button type="button" class="btn btn-line sm" id="dcClear">Clear all</button>
@@ -745,7 +743,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 
         <!-- DEMURRAGE -->
         <div class="view" id="v-demurrage" role="tabpanel" hidden>
-          <div class="vhead"><div><h2>Free days tracker</h2><p>Every container on one board, sorted by days left. Get an SMS alert before free days run out.</p></div><span class="sample">Sample data</span></div>
+          <div class="vhead"><div><h2>Free days tracker</h2><p>Every container on one board, sorted by days left. Get an SMS alert before free days run out.</p></div><span class="sample">Example</span></div>
           <div class="kpis" id="demKpis"></div>
           <div class="tablewrap" style="margin-top:14px" data-result="demurrage"><table>
             <caption class="sr">All containers, sorted by free days left</caption>
@@ -760,7 +758,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
             <div class="f"><label for="dm-r">Charge per day after free days (TZS)</label><input id="dm-r" type="number" min="0" step="1000" value="60000" inputmode="numeric"></div>
             <button class="btn btn-brand" type="submit">Add container</button>
           </form>
-          <p class="foot2" id="demMsg" aria-live="polite">Free days and daily charges depend on the shipping line and terminal. Test version: nothing is saved.</p>
+          <p class="foot2" id="demMsg" aria-live="polite">Free days and daily charges depend on the shipping line and terminal.</p>
           <div class="panel" style="margin-top:16px">
             <h3 class="t">Alerts for every container</h3>
             <p class="small" style="margin:4px 0 0">One SMS alert for each container on this board, before its free days end. New containers are added to the alerts too.</p>
@@ -778,7 +776,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 
         <!-- REFER -->
         <div class="view" id="v-refer" role="tabpanel" hidden>
-          <div class="vhead"><div><h2>Refer and earn</h2><p>When a client can't pay duty or their supplier, refer them in two minutes. Ramani never takes over the clearing of a client you referred.</p></div><div class="badges"><span class="status locked" id="licBadge">Licence check pending</span><span class="sample">Sample data</span></div></div>
+          <div class="vhead"><div><h2>Refer and earn</h2><p>When a client can't pay duty or their supplier, refer them in two minutes. Ramani never takes over the clearing of a client you referred.</p></div><div class="badges"><span class="status locked" id="licBadge">Licence check pending</span><span class="sample">Example</span></div></div>
           <div class="kpis">
             <div class="kpi"><div class="k">Clients referred</div><div class="v" id="k-ref">0</div><div class="d">This year</div></div>
             <div class="kpi"><div class="k">Funded by Ramani</div><div class="v" id="k-fund">0</div><div class="d">Cargo released</div></div>
@@ -804,7 +802,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 
         <!-- BALANCES -->
         <div class="view" id="v-balances" role="tabpanel" hidden>
-          <div class="vhead"><div><h2>Client balances</h2><p>Money you paid for clients (duty, port and line charges) that they still owe you. Send polite reminders on WhatsApp.</p></div><span class="sample">Sample data</span></div>
+          <div class="vhead"><div><h2>Client balances</h2><p>Money you paid for clients (duty, port and line charges) that they still owe you. Send polite reminders on WhatsApp.</p></div><span class="sample">Example</span></div>
           <div class="kpis" id="balKpis"></div>
           <div data-result="balances">
             <div class="panels">
@@ -832,7 +830,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 
         <!-- STATUS LINK -->
         <div class="view" id="v-status" role="tabpanel" hidden>
-          <div class="vhead"><div><h2>Client status link</h2><p>Send each client one link that shows where their container is. Fewer calls asking "where is my cargo?"</p></div><span class="sample">Sample data</span></div>
+          <div class="vhead"><div><h2>Client status link</h2><p>Send each client one link that shows where their container is. Fewer calls asking "where is my cargo?"</p></div><span class="sample">Example</span></div>
           <div class="tools">
             <div style="min-width:0;display:grid">
             <div class="phone" aria-label="Preview of the client's status page" data-result="status">
@@ -921,7 +919,6 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     if(!ok){ var first=document.querySelector('#gate [aria-invalid="true"]'); if(first) first.focus(); return; }
     unlock(name+" · "+role+" · "+co+" · licence "+lic+" (check pending)",co);
   });
-  $("previewBtn").addEventListener("click",function(){ unlock("Demo unlock · form skipped","Pwani Clearing and Forwarding Ltd"); });
   $("reset").addEventListener("click",lock);
 
   /* ---------- tabs ---------- */
@@ -1049,7 +1046,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     if(!cur.length){ $("raMsg").textContent="Choose at least one currency."; return; }
     if(!$("ra-ok").checked){ $("raMsg").textContent="Tick the box so Ramani can send you the rates by SMS."; return; }
     if(window.RAMANI) RAMANI.send("rate_alert",{phone:wa,currencies:cur,frequency:"weekly",marketing_consent:true});
-    $("raMsg").textContent="You are on the list. Each week you get the rates for "+cur.join(", ")+" by SMS. Saved to the test inbox.";
+    $("raMsg").textContent="You are on the list. Each week you get the rates for "+cur.join(", ")+" by SMS.";
   });
 
   /* ---------- free days tracker: one board sorted by days left ---------- */
@@ -1069,7 +1066,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
       tr.appendChild(el("td","num",left<0?plural(over,"day","days")+" over":String(left))); tr.appendChild(el("td","num",c?tzs(c):"None"));
       var s=el("td"); s.appendChild(el("span","st "+st[0],st[1])); tr.appendChild(s);
       var a=el("td"), b=el("button","linkbtn",d[4]?"SMS alert on":"Turn on alert"); b.type="button";
-      b.addEventListener("click",function(){ d[4]=!d[4]; drawDem(); $("demMsg").textContent=d[4]?"Alert set for "+d[0]+". You get an SMS 2 days before free days end. Test version: nothing was sent.":"Alert turned off for "+d[0]+"."; });
+      b.addEventListener("click",function(){ d[4]=!d[4]; drawDem(); $("demMsg").textContent=d[4]?"Reminder flagged for "+d[0]+" on this board.":"Alert turned off for "+d[0]+"."; });
       a.appendChild(b); tr.appendChild(a); return tr;
     }));
     var k=[["Containers tracked",String(DEM.length),"Sorted by days left"],["Ending within 2 days",String(soon),"Clear these first"],["Already charging",String(charging),"Past free days"],["Charges so far",tzs(cost),"Avoidable with faster release"]];
@@ -1083,7 +1080,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     if(!cl){ $("demMsg").textContent="Enter the client name."; $("dm-cl").focus(); return; }
     DEM.unshift([c.replace(/^([A-Z]{4})\s?/,"$1 "),cl,isFinite(d)&&d>=0?d:0,isFinite(r)&&r>0?r:0,true,isFinite(f)&&f>=0?f:FREE_DAYS]);
     drawDem(); $("demForm").reset(); $("dm-d").value="0"; $("dm-r").value="60000"; $("dm-f").value=String(FREE_DAYS);
-    $("demMsg").textContent="Added to the board, sorted by days left. Test version: nothing is saved.";
+    $("demMsg").textContent="Added to the board, sorted by days left.";
   });
   $("fa-wa").value=leadPhone();
   $("faForm").addEventListener("submit",function(e){
@@ -1093,7 +1090,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     if(!$("fa-ok").checked){ $("faMsg").textContent="Tick the box so Ramani can send you alerts by SMS."; return; }
     if(window.RAMANI) RAMANI.send("freedays_alert",{phone:wa,days_before:+when,agent:$("who").textContent,containers:DEM.map(function(d){ return {container:d[0],client:d[1],free_days_left:daysLeft(d)}; }),marketing_consent:true});
     DEM.forEach(function(d){ d[4]=true; }); drawDem();
-    $("faMsg").textContent="Alerts are on for all "+DEM.length+" containers. "+$("fa-when").options[$("fa-when").selectedIndex].text+", you get an SMS. Saved to the test inbox.";
+    $("faMsg").textContent="Alerts are on for all "+DEM.length+" containers. "+$("fa-when").options[$("fa-when").selectedIndex].text+", you get an SMS.";
   });
 
   /* ---------- refer and earn: tracker ---------- */
@@ -1141,7 +1138,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     if(window.RAMANI&&RAMANI.lastDuplicate){ $("refMsg").textContent="This client has already been referred to Ramani, so they were not added twice."; return; }
     REFS.unshift([name,$("rf-need").value,"Today","received","Pending"]);
     REFS[0][5]="Ramani will call within one working day"; REFS[0][7]=amt>0?amt:0; RFILTER="all"; drawRefs(); $("referForm").reset();
-    $("refMsg").textContent=name+" referred. Ramani calls them within one working day. Saved to the test inbox.";
+    $("refMsg").textContent=name+" referred. Ramani calls them within one working day.";
   });
 
   /* ---------- client balances ---------- */
@@ -1563,7 +1560,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     '<span class="lg-pn">We use your details to give you your results and to answer your requests. <a id="lg-priv" target="_blank" rel="noopener">How Ramani uses your data</a></span>'+
     '<span class="err" id="lg-err" aria-live="polite"></span>'+
     '<div class="lg-row"><button type="button" class="lg-skip" id="lg-skip">Not now</button><button type="submit" class="go" id="lg-go">Continue</button></div>'+
-    '<span style="font-size:12px;color:var(--muted)">Test version: your details go to the test inbox on the Tools home page. Nothing reaches Ramani yet.</span>'+
+    ''+
     '</form></div>';
   document.body.appendChild(back);
   var $=function(id){ return document.getElementById(id); };
@@ -1609,7 +1606,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     if(pendingEl){ var x=pendingEl; pendingEl=null; setTimeout(function(){ x.click(); },60); } // finish what they asked for
   });
 
-  var reset=document.createElement("button"); reset.type="button"; reset.className="lg-reset"; reset.textContent="Demo: forget my contact details";
+  var reset=document.createElement("button"); reset.type="button"; reset.className="lg-reset"; reset.textContent="Use different contact details";
   reset.addEventListener("click",function(){ setLead(null); if(window.RAMANI&&window.RAMANI.people) window.RAMANI.people.forgetMe(); $("lg-f").reset(); lock(); window.scrollTo({top:0}); });
   document.body.insertBefore(reset,bar);
 
@@ -1742,7 +1739,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
     if(window.rtrack) window.rtrack("export_sent",{channel:ch,tool:cur.tool,view:cur.view,marketing_consent:mk});
     var to=ch==="email"?email:phone;
     $("sm-f").hidden=true; $("sm-ok").hidden=false;
-    $("sm-ok").textContent="Done. Your "+cur.tool+" result is on its way to "+to+"."+(R.inbox?" Test version: saved to the test inbox.":"");
+    $("sm-ok").textContent="Done. Your "+cur.tool+" result is on its way to "+to+".";
   });
 
   function add(){
@@ -1786,7 +1783,7 @@ b.addEventListener("click",function(e){e.stopPropagation();s(!m.classList.contai
 var n=document.getElementById("rn-name").value.trim(),m=document.getElementById("rn-email").value.trim().toLowerCase(),o=document.getElementById("rn-msg");
 if(!n){o.style.color="var(--warn,#a35208)";o.textContent="Please enter your name.";return;}
 if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)){o.style.color="var(--warn,#a35208)";o.textContent="Please enter a valid email address.";return;}
-var done=function(r){o.style.color="var(--brand,#04C401)";o.textContent=(r&&r.duplicate)?"This email is already subscribed. You will keep getting the newsletter every Monday.":"Thank you, "+n+". Our next newsletter reaches your inbox on Monday. Test version: saved to the test inbox only.";f.reset();};
+var done=function(r){o.style.color="var(--brand,#04C401)";o.textContent=(r&&r.duplicate)?"This email is already subscribed. You will keep getting the newsletter every Monday.":"Thank you, "+n+". Our next newsletter reaches your inbox on Monday.";f.reset();};
 if(window.RAMANI&&window.RAMANI.send)window.RAMANI.send("newsletter",{list:"Ramani newsletter",name:n,email:m,marketing_consent:true}).then(done,done);else done();});})();</script>
 </body>
 </html>
