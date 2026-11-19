@@ -7,17 +7,62 @@ import { workersAIReady, underDailyCap, factsFor, workersAIAnswer } from "../../
 import { liveRates } from "../../lib/fx.js";
 
 const core = makeCore(KB);
+
+// Page titles for links, so answers say "Landed cost calculator" and not "landed-cost-calculator.html".
+const TITLES = (() => { const m = {}; (KB.res || []).forEach((r) => { if (r && r[1]) m[String(r[1]).split(/[?#]/)[0]] = [r[5], r[6]]; }); return m; })();
+const EXTRA = { "import-plan-generator.html": ["Your import plan", "Mpango wako wa uagizaji"], "glossary.html": ["Importer glossary", "Kamusi ya mwagizaji"], "import-permit-finder.html": ["Permit finder", "Kitafuta vibali"], "resources.html": ["Resource library", "Maktaba ya rasilimali"] };
+function titleFor(url, sw) {
+  const base = String(url).split(/[?#]/)[0], t = TITLES[base] || EXTRA[base];
+  if (t) return (sw && t[1]) || t[0];
+  const w = base.replace(/\.html$/i, "").replace(/[-_]+/g, " ").trim();
+  return w ? w[0].toUpperCase() + w.slice(1) : null;
+}
+export function fixLinks(text, sw) {
+  let out = String(text).replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (all, label, url) => {
+    const fileLike = /\.html\b/i.test(label) || /^https?:/i.test(label) || label.trim() === url;
+    const t = fileLike ? titleFor(url, sw) : null;
+    return t ? `[${t}](${url})` : all;
+  });
+  // a bare file name in the text becomes a proper link
+  out = out.replace(/(^|[\s:])((?:[a-z0-9]+-)*[a-z0-9]+\.html(?:\?[^\s)\]]*)?)(?=[\s.,;!?]|$)/gim, (all, pre, url) => { const t = titleFor(url, sw); return t ? `${pre}[${t}](${url})` : all; });
+  return out;
+}
+
+// What the chat already established: a plan from an earlier message, carried into a follow up question.
+function pickFrom(map, text) {
+  const w = " " + String(text || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/[^a-z0-9]+/).filter(Boolean).join(" ") + " ";
+  let best = null, n = 0;
+  Object.keys(map || {}).forEach((k) => { let c = 0; map[k].split(" ").forEach((x) => { if (w.indexOf(" " + x + " ") >= 0) c++; }); if (c > n) { n = c; best = k; } });
+  return best;
+}
+const COST = /cost|gharama|bei|how much|kiasi|landed|duty|ushuru|vat|deposit|malipo|days|siku|instead|badala|what about|je kwa|na kwa/i;
+const PERMIT = /permit|kibali|vibali|tbs|tmda|tcra|standard|certificate|cheti/i;
+export function chatContext(turns) {
+  const users = turns.filter((t) => t.role === "user").map((t) => t.content), q = users[users.length - 1] || "";
+  const ctx = {};
+  let prior = null;
+  for (let i = users.length - 2; i >= 0 && !prior; i--) { try { prior = core.parsePlan(users[i]); } catch {} }
+  let now = null; try { now = core.parsePlan(q); } catch {}
+  if (!now && prior) {
+    const g = pickFrom(KB.goods, q), o = pickFrom(KB.orig, q), r = pickFrom(KB.reg, q), v = core.money(q);
+    if (g || o || r || v || COST.test(q)) ctx.plan = { goods: g || prior.goods, origin: o || prior.origin, region: r || prior.region, value_usd: v || prior.value_usd };
+  }
+  if (!core.goods(q) && PERMIT.test(q)) ctx.goods = (prior && prior.goods) || null;
+  return ctx;
+}
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { "content-type": "application/json" } });
 
 const RULES = `You are Uliza Ramani, the assistant on Ramani's free resource site for Tanzanian importers. Ramani is a trade finance company in Dar es Salaam.
 Rules:
-1. Reply in the language of the user's last message (Kiswahili or English). Keep it short: under 120 words, simple words, short lines.
+1. Reply in the language of the user's last message (Kiswahili or English). Keep it short: under 100 words, simple words, short lines. Start with the answer; do not repeat the question.
 2. Every number (costs, duty, VAT, days) must come from the plan_import tool. Never invent duty rates, prices, permits, laws or bank fees. If the tools do not cover it, say you are not sure and suggest a licensed clearing agent or a Ramani BDM.
 3. Finance: Ramani pays the supplier and the importer repays as they sell, subject to assessment. Never say someone qualifies, will be approved or what rate they will pay. Suggest the readiness score (import-finance-readiness-score.html) or a call with a Ramani BDM.
-4. End with one or two links to Ramani pages as markdown links, using urls exactly as the tools return them.
+4. End with one or two links to Ramani pages as markdown links, using urls exactly as the tools return them. The link text is the page title, never a file name.
 5. Never ask for phone numbers, ID numbers or bank details.
 6. Only help with importing, trade, Ramani's tools and running an import business. Politely decline anything else.
-7. Do not use dashes. Use plain sentences or short bullet lists.`;
+7. Do not use dashes. Use plain sentences or short bullet lists. Put each number on its own bullet.
+8. Kiswahili: write simple, everyday Tanzanian Kiswahili as traders in Kariakoo speak it, not a word for word translation. Use common trade words (mzigo, kontena, ushuru, msambazaji, wakala wa forodha, bandari) and keep English terms traders use, such as LCL or demurrage, with a short Kiswahili explanation.
+9. If the user is following up on an earlier answer, use the earlier details (goods, amount, origin, region) unless they change them.`;
 
 const TOOLS = [
   { name: "plan_import", description: "Works out an import with Ramani's calculator: shipping option, landed cost in TZS, duty band, VAT, deposit, days to the shop, permits and a link to the full plan. Use it for ANY cost question.",
@@ -65,7 +110,7 @@ export async function onRequestPost({ request, env }) {
   if (env.DB) { // keep the questions: they show what content to make next
     try { await env.DB.prepare("INSERT INTO questions (id, asked_at, page, lang, question) VALUES (?1, ?2, ?3, ?4, ?5)").bind(qid, new Date().toISOString(), String(body.page || "").slice(0, 120), sw ? "sw" : "en", question.slice(0, 1000)).run(); } catch {}
   }
-  const clean = (t) => String(t).replace(/[—–]/g, ",");
+  const clean = (t) => fixLinks(String(t).replace(/[—–]/g, ","), sw);
   if (env.ANTHROPIC_API_KEY && env.ANTHROPIC_MODEL) { // 1. Claude, when Ramani adds a key
     try {
       const text = await claudeWithTools(env, { system: RULES + "\nSite language: " + (sw ? "Kiswahili" : "English") + ". Page: " + String(body.page || "").slice(0, 80), messages: turns, tools: TOOLS, run });
@@ -77,7 +122,7 @@ export async function onRequestPost({ request, env }) {
   if (workersAIReady(env) && (await underDailyCap(env))) { // 2. Cloudflare Workers AI, free tier
     try {
       const t0 = Date.now();
-      const text = await workersAIAnswer(env, { rules: RULES, facts: factsFor(core, question, sw), turns, sw, model: debug && body.model ? String(body.model) : null, raw: debug });
+      const text = await workersAIAnswer(env, { rules: RULES, facts: factsFor(core, question, sw, chatContext(turns)), turns, sw, model: debug && body.model ? String(body.model) : null, raw: debug });
       if (debug && text && typeof text === "object") return json({ debug: text, ms: Date.now() - t0 });
       if (text) {
         if (env.DB) { try { await env.DB.prepare("UPDATE questions SET answered_by = 'workers_ai' WHERE id = ?1").bind(qid).run(); } catch {} }
