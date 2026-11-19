@@ -19,8 +19,9 @@ function titleFor(url, sw) {
 }
 export function fixLinks(text, sw) {
   let out = String(text).replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (all, label, url) => {
+    const base = String(url).split(/[?#]/)[0], known = TITLES[base] || EXTRA[base];
     const fileLike = /\.html\b/i.test(label) || /^https?:/i.test(label) || label.trim() === url;
-    const t = fileLike ? titleFor(url, sw) : null;
+    const t = known || fileLike ? titleFor(url, sw) : null; // known pages always use their real title, in the reply's language
     return t ? `[${t}](${url})` : all;
   });
   // a bare file name in the text becomes a proper link
@@ -165,7 +166,11 @@ export async function onRequestPost({ request, env }) {
       const facts = factsFor(core, question, sw, chatContext(turns));
       const block = facts.plan ? planBlock(facts.plan, sw) : "";
       let text = await workersAIAnswer(env, { rules: RULES, facts, turns, sw, model: debug && body.model ? String(body.model) : null, raw: debug, numbersShown: !!block });
-      if (block && typeof text === "string") text = block + "\n\n" + text;
+      if (block && typeof text === "string") {
+        // the numbers come from the block only: drop any model line that still carries a number
+        text = text.split("\n").filter((l) => !/\d/.test(l.replace(/\[[^\]]*\]\([^)]*\)/g, ""))).join("\n").trim();
+        text = block + "\n\n" + text;
+      }
       if (debug && text && typeof text === "object") return json({ debug: text, ms: Date.now() - t0 });
       if (text) {
         if (env.DB) { try { await env.DB.prepare("UPDATE questions SET answered_by = 'workers_ai' WHERE id = ?1").bind(qid).run(); } catch {} }
