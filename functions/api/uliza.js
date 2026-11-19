@@ -123,7 +123,7 @@ export async function onRequestPost({ request, env }) {
     const v = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body: new URLSearchParams({ secret: env.TURNSTILE_SECRET, response: String(body.turnstile || ""), remoteip: request.headers.get("cf-connecting-ip") || "" }) }).then((r) => r.json()).catch(() => ({}));
     if (!v.success) return json({ error: "bot_check_failed" }, 403);
   }
-  const sw = body.lang === "sw";
+  let sw = body.lang === "sw";
   let turns = (Array.isArray(body.messages) ? body.messages : []).slice(-10)
     .filter((t) => t && (t.role === "user" || t.role === "assistant") && typeof t.content === "string" && t.content.trim())
     .map((t) => ({ role: t.role, content: redact(t.content).slice(0, 1500) }));
@@ -140,6 +140,7 @@ export async function onRequestPost({ request, env }) {
     throw new Error("Unknown tool");
   };
   const question = turns[turns.length - 1].content;
+  if (!sw && /\b(nini|gani|vipi|nataka|nahitaji|kutoka|kiasi|bei|mzigo|ushuru|vibali|kibali|hadi|vya|za|kwa|gharama|msambazaji|habari)\b/i.test(question)) sw = true; // a Kiswahili question gets a Kiswahili answer
   let fxTime = "";
   try { // the calculator reads today's rate the same way the tool pages do
     const fx = await liveRates(); fxTime = fx.time;
