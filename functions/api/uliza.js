@@ -25,6 +25,15 @@ export function fixLinks(text, sw) {
   });
   // a bare file name in the text becomes a proper link
   out = out.replace(/(^|[\s:])((?:[a-z0-9]+-)*[a-z0-9]+\.html(?:\?[^\s)\]]*)?)(?=[\s.,;!?]|$)/gim, (all, pre, url) => { const t = titleFor(url, sw); return t ? `${pre}[${t}](${url})` : all; });
+  // drop a line that only repeats a link already given
+  const seen = new Set();
+  out = out.split("\n").filter((line) => {
+    const urls = [...line.matchAll(/\]\(([^)\s]+)\)/g)].map((m) => m[1]);
+    const bare = line.replace(/\[[^\]]*\]\([^)]*\)/g, "").replace(/[\s*\-•·.,]/g, "");
+    const dup = urls.length && !bare && urls.every((u) => seen.has(u));
+    urls.forEach((u) => seen.add(u));
+    return !dup;
+  }).join("\n");
   return out;
 }
 
