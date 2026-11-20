@@ -9,13 +9,14 @@ import { KB } from "../../lib/kb.js";
 import { makeCore } from "../../lib/core.js";
 import { activity } from "../../lib/contact.js";
 import { autoEmail, sendToPerson } from "../../lib/email.js";
+import { autoSms } from "../../lib/autosms.js";
 const core = makeCore(KB);
 
 const ONCE = { tool_lead:1, newsletter:1, community_join:1, registration:1, trip_alerts:1, rate_alert:1,
   freedays_alert:1, partner_review:1, dataroom_request:1, download:"item", download_notify:"item",
   academy_certificate:"item", academy_enroll:"item", importer_survey:1, report_notify:1, meetup_rsvp:"item", meetup_interest:"item" };
 const THIRD = { agent_referral:["client_phone"], bank_referral:["phone"] };
-const ALLOWED = new Set([...Object.keys(ONCE), ...Object.keys(THIRD), "quote_request", "request", "readiness_score", "finance_interest", "import_plan", "invoice_generator", "webinar_topic", "callback_request", "uliza_question"]);
+const ALLOWED = new Set([...Object.keys(ONCE), ...Object.keys(THIRD), "quote_request", "request", "readiness_score", "finance_interest", "import_plan", "invoice_generator", "webinar_topic", "callback_request", "uliza_question", "repay_reminder", "demurrage_alert", "season_alert"]);
 
 function phone(p){
   p = String(p || "").replace(/[^\d+]/g, ""); if (p[0] === "+") p = p.slice(1); if (p.startsWith("00")) p = p.slice(2);
@@ -93,6 +94,11 @@ export async function onRequestPost({ request, env, waitUntil }) {
       if (waitUntil) waitUntil(send); else await send;
     }
   } catch {}
+  // Confirmation SMS by Ghala for the actions we promise by SMS (alerts, reminders, estimates, call backs). See lib/autosms.js.
+  if (!third) {
+    const sms = autoSms(env, core, { type, data: d, personId: person.id, duplicate }).catch(() => {});
+    if (waitUntil) waitUntil(sms); else await sms;
+  }
   if (!duplicate) {
     try {
       const m = core.mqlScore(await activity(env, person.id));
