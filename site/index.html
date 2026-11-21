@@ -827,8 +827,8 @@ function skeleton(){
   return s+'</div></div>';
 }
 function emptyState(){
-  var why=S.noDb?"Posts load when this page is opened on claude.ai while signed in.":S.err==="slow"?"Posts are taking longer than usual to load. Check your connection and refresh.":S.err?"Posts could not be loaded right now.":"No posts are live yet.";
-  return '<div class="empty"><h3>Nothing to read yet</h3><p>'+why+'</p><p style="margin-top:14px"><a class="btn btn-p" href="#write">Open the editor</a></p></div>';
+  var why=S.err==="slow"?"Guides are taking longer than usual to load. Check your connection and refresh.":S.err&&!S.noDb?"Guides could not be loaded right now. Please refresh.":"New guides are on the way. Meanwhile, try the free Ramani tools.";
+  return '<div class="empty"><h3>New guides coming soon</h3><p>'+why+'</p><p style="margin-top:14px">'+(S.canEdit?'<a class="btn btn-p" href="#write">Open the editor</a>':'<a class="btn btn-p" href="tools.html">Open the free tools</a>')+'</p></div>';
 }
 function hub(){
   document.title="Ramani Learn: guides for Tanzanian importers and traders";
@@ -1006,14 +1006,15 @@ function parse(){
 }
 function marks(r){
   $$("#cats a").forEach(function(a){if(r.name==="topic"&&a.getAttribute("data-cat")===r.arg)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");});
-  var w=$("#writeBtn");w.style.display=/write|draft|edit/.test(r.name)?"none":"";
+  var w=$("#writeBtn");w.style.display=(S.canEdit&&!/write|draft|edit/.test(r.name))?"":"none";
 }
 function route(){
   var r=parse();
   var editorish=/^(write|draft|edit)$/.test(r.name);
   if(window.LEARN_EDITOR_LEAVE&&!editorish)window.LEARN_EDITOR_LEAVE();
   cur=r;marks(r);$("#nav").classList.remove("open");
-  if(editorish){window.LEARN_EDITOR_OPEN&&window.LEARN_EDITOR_OPEN(r);}
+  if(editorish&&!S.canEdit){S.blocked=true;document.title="Ramani Learn";app.innerHTML='<div class="wrap" style="padding:60px 0"><div class="empty"><h3>Writing is for Ramani editors</h3><p>Only Ramani admins can write and publish on Learn. Browse the guides instead.</p><p style="margin-top:14px"><a class="btn btn-p" href="#learn">Back to Learn</a></p></div></div>';}
+  else if(editorish){S.blocked=false;window.LEARN_EDITOR_OPEN&&window.LEARN_EDITOR_OPEN(r);}
   else if(r.name==="topic")VIEW.topic(r.arg);
   else if(r.name==="post")VIEW.post(r.arg);
   else if(r.name==="author")VIEW.author(r.arg);
@@ -1022,7 +1023,8 @@ function route(){
 }
 function refresh(){
   // data changed: re-render reader views in place, let the editor update its own bits
-  var r=cur;
+  var r=cur;marks(r);
+  if(S.blocked){if(S.canEdit){S.blocked=false;route();}return;}
   if(/^(write|draft|edit)$/.test(r.name)){window.LEARN_EDITOR_REFRESH&&window.LEARN_EDITOR_REFRESH();return;}
   var y=window.scrollY,qFocus=document.activeElement&&document.activeElement.id==="q";
   if(r.name==="topic")VIEW.topic(r.arg);else if(r.name==="post")VIEW.post(r.arg);else if(r.name==="author")VIEW.author(r.arg);else VIEW.hub();
