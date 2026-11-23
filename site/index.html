@@ -1,4 +1,4 @@
-<!doctype html><html><head><script src="/config.js"></script><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="icon" type="image/png" sizes="32x32" href="brand/favicon-32.png"><link rel="apple-touch-icon" href="brand/ramani-icon.png"><link rel="stylesheet" href="ramani-ds.css">
+<!doctype html><html><head><script src="/config.js"></script><script src="/learn-shim.js"></script><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="icon" type="image/png" sizes="32x32" href="brand/favicon-32.png"><link rel="apple-touch-icon" href="brand/ramani-icon.png"><link rel="stylesheet" href="ramani-ds.css">
 </head><body>
 <script src="brain/kb.js"></script>
 <script src="brain/core.js"></script>
@@ -994,6 +994,7 @@ window.addEventListener("scroll",function(){
 var cur={name:"",arg:""};
 function parse(){
   var h=(location.hash||"").replace(/^#/,"");
+  if(!h){var pm=/^\/learn\/([a-z0-9-]+)\/?$/.exec(location.pathname);if(pm)return {name:"post",arg:pm[1]};}
   if(!h||h==="learn")return {name:"hub"};
   var m;
   if((m=/^t-(.+)$/.exec(h)))return {name:"topic",arg:m[1]};
@@ -1244,7 +1245,7 @@ function insertBlock(id,blk){
       swap(n);ensureAfter(n);caret(n.querySelector("td"),true);break;
     case "sub":n=el("div","b-sub");swap(n);window.LEARN_HYDRATE(n.parentNode===ebody?wrapOne(n):n,"edit");n.setAttribute("contenteditable","false");caret(ensureAfter(n),true);break;
     case "img":
-      if(!S.assets){toast("Image upload needs editor access on claude.ai");return;}
+      if(!S.assets){toast("Image upload needs a signed in Ramani editor");return;}
       F.file.onchange=function(){var f=F.file.files[0];F.file.value="";if(!f)return;uploadImage(f,function(r){
         var fig=el("figure","b-img");var im=el("img");im.src="/_blob/"+r.id;im.setAttribute("data-asset",r.id);im.alt="";fig.appendChild(im);fig.appendChild(el("figcaption"));
         if(keep&&keep.isConnected)keep.replaceWith(fig);else if(blk.isConnected)blk.after(fig);else ebody.appendChild(fig);
@@ -1280,7 +1281,7 @@ function insertBlock(id,blk){
 }
 function wrapOne(n){return n.parentNode;}
 function uploadImage(file,cb){
-  if(!S.assets){toast("Image upload needs editor access on claude.ai");return;}
+  if(!S.assets){toast("Image upload needs a signed in Ramani editor");return;}
   if(file.size>20*1024*1024){toast("That image is over 20 MB");return;}
   toast("Uploading image…");
   S.assets.upload(file).then(function(r){toast("Image added");cb(r);},function(e){toast("Upload failed: "+((e&&e.code)||"error"));});
@@ -1429,7 +1430,7 @@ function wire(){
   $("#eAud").addEventListener("change",function(){D.audience=this.value;dirty();});
   $("#cvShuffle").addEventListener("click",function(){D.artSeed=Math.random().toString(36).slice(2,9);drawCover();dirty();});
   $("#cvUp").addEventListener("click",function(){
-    if(!S.assets){toast("Cover upload needs editor access on claude.ai. The map art is used until then.");return;}
+    if(!S.assets){toast("Cover upload needs a signed in Ramani editor. The map art is used until then.");return;}
     F.file.onchange=function(){var f=F.file.files[0];F.file.value="";if(f)uploadImage(f,function(r){D.cover=r.id;D.coverUrl="/_blob/"+r.id;drawCover();dirty();});};F.file.click();
   });
   $("#cvRm").addEventListener("click",function(){D.cover="";D.coverUrl="";drawCover();dirty();});
@@ -1525,7 +1526,7 @@ function updatePerms(){
   var sched=D.schedule&&new Date(D.schedule).getTime()>Date.now();
   b.textContent=D.editing?(sched?"Update schedule":"Update"):(sched?"Schedule":"Publish");
   b.title=canPublish()?"":"Only Ramani editors can publish. Your draft is saved in this browser.";
-  var n=$("#dNote");if(n){n.hidden=canPublish();n.textContent=!S.db?"Publishing works when this page is open on claude.ai and you are signed in. Your draft is saved in this browser.":"Only Ramani editors can publish. Your draft is saved in this browser, so you can keep writing and share a preview.";}
+  var n=$("#dNote");if(n){n.hidden=canPublish();n.textContent=!S.db?"Publishing needs a signed in Ramani editor. Your draft is saved in this browser.":"Only Ramani editors can publish. Your draft is saved in this browser, so you can keep writing and share a preview.";}
   var sv=$("#dSaveRemote");if(sv)sv.hidden=!canPublish();
 }
 
@@ -1685,7 +1686,7 @@ function publish(live){
   if(!slug||!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))errs.push("Add a link for the post.");
   else if(window.LEARN_BYSLUG(slug)&&slug!==D.editing)errs.push("Another post already uses this link. Change it in Link.");
   if(W.words<30)errs.push("Write a little more before publishing.");
-  if(!S.db)errs.push("Open this page on claude.ai, signed in, to publish. Your draft is saved in this browser.");
+  if(!S.db)errs.push("Sign in to the Learn editor to publish. Your draft is saved in this browser.");
   else if(!S.canEdit)errs.push("Only Ramani editors can publish. Your draft is saved in this browser.");
   if(errs.length){if(!F.drawer.classList.contains("open"))openDrawer();document.getElementById("dWarn").textContent=errs.join(" ");toast(errs[0]);return;}
   warn.textContent="";
