@@ -1,5 +1,6 @@
 // POST /api/uliza  ·  Uliza Ramani, the site assistant. Claude when ANTHROPIC_API_KEY is set, otherwise Cloudflare Workers AI (free tier, binding AI).
 // The page sends {messages:[{role,content}], lang, page}. Numbers come from Ramani's own calculator (lib/core.js), not the model.
+import { turnstileOk } from "../../lib/turnstile.js";
 import { KB } from "../../lib/kb.js";
 import { makeCore } from "../../lib/core.js";
 import { claudeWithTools } from "../../lib/claude.js";
@@ -120,10 +121,7 @@ const redact = (s) => String(s).replace(/[^\s@]+@[^\s@]+\.[^\s@]+/g, "[email]").
 
 export async function onRequestPost({ request, env }) {
   let body; try { body = await request.json(); } catch { return json({ error: "bad_json" }, 400); }
-  if (env.TURNSTILE_SECRET) { // optional bot check
-    const v = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body: new URLSearchParams({ secret: env.TURNSTILE_SECRET, response: String(body.turnstile || ""), remoteip: request.headers.get("cf-connecting-ip") || "" }) }).then((r) => r.json()).catch(() => ({}));
-    if (!v.success) return json({ error: "bot_check_failed" }, 403);
-  }
+  if (!(await turnstileOk(request, env, body.turnstile))) return json({ error: "bot_check_failed" }, 403); // Turnstile, once TURNSTILE_SECRET is set
   let sw = body.lang === "sw";
   let turns = (Array.isArray(body.messages) ? body.messages : []).slice(-10)
     .filter((t) => t && (t.role === "user" || t.role === "assistant") && typeof t.content === "string" && t.content.trim())
