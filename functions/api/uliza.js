@@ -120,7 +120,14 @@ const TOOLS = [
 const redact = (s) => String(s).replace(/[^\s@]+@[^\s@]+\.[^\s@]+/g, "[email]").replace(/(\+?\d[\d\s-]{7,}\d)/g, "[number]");
 
 export async function onRequestPost({ request, env }) {
-  let body; try { body = await request.json(); } catch { return json({ error: "bad_json" }, 400); }
+  // Request validation: a chat request is small, so anything over 20 KB or shaped differently is refused.
+  const raw = await request.text();
+  if (raw.length > 20000) return json({ error: "too_large" }, 413);
+  let body; try { body = JSON.parse(raw); } catch { return json({ error: "bad_json" }, 400); }
+  if (!body || typeof body !== "object" || Array.isArray(body)) return json({ error: "bad_body" }, 400);
+  if (body.messages !== undefined && (!Array.isArray(body.messages) || body.messages.length > 40)) return json({ error: "bad_messages" }, 400);
+  if (body.lang !== undefined && !["en", "sw"].includes(body.lang)) return json({ error: "bad_lang" }, 400);
+  if (body.page !== undefined && (typeof body.page !== "string" || body.page.length > 200)) return json({ error: "bad_page" }, 400);
   if (!(await turnstileOk(request, env, body.turnstile))) return json({ error: "bot_check_failed" }, 403); // Turnstile, once TURNSTILE_SECRET is set
   let sw = body.lang === "sw";
   let turns = (Array.isArray(body.messages) ? body.messages : []).slice(-10)
