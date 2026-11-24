@@ -66,7 +66,7 @@ RAMANI.turnstileSiteKey = "0x4AAAAAAGQRZBKSEnEewVKg";
       var url = typeof u === "string" ? u : (u && u.url) || "";
       var path = url.indexOf(location.origin) === 0 ? url.slice(location.origin.length) : url;
       if (o && String(o.method || "").toUpperCase() === "POST" && typeof o.body === "string" &&
-          (path === RAMANI.endpoint || path === RAMANI.brainEndpoint)) {
+          (path === RAMANI.endpoint || path === RAMANI.brainEndpoint || path === "/api/c/auth/start")) {
         return token().then(function (t) {
           var b; try { b = JSON.parse(o.body); } catch (e) { return plain.call(window, u, o); }
           if (t) b.turnstile = t;
