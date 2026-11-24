@@ -25,6 +25,37 @@ function phone(p){
   return /^\d{9,15}$/.test(p) ? "+" + p : null;
 }
 function email(e){ e = String(e || "").trim().toLowerCase(); return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e) && e.length <= 200 ? e : null; }
+// Request validation: form data must look like something a real form sends: an object of short values, with
+// small lists or nested objects allowed (utm tags, a list of containers). Anything bigger, deeper or stranger is
+// refused before it reaches the database. The whole request is also capped at 20 KB.
+function badData(d) {
+  if (!d || typeof d !== "object" || Array.isArray(d)) return "data_not_object";
+  let nodes = 0;
+  const check = (v, depth) => {
+    if (++nodes > 800) return "too_much_data";
+    if (v === null || typeof v === "boolean") return null;
+    if (typeof v === "number") return Number.isFinite(v) ? null : "bad_number";
+    if (typeof v === "string") return v.length > 2000 ? "field_too_long" : null;
+    if (depth >= 3) return "too_deep";
+    if (Array.isArray(v)) {
+      if (v.length > 100) return "list_too_long";
+      for (const x of v) { const e = check(x, depth + 1); if (e) return e; }
+      return null;
+    }
+    if (typeof v === "object") {
+      const keys = Object.keys(v);
+      if (keys.length > 60) return "too_many_fields";
+      for (const k of keys) {
+        if (k.length > 60 || !/^[A-Za-z0-9_.\-]+$/.test(k)) return "bad_field_name";
+        const e = check(v[k], depth + 1); if (e) return e;
+      }
+      return null;
+    }
+    return "bad_value";
+  };
+  return check(d, 0);
+}
+
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { "content-type": "application/json" } });
 const id = (p) => p + crypto.randomUUID().replace(/-/g, "").slice(0, 16);
 
@@ -37,8 +68,10 @@ export async function onRequestPost({ request, env, waitUntil }) {
   let body;
   try { const t = await request.text(); if (t.length > 20000) return json({ ok:false, error:"too_large" }, 413); body = JSON.parse(t); }
   catch { return json({ ok:false, error:"bad_json" }, 400); }
-  const type = String(body.type || ""), d = body.data && typeof body.data === "object" ? body.data : {};
+  if (!body || typeof body !== "object" || Array.isArray(body)) return json({ ok:false, error:"bad_body" }, 400);
+  const type = String(body.type || "").slice(0, 40), d = body.data && typeof body.data === "object" ? body.data : {};
   if (!ALLOWED.has(type)) return json({ ok:false, error:"unknown_type" }, 400);
+  const invalid = badData(d); if (invalid) return json({ ok:false, error: invalid }, 400);
   // Bot check (Cloudflare Turnstile) once TURNSTILE_SECRET is set: stops fake sign ups and SMS pumping.
   if (!(await turnstileOk(request, env, body.turnstile))) return json({ ok:false, error:"bot_check_failed" }, 403);
 
