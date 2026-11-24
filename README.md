@@ -48,7 +48,7 @@ Every pull request gets its own preview link. Pages on `*.pages.dev` are marked 
 
 - [ ] Move the repo to Ramani's GitHub organisation, then reconnect Cloudflare Pages.
 - [ ] Connect ramani.io: route `/tools/*` and `/resources` to this project (see the SEO plan), and verify `news.ramani.io` in Resend.
-- [ ] Add the secrets: Claude API, Resend (`RESEND_API_KEY`, `RESEND_WEBHOOK_SECRET`, `EMAIL_FROM`), Ghala (`GHALA_SMS_KEY`, `GHALA_SENDER_ID`, `GHALA_WEBHOOK_SECRET`), SemaCall and `EMAIL_SECRET`.
+- [ ] Add the secrets: Claude API, Resend (`RESEND_API_KEY`, `RESEND_WEBHOOK_SECRET`, `EMAIL_FROM`), Ghala (`GHALA_SMS_KEY`, `GHALA_SENDER_ID`, `GHALA_WEBHOOK_SECRET`), Turnstile bot check (`TURNSTILE_SECRET`, Secret; the public site key is in `site/config.js`), SemaCall and `EMAIL_SECRET`.
 - [ ] Run the four database files on the production D1 database.
 - [ ] Protect `/admin/*`, `/sales-desk.html`, `/api/brief*`, `/api/semacall/push*`, `/api/semacall/send-sms*`, `/api/email/campaign*` and `/api/email/send-batch*` with Cloudflare Access, then set `ACCESS_TEAM_DOMAIN` and `ACCESS_AUD` (staff routes stay closed until then).
 - [ ] Remove the "test inbox" and "Prototype" notes from the tools pages once the live database is connected.
