@@ -10,6 +10,7 @@ import { makeCore } from "../../lib/core.js";
 import { activity } from "../../lib/contact.js";
 import { autoEmail, sendToPerson } from "../../lib/email.js";
 import { autoSms } from "../../lib/autosms.js";
+import { turnstileOk } from "../../lib/turnstile.js";
 const core = makeCore(KB);
 
 const ONCE = { tool_lead:1, newsletter:1, community_join:1, registration:1, trip_alerts:1, rate_alert:1,
@@ -33,6 +34,8 @@ export async function onRequestPost({ request, env, waitUntil }) {
   catch { return json({ ok:false, error:"bad_json" }, 400); }
   const type = String(body.type || ""), d = body.data && typeof body.data === "object" ? body.data : {};
   if (!ALLOWED.has(type)) return json({ ok:false, error:"unknown_type" }, 400);
+  // Bot check (Cloudflare Turnstile) once TURNSTILE_SECRET is set: stops fake sign ups and SMS pumping.
+  if (!(await turnstileOk(request, env, body.turnstile))) return json({ ok:false, error:"bot_check_failed" }, 403);
 
   const third = !!THIRD[type];
   const em = third ? null : email(d.email);
