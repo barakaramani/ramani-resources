@@ -2,6 +2,7 @@
 // Sign in with a 6 digit code by email (Resend) or SMS (Ghala, once Ghala SMS is live), then post, comment, like, report.
 // Needs db/schema_v5.sql. Optional env: COMMUNITY_ADMINS (comma list of emails that become admins on sign in),
 // MEDIA (an R2 bucket binding for post images), TURNSTILE_SECRET (bot check on sign in).
+import { turnstileOk } from "../../../lib/turnstile.js";
 import { KB } from "../../../lib/kb.js";
 import { makeCore } from "../../../lib/core.js";
 import { activity, phone as normPhone, id } from "../../../lib/contact.js";
@@ -39,10 +40,9 @@ async function who(req, env) {
 const pub = (m) => m && { id: m.id, name: m.name, business: m.business, city: m.city, imports: m.imports, years: m.years, bio: m.bio, role: m.role, created_at: m.created_at };
 const self = (m) => m && { ...pub(m), email: m.email, phone: m.phone, lang: m.lang };
 
+// Same Turnstile check as the forms and Uliza (lib/turnstile.js); the page gets its token from site/config.js.
 async function turnstile(env, token, ip) {
-  if (!env.TURNSTILE_SECRET) return true;
-  const r = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body: new URLSearchParams({ secret: env.TURNSTILE_SECRET, response: String(token || ""), remoteip: ip || "" }) });
-  return !!(await r.json().catch(() => ({}))).success;
+  return turnstileOk({ headers: new Headers(ip ? { "cf-connecting-ip": ip } : {}) }, env, token);
 }
 
 // ---------- sign in
