@@ -28,6 +28,11 @@ function email(e){ e = String(e || "").trim().toLowerCase(); return /^[^@\s]+@[^
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { "content-type": "application/json" } });
 const id = (p) => p + crypto.randomUUID().replace(/-/g, "").slice(0, 16);
 
+// Health check: GET /api/lead says whether the Turnstile bot check is switched on (never shows the key).
+export async function onRequestGet({ env }) {
+  return json({ ok: true, bot_check: env.TURNSTILE_SECRET ? "on" : "off" });
+}
+
 export async function onRequestPost({ request, env, waitUntil }) {
   let body;
   try { const t = await request.text(); if (t.length > 20000) return json({ ok:false, error:"too_large" }, 413); body = JSON.parse(t); }
