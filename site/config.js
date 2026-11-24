@@ -13,7 +13,7 @@ RAMANI.turnstileSiteKey = "0x4AAAAAAGQRZBKSEnEewVKg";
 (function () {
   var KEY = RAMANI.turnstileSiteKey;
   if (!KEY || !window.fetch || !window.Promise) return;
-  var ready = null, wid = null, tok = null, tokAt = 0, waiters = [];
+  var ready = null, wid = null, box = null, tok = null, tokAt = 0, waiters = [];
   function load() {
     if (ready) return ready;
     ready = new Promise(function (res) {
@@ -28,18 +28,18 @@ RAMANI.turnstileSiteKey = "0x4AAAAAAGQRZBKSEnEewVKg";
   function settle(t) { var w = waiters; waiters = []; w.forEach(function (f) { f(t); }); }
   function mount() {
     if (wid !== null || !window.turnstile || !document.body) return;
-    var box = document.createElement("div");
+    box = document.createElement("div");
     box.id = "rg-turnstile";
     box.style.cssText = "position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:2147483000";
     document.body.appendChild(box);
     wid = window.turnstile.render(box, {
       sitekey: KEY, appearance: "interaction-only", execution: "execute",
-      callback: function (t) { tok = t; tokAt = Date.now(); settle(t); },
+      callback: function (t) { tok = t; tokAt = Date.now(); settle(t); setTimeout(function () { if (box) box.style.display = "none"; }, 1500); },
       "error-callback": function () { settle(""); return true; },
       "expired-callback": function () { tok = null; }
     });
   }
-  function run() { try { window.turnstile.reset(wid); window.turnstile.execute(wid); } catch (e) { settle(""); } }
+  function run() { try { if (box) box.style.display = ""; window.turnstile.reset(wid); window.turnstile.execute(wid); } catch (e) { settle(""); } }
   function fresh() { return tok && Date.now() - tokAt < 270000; }
   function warm() { load().then(function (ok) { if (!ok) return; mount(); if (wid !== null && !fresh()) run(); }); }
   // A token for one request: the one fetched in the background if still fresh, otherwise a new one (max 10 s).
